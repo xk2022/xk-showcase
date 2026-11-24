@@ -1,12 +1,34 @@
 # Deployment
 
-The hub builds registered public XK source repositories from their configured branches or tags, exports Next.js static assets into isolated subdirectories, generates an index, and publishes one artifact on GitHub Pages. Each artifact records source SHAs. Failed builds must not publish.
+The hub builds registered public XK source repositories from their configured branches or tags, copies static exports into isolated subdirectories, generates an index, and publishes one artifact on GitHub Pages. Each artifact records source SHAs. Failed builds must not publish. Company rules remain in [xplore-kaleidoscope](https://github.com/xk2022/xplore-kaleidoscope); this document describes the hub's implementation.
+
+## Export registration
+
+Existing registrations default to Next.js validation: `/<slug>/_next/static/` assets, a case-specific canonical URL, valid local resources and `out/sitemap.xml`.
+
+Vite registrations set `framework: "vite"`. They must provide actual `/<slug>/assets/` module JavaScript and stylesheet files, `out/index.html`, and `out/404.html`. The hub checks every exported HTML file's local resource references, including directory links and nested routes. Resources must stay within the case path and exist in the export. It rejects cross-case paths, traversal and protocol-relative resources.
+
+Proposal controls are explicit per registration:
+
+| Field | Default | Effect |
+| --- | --- | --- |
+| `framework` | `next` | Use `vite` for real Vite static assets; no fake `_next` directory is needed. |
+| `indexable` | `true` | `false` requires `noindex,nofollow` in every HTML file, rejects `sitemap.xml`, adds a root robots Disallow rule, and omits its sitemap reference. |
+| `listed` | `true` | `false` excludes the site from homepage showcase cards. |
+
+`yuan-guang-pcb` uses `BASE_PATH=/yuan-guang-pcb/`, `framework: "vite"`, `indexable: false`, and `listed: false`. It is a corporate-website concept proposal, not the company's official website or a formally commissioned client case. Preserve its visible proposal notice and fictional-only, non-submitting form.
+
+These controls do **not** restrict access. An unlisted URL, robots directives, a private source repository or lack of a sitemap cannot replace authentication. A proposal that requires restricted access must use a suitable authenticated hosting arrangement.
+
+## Unknown paths
+
+GitHub Pages uses the hub's root `404.html`. For registered Vite sites, that page matches a literal allowlist of case prefixes and replaces the unknown path with the corresponding `/<slug>/404.html`. It preserves only `?lang=en`, not other query data. Other unknown paths remain on the hub's generic 404 page. The subsite's 404 page provides its normal navigation and proposal notice; this is an explicit redirect, not a server rewrite or client-side recreation of the original URL.
 
 ## Migration and verification
 
 1. Confirm Pages source is GitHub Actions and configure the custom domain and DNS.
-2. Run the hub workflow and verify all three routes load their CSS, scripts, photos and icons without 404s; confirm browser interactions and case-specific canonical URLs.
-3. Verify the root robots.txt references each sitemap. Keep old independent deployments until the new URLs are confirmed.
+2. Run the hub workflow and verify each registered site's routes load their CSS, scripts, photos and icons without 404s; confirm browser interactions and case-specific canonical URLs. Test a deep route reload and the root-404 handoff for Vite sites.
+3. Verify root robots.txt references only indexable sites' sitemaps and disallows non-indexable proposal paths. Confirm proposals are absent from homepage cards where `listed: false`. Keep old independent deployments until the new URLs are confirmed.
 4. Retire any duplicate showcase-domain binding only after inspecting existing site settings; do not remove unrelated domains. Redirect the legacy Honest hostname at the DNS/HTTP provider or keep the prior deployment until redirect is ready.
 
 ## Updates and rollback
