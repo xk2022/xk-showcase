@@ -11,6 +11,7 @@ The hub supports Next.js static exports and explicitly configured Vite exports. 
 - [宏家燕窩 Brand](https://showcase.xplorekaleidoscope.com/hongjia-brand/)
 - [澄策企業顧問工作室](https://showcase.xplorekaleidoscope.com/consulting-chengce/)
 - [千剛實業有限公司](https://showcase.xplorekaleidoscope.com/qiangang-windows/)
+- [序程運輸](https://showcase.xplorekaleidoscope.com/truck-transport/)
 
 ## Build
 
@@ -25,3 +26,9 @@ In Settings → Pages choose GitHub Actions and set the custom domain to `showca
 Register a site in `config/showcases.json`. Each repository must export `out/index.html` and support its unique path at build time. Run the Showcase Hub workflow manually after source changes; hub main changes also deploy. Refs may be changed to immutable release tags for controlled releases. See [deployment notes](doc/deployment.md).
 
 The Yuan-Guang PCB entry is a **concept proposal**, with `framework: "vite"`, `indexable: false`, and `listed: false`. It is not included in the homepage's client-case cards or sitemap references. This is a public preview configuration, not access control.
+
+## Transport showcase
+
+`truck-transport` builds `xk2022/xk-corp-truck-transport` independently from its `main` branch. The hub provides `GITHUB_PAGES=true`, `NEXT_PUBLIC_BASE_PATH=/truck-transport` and `NEXT_PUBLIC_SITE_URL=https://showcase.xplorekaleidoscope.com` to export the five-page site with the correct assets, canonical URLs and sitemap. The inquiry preview remains in browser memory and has no submission endpoint or storage.
+
+The original [independent deployment](https://xk2022.github.io/xk-corp-truck-transport/) remains available. The hub alone owns the showcase custom domain; generated exports are not committed. Deployment status and the exact built source SHA are available from the Actions run and published `manifest.json`.
