@@ -1,5 +1,6 @@
 import { access, readFile, readdir, stat } from 'node:fs/promises';
 import { join, relative, resolve, sep } from 'node:path';
+import { validateReleaseConfiguration } from './release-gate.mjs';
 
 export const origin = 'https://showcase.xplorekaleidoscope.com';
 export const escape = value => String(value).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]);
@@ -12,6 +13,7 @@ export function validateSites(sites) {
     for (const option of ['indexable', 'listed']) {
       if (site[option] !== undefined && typeof site[option] !== 'boolean') throw new Error(`Invalid ${option}: ${site.slug}`);
     }
+    validateReleaseConfiguration(site);
     seen.add(site.slug);
   }
 }
@@ -60,6 +62,7 @@ export async function validateExport(directory, site) {
     const assetPrefix = `/${site.slug}/assets/`;
     if (!tags.some(tag => tag.type === 'module' && tag.src?.startsWith(assetPrefix) && /\.js(?:\?|$)/.test(tag.src)) || !tags.some(tag => tag.rel === 'stylesheet' && tag.href?.startsWith(assetPrefix) && /\.css(?:\?|$)/.test(tag.href))) throw new Error(`Invalid Vite assets: ${site.slug}`);
     await access(join(directory, '404.html'));
+    await access(join(directory, 'en/404.html'));
   } else if (!html.includes(`/${site.slug}/_next/static/`)) {
     throw new Error(`Invalid Next.js base path: ${site.slug}`);
   }
@@ -100,6 +103,6 @@ export function renderCards(sites) {
 }
 
 export function renderNotFound(sites) {
-  const fallbacks = sites.filter(site => site.framework === 'vite').map(site => [`/${site.slug}/`, `/${site.slug}/404.html`]);
-  return `<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>找不到頁面｜XK SYSTEM</title></head><body><main><h1>找不到頁面 / Page not found</h1><p>請使用網站導覽返回。Return to the showcase to continue.</p><a href="/">XK SYSTEM Showcase</a></main><script>const fallbacks=${JSON.stringify(fallbacks)};const match=fallbacks.find(([prefix])=>location.pathname.startsWith(prefix));if(match){const language=new URLSearchParams(location.search).get('lang')==='en'?'?lang=en':'';location.replace(match[1]+language);}</script></body></html>\n`;
+  const fallbacks = sites.filter(site => site.framework === 'vite').map(site => [`/${site.slug}/`, `/${site.slug}/404.html`, `/${site.slug}/en/404.html`]);
+  return `<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>找不到頁面｜XK SYSTEM</title></head><body><main><h1>找不到頁面 / Page not found</h1><p>請使用網站導覽返回。Return to the showcase to continue.</p><a href="/">XK SYSTEM Showcase</a></main><script>const fallbacks=${JSON.stringify(fallbacks)};const match=fallbacks.find(([prefix])=>location.pathname.startsWith(prefix));if(match){const english=location.pathname.startsWith(match[0]+'en/')||new URLSearchParams(location.search).get('lang')==='en';location.replace(match[english?2:1]);}</script></body></html>\n`;
 }

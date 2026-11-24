@@ -6,7 +6,7 @@ The hub builds registered public XK source repositories from their configured br
 
 Existing registrations default to Next.js validation: `/<slug>/_next/static/` assets, a case-specific canonical URL, valid local resources and `out/sitemap.xml`.
 
-Vite registrations set `framework: "vite"`. They must provide actual `/<slug>/assets/` module JavaScript and stylesheet files, `out/index.html`, and `out/404.html`. The hub checks every exported HTML file's local resource references, including directory links and nested routes. Resources must stay within the case path and exist in the export. It rejects cross-case paths, traversal and protocol-relative resources.
+Vite registrations set `framework: "vite"`. They must provide actual `/<slug>/assets/` module JavaScript and stylesheet files, `out/index.html`, `out/404.html`, and an English `out/en/404.html`. The hub checks every exported HTML file's local resource references, including directory links and nested routes. Resources must stay within the case path and exist in the export. It rejects cross-case paths, traversal and protocol-relative resources.
 
 Proposal controls are explicit per registration:
 
@@ -20,9 +20,21 @@ Proposal controls are explicit per registration:
 
 These controls do **not** restrict access. An unlisted URL, robots directives, a private source repository or lack of a sitemap cannot replace authentication. A proposal that requires restricted access must use a suitable authenticated hosting arrangement.
 
+## Source release verification
+
+The Yuan-Guang entry opts into `releaseGate: { "workflow": ".github/workflows/ci.yml", "job": "verify" }`. Other existing registrations keep their current build process unless they explicitly opt in. Prefer a full 40-character source commit SHA in `ref`; named branches and tags are supported, but are resolved to an exact SHA before verification and checkout.
+
+The `resolve` job performs GitHub REST metadata reads before any source build runs. It checks the exact SHA's push workflow run, matches the configured workflow path and source repository, and requires the latest matching run to have completed successfully. It then checks the configured job for that exact run attempt and SHA, and rechecks the workflow to detect a rerun starting during verification. Missing checks, pending/failed runs, wrong workflows, wrong SHAs, incomplete API pages and API errors all stop publication. It does not substitute another commit's success or poll indefinitely.
+
+The resolver stores each source SHA and its optional `release` evidence (workflow, job, run ID, attempt and verification timestamp) in the existing `.release/resolved-sites.json` plan, retained as the single `resolved-sources` artifact. The separate `build` job downloads that same workflow run's artifact and checks its repository/ref/workflow/job pairing against the current configuration before executing any source code. It fetches the approved SHA into a detached checkout and confirms the fetched commit matches. Changes to a branch or tag after verification cannot change the code being built. The final manifest includes the release evidence alongside the exact source SHA.
+
+`GH_TOKEN` is passed only to the metadata command in the resolution job, with read-only contents/checks/actions permissions. It is never written into an artifact, Git configuration, command argument or log. The source-build job has no such environment variable; the builder also refuses `GITHUB_TOKEN`/`GH_TOKEN` in its own environment. Git/npm child environments contain a small runtime allowlist plus explicit public configuration; inherited Actions credentials and token-like settings are excluded. Credential-bearing proxy URLs are not forwarded. This environment filtering is not a sandbox for untrusted code: source repositories must remain trusted XK projects. Deployment retains its isolated Pages/OIDC permissions.
+
+For a complete local build, first run `node scripts/resolve-sources.mjs /tmp/resolved-sites.json`, then run `node scripts/build-showcases.mjs /tmp/resolved-sites.json` and no GitHub tokens in its environment. Public repository metadata can be read without a token subject to GitHub rate limits; private sources require a separately designed access policy. In environments using HTTP proxies, prefix the metadata command with `NODE_USE_ENV_PROXY=1` on Node.js 24. Never commit the generated approval artifact or reuse an approval from a different release configuration.
+
 ## Unknown paths
 
-GitHub Pages uses the hub's root `404.html`. For registered Vite sites, that page matches a literal allowlist of case prefixes and replaces the unknown path with the corresponding `/<slug>/404.html`. It preserves only `?lang=en`, not other query data. Other unknown paths remain on the hub's generic 404 page. The subsite's 404 page provides its normal navigation and proposal notice; this is an explicit redirect, not a server rewrite or client-side recreation of the original URL.
+GitHub Pages uses the hub's root `404.html`. For registered Vite sites, that page matches a literal allowlist of case prefixes and replaces the unknown path with `/<slug>/404.html`. Paths under the exact `/<slug>/en/` prefix, or legacy URLs with `?lang=en`, instead go to the physical English `/<slug>/en/404.html`. No query data is forwarded. Other unknown paths remain on the hub's generic 404 page. The subsite's 404 page provides its normal navigation and proposal notice; this is an explicit redirect, not a server rewrite or client-side recreation of the original URL.
 
 ## Migration and verification
 
@@ -50,7 +62,7 @@ Validation passed: all nine sites built locally, all nine hub tests passed, and 
 The workflow separates public source resolution, source building and privileged publication:
 
 1. Resolve each configured branch, tag or full SHA once through GitHub's public commit API. The plan is stored as `.release/resolved-sites.json` and retained as the `resolved-sources` Actions artifact for 14 days. A branch may move later without changing the sources for that run. A checked-out source SHA must match the plan before any npm command executes.
-2. For `xk2022/xk-brand-hongjia-birdnest`, require successful GitHub Actions checks named `Verify root static export` and `Verify subpath static export` on the resolved SHA. Pending, missing, failed or mismatched checks stop the release. No new CI requirements are imposed on unrelated registrations. When changing Brand CI job names, update this policy in `scripts/release.mjs` in the same release.
+2. For `xk2022/xk-brand-hongjia-birdnest`, require successful GitHub Actions checks named `Verify root static export` and `Verify subpath static export` on the resolved SHA. Yuan-Guang additionally opts into the exact workflow/job/attempt gate described above; its resolved plan and manifest include that evidence. Pending, missing, failed or mismatched checks stop the release. No new CI requirements are imposed on unrelated registrations. When changing Brand CI job names, update this policy in `scripts/release.mjs` in the same release.
 3. Build in a separate job with no `GH_TOKEN`/`GITHUB_TOKEN` environment supplied. Checkout actions do not retain credentials, and source npm lifecycle/build environments discard token, secret and credential variables. Only the resolver step and deployment guard receive a short-lived workflow token. Deployment permissions remain in the deploy job.
 4. Serialize the complete main publication pipeline, including resolution and builds. Do not cancel an active Pages deployment. The guard immediately before deployment checks both current Hub main SHA and whether a newer main publication run was requested; a superseded run fails instead of publishing an old snapshot.
 5. After Pages accepts the deployment, verify the full public manifest exactly matches the resolved slug/repository/SHA set. Fetch with `no-cache` headers and a per-attempt query key; retry up to 12 times with 15-second pauses, with a five-second timeout per request. The deployment job has a 15-minute overall limit. A stale CDN manifest cannot count as verified publication.

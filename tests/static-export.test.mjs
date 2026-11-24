@@ -19,10 +19,12 @@ async function fixture(site = proposal) {
   const asset = site.framework === 'vite' ? 'assets' : '_next/static';
   await mkdir(join(directory, asset), { recursive: true });
   await mkdir(join(directory, 'about'));
+  await mkdir(join(directory, 'en'));
   await Promise.all([
     writeFile(join(directory, 'index.html'), html(site.slug, 'noindex,nofollow', site.framework || 'next')),
     writeFile(join(directory, 'about/index.html'), html(site.slug, 'noindex,nofollow', site.framework || 'next')),
     writeFile(join(directory, '404.html'), html(site.slug, 'noindex,nofollow', site.framework || 'next')),
+    writeFile(join(directory, 'en/404.html'), html(site.slug, 'noindex,nofollow', site.framework || 'next')),
     writeFile(join(directory, asset, 'app.js'), '/* app */'),
     writeFile(join(directory, asset, 'app.css'), '/* styles */'),
     ...(site.indexable !== false ? [writeFile(join(directory, 'sitemap.xml'), '<urlset/>')] : []),
@@ -118,7 +120,9 @@ test('root 404 uses a literal whitelisted subsite fallback and preserves only En
     runInNewContext(code, { location: { pathname, search, replace: value => { result = value; } }, URLSearchParams });
     return result;
   };
-  assert.equal(route('/yuan-guang-pcb/missing/deep/', '?lang=en&next=https://evil.example'), '/yuan-guang-pcb/404.html?lang=en');
+  assert.equal(route('/yuan-guang-pcb/missing/deep/', '?lang=en&next=https://evil.example'), '/yuan-guang-pcb/en/404.html');
+  assert.equal(route('/yuan-guang-pcb/en/missing/deep/', '?data=secret'), '/yuan-guang-pcb/en/404.html');
+  assert.equal(route('/yuan-guang-pcb/enough/missing/', ''), '/yuan-guang-pcb/404.html');
   assert.equal(route('/yuan-guang-pcb/missing/', '?lang=zh&data=secret'), '/yuan-guang-pcb/404.html');
   assert.equal(route('/existing/missing/', ''), undefined);
   assert.equal(route('//evil.example/yuan-guang-pcb/', '?lang=en'), undefined);

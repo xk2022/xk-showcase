@@ -1,4 +1,5 @@
 import { validateSites } from './static-export.mjs';
+import { sourceEnvironment, validateReleaseEvidence, verifyRelease } from './release-gate.mjs';
 
 export const brandRepository = 'xk2022/xk-brand-hongjia-birdnest';
 export const requiredBrandChecks = ['Verify root static export', 'Verify subpath static export'];
@@ -7,13 +8,13 @@ export const isSha = value => /^[a-f0-9]{40}$/.test(value);
 export async function githubRequest(path, { token = process.env.GH_TOKEN || process.env.GITHUB_TOKEN, fetchImpl = fetch } = {}) {
   const headers = { Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
   if (token) headers.Authorization = `Bearer ${token}`;
-  let response = await fetchImpl(`https://api.github.com/${path}`, { headers, signal: AbortSignal.timeout(15000) });
+  let response = await fetchImpl(`https://api.github.com/${path}`, { headers, redirect: 'error', signal: AbortSignal.timeout(15000) });
   // All registry sources are public. A hub-scoped GITHUB_TOKEN may not have
   // cross-repository checks access (403 or concealed 404); anonymous public
   // reads use the same API and still fail closed if the resource is private/missing.
   if ([403, 404].includes(response.status) && token) {
     const { Authorization: omitted, ...publicHeaders } = headers;
-    response = await fetchImpl(`https://api.github.com/${path}`, { headers: publicHeaders, signal: AbortSignal.timeout(15000) });
+    response = await fetchImpl(`https://api.github.com/${path}`, { headers: publicHeaders, redirect: 'error', signal: AbortSignal.timeout(15000) });
   }
   if (!response.ok) throw new Error(`GitHub API ${response.status}: ${path}`);
   return response.json();
@@ -40,6 +41,9 @@ export async function resolveSources(sites, request = githubRequest) {
     const data = await request(`repos/${site.repository}/commits/${site.sha}/check-runs?filter=latest&per_page=100`);
     assertSuccessfulBrandChecks(data.check_runs || [], site.sha);
   }
+  for (const site of resolved.filter(site => site.releaseGate)) {
+    site.release = await verifyRelease(site, site.sha, request);
+  }
   return resolved;
 }
 
@@ -49,8 +53,10 @@ export function validateResolvedSources(sites, resolved) {
   for (const site of sites) {
     const candidate = resolved.find(entry => entry.slug === site.slug);
     if (!candidate || !isSha(candidate.sha)) throw new Error(`Missing resolved SHA: ${site.slug}`);
-    const { sha, ...registration } = candidate;
+    const { sha, release, ...registration } = candidate;
     if (JSON.stringify(registration) !== JSON.stringify(site)) throw new Error(`Resolved registration changed: ${site.slug}`);
+    if (isSha(site.ref) && site.ref !== sha) throw new Error(`Resolved SHA differs from pinned registry ref: ${site.slug}`);
+    validateReleaseEvidence(site, sha, release);
   }
 }
 
@@ -61,6 +67,5 @@ export function assertFreshPublication({ expectedSha, currentSha, runNumber, run
 }
 
 export function sourceBuildEnvironment(environment, configured = {}) {
-  const publicEntries = entries => Object.fromEntries(Object.entries(entries).filter(([key]) => !/(?:TOKEN|SECRET|PASSWORD|CREDENTIAL|AUTHORIZATION|PRIVATE_KEY)/i.test(key)));
-  return { ...publicEntries(environment), NEXT_TELEMETRY_DISABLED: '1', ...publicEntries(configured) };
+  return sourceEnvironment(environment, configured);
 }
