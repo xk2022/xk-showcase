@@ -6,6 +6,9 @@ Central static publishing for independently maintained showcase repositories.
 - [三月手工湯包](https://showcase.xplorekaleidoscope.com/march-tangbao/)
 - [宏家燕窩](https://showcase.xplorekaleidoscope.com/hongjia-birdnest/)
 - [御品園港式燒臘](https://showcase.xplorekaleidoscope.com/yupinyuan-bento/)
+- [宏家燕窩 Brand](https://showcase.xplorekaleidoscope.com/hongjia-brand/)
+- [澄策企業顧問工作室](https://showcase.xplorekaleidoscope.com/consulting-chengce/)
+- [千剛實業有限公司](https://showcase.xplorekaleidoscope.com/qiangang-windows/)
 
 ## Build
 
