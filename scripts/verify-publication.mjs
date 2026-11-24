@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
-import { origin as defaultOrigin, validateSites } from './static-export.mjs';
+import { origin as defaultOrigin, validateSites, transportRoutes, assertTransportPage, assertTransportSitemap } from './static-export.mjs';
 
 const shaPattern = /^[a-f0-9]{40}$/;
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -118,6 +118,10 @@ export async function verifyPublication({ sites, manifest = sites.map(({ slug, r
     const type = response.headers.get('content-type') || '';
     const isCSS = /\.css$/i.test(url.pathname) || type.includes('text/css');
     if (type.includes('text/html')) throw new Error(`Asset returned HTML instead of its resource: ${url.pathname}`);
+    if (site.slug === 'truck-transport') {
+      const expectedType = url.pathname === '/truck-transport/images/social-card.jpg' ? 'image/jpeg' : url.pathname === '/truck-transport/favicon.svg' ? 'image/svg+xml' : undefined;
+      if (expectedType && type.split(';')[0].trim().toLowerCase() !== expectedType) throw new Error(`Incorrect transport asset content type: ${url.pathname}`);
+    }
     if (isCSS) {
       const css = await response.text();
       for (const resource of cssResources(css)) await verifyAsset(resource, url, site);
@@ -137,6 +141,7 @@ export async function verifyPublication({ sites, manifest = sites.map(({ slug, r
     } else {
       if (!robotLines.has(`Sitemap: ${home}sitemap.xml`)) throw new Error(`Missing sitemap robots reference: ${site.slug}`);
       const sitemap = await (await request(`${home}sitemap.xml`)).text();
+      if (site.slug === 'truck-transport') assertTransportSitemap(sitemap, base);
       for (const [, value] of sitemap.matchAll(/<loc\b[^>]*>(.*?)<\/loc>/gs)) {
         const url = new URL(decode(value.trim()));
         if (url.origin !== base || !url.pathname.startsWith(`/${site.slug}/`) || url.search || url.hash) throw new Error(`Sitemap URL escapes case path: ${url}`);
@@ -150,6 +155,9 @@ export async function verifyPublication({ sites, manifest = sites.map(({ slug, r
         }
       }
     }
+    if (site.slug === 'truck-transport') {
+      for (const route of transportRoutes) pages.add(`${home}${route}`);
+    }
     for (const url of pages) {
       const html = await (await request(url)).text();
       assertCanonical(html, url);
@@ -157,6 +165,9 @@ export async function verifyPublication({ sites, manifest = sites.map(({ slug, r
       if (site.slug === 'hongjia-brand' && [...html.matchAll(/<h1\b/gi)].length !== 1) throw new Error(`Brand page must have one H1: ${url}`);
       if (site.indexable === false) assertNoindex(html, url);
       if (site.slug === 'hongjia-brand') await verifyAsset(assertBrandSocial(html, base), url, site);
+      if (site.slug === 'truck-transport') {
+        for (const asset of assertTransportPage(html, url, base)) await verifyAsset(asset, url, site);
+      }
       for (const resource of htmlResources(html)) await verifyAsset(resource, url, site);
       pagesChecked++;
     }

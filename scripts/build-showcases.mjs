@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { validateSites, validateExport, buildRobots, renderCards, renderNotFound } from './static-export.mjs';
 import { resolveSources, validateResolvedSources, sourceBuildEnvironment } from './release.mjs';
 
-const sites = JSON.parse(await readFile(new URL('../config/showcases.json', import.meta.url), 'utf8'));
+const sites = JSON.parse(await readFile(process.argv[3] ? resolve(process.argv[3]) : new URL('../config/showcases.json', import.meta.url), 'utf8'));
 const output = resolve('dist');
 validateSites(sites);
 if (process.env.GITHUB_TOKEN || process.env.GH_TOKEN) throw new Error('Run the build without GITHUB_TOKEN/GH_TOKEN. Source checks belong in the separate resolution job.');

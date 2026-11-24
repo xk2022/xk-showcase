@@ -22,6 +22,39 @@ function attributes(tag) {
   return Object.fromEntries([...tag.matchAll(/([\w-]+)\s*=\s*(["'])(.*?)\2/gs)].map(([, name, , value]) => [name.toLowerCase(), value]));
 }
 
+export const transportRoutes = ['', 'services/', 'shipping-guide/', 'about/', 'inquiry/'];
+
+// Keep transport's metadata contract in the Hub as well as its source suite.
+// Its sitemap remains an explicit route inventory while its fictional demo is noindex.
+export function assertTransportPage(html, url, base = origin) {
+  const home = `${new URL(base).origin}/truck-transport/`;
+  const metadata = [...html.matchAll(/<meta\b[^>]*>/gi)].map(match => attributes(match[0]));
+  const links = [...html.matchAll(/<link\b[^>]*>/gi)].map(match => attributes(match[0]));
+  const canonical = links.filter(tag => tag.rel?.toLowerCase() === 'canonical');
+  if (canonical.length !== 1 || canonical[0].href !== url) throw new Error(`Incorrect transport canonical URL: ${url}`);
+  const headings = [...html.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)];
+  if (headings.length !== 1 || !headings[0][1].replace(/<[^>]*>/g, '').trim()) throw new Error(`Transport page must have one nonempty H1: ${url}`);
+  const robots = metadata.filter(tag => tag.name?.toLowerCase() === 'robots');
+  if (!robots.length || robots.some(tag => {
+    const tokens = (tag.content || '').toLowerCase().split(/[\s,]+/);
+    return !tokens.includes('noindex') || !tokens.includes('nofollow') || tokens.includes('index') || tokens.includes('follow');
+  })) throw new Error(`Missing transport noindex,nofollow: ${url}`);
+  const image = `${home}images/social-card.jpg`;
+  for (const [key, value] of Object.entries({ 'og:url': url, 'og:image': image, 'og:image:width': '1200', 'og:image:height': '630', 'twitter:card': 'summary_large_image', 'twitter:image': image })) {
+    const matches = metadata.filter(tag => (tag.property || tag.name)?.toLowerCase() === key);
+    if (matches.length !== 1 || matches[0].content !== value) throw new Error(`Incorrect transport social metadata ${key}: ${url}`);
+  }
+  const icons = links.filter(tag => tag.rel?.toLowerCase().split(/\s+/).includes('icon'));
+  if (icons.length !== 1 || !icons[0].href || icons[0].href.startsWith('//') || new URL(icons[0].href, url).href !== `${home}favicon.svg`) throw new Error(`Incorrect transport icon: ${url}`);
+  return [image, `${home}favicon.svg`];
+}
+
+export function assertTransportSitemap(xml, base = origin) {
+  const expected = transportRoutes.map(route => `${new URL(base).origin}/truck-transport/${route}`).sort();
+  const actual = [...xml.matchAll(/<loc\b[^>]*>(.*?)<\/loc>/gs)].map(([, value]) => value.trim()).sort();
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) throw new Error('Transport sitemap must list exactly its five public routes');
+}
+
 async function htmlFiles(directory) {
   const files = [];
   for (const entry of await readdir(directory, { withFileTypes: true })) {
@@ -56,7 +89,8 @@ export async function validateLocalReferences(html, directory, slug, pagePath = 
 
 export async function validateExport(directory, site) {
   const html = await readFile(join(directory, 'index.html'), 'utf8');
-  if (!html.includes(`${origin}/${site.slug}/`)) throw new Error(`Invalid canonical URL: ${site.slug}`);
+  const canonical = [...html.matchAll(/<link\b[^>]*>/gi)].map(match => attributes(match[0])).filter(tag => tag.rel?.toLowerCase() === 'canonical');
+  if (canonical.length !== 1 || canonical[0].href !== `${origin}/${site.slug}/`) throw new Error(`Invalid canonical URL: ${site.slug}`);
   if (site.framework === 'vite') {
     const tags = [...html.matchAll(/<(?:script|link)\b[^>]*>/g)].map(match => attributes(match[0]));
     const assetPrefix = `/${site.slug}/assets/`;
@@ -68,7 +102,8 @@ export async function validateExport(directory, site) {
   }
 
   const strict = site.framework === 'vite' || site.indexable === false;
-  const files = strict ? await htmlFiles(directory) : [join(directory, 'index.html')];
+  // Check nested Next exports too, while retaining their legacy root-home link contract.
+  const files = await htmlFiles(directory);
   for (const file of files) {
     const content = await readFile(file, 'utf8');
     await validateLocalReferences(content, directory, site.slug, relative(directory, file).split(sep).join('/'), { legacy: !strict });
@@ -90,6 +125,14 @@ export async function validateExport(directory, site) {
     throw new Error(`Non-indexable proposal must not export sitemap.xml: ${site.slug}`);
   }
   await access(join(directory, 'sitemap.xml'));
+  if (site.slug === 'truck-transport') {
+    assertTransportSitemap(await readFile(join(directory, 'sitemap.xml'), 'utf8'));
+    for (const route of transportRoutes) {
+      const content = await readFile(join(directory, route, 'index.html'), 'utf8');
+      const assets = assertTransportPage(content, `${origin}/truck-transport/${route}`);
+      for (const asset of assets) await access(join(directory, new URL(asset).pathname.slice('/truck-transport/'.length)));
+    }
+  }
 }
 
 export function buildRobots(sites) {
