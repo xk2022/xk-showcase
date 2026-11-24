@@ -128,3 +128,57 @@ test('root 404 uses a literal whitelisted subsite fallback and preserves only En
   assert.equal(route('//evil.example/yuan-guang-pcb/', '?lang=en'), undefined);
   assert.equal(route('/yuan-guang-pcb-evil/missing/', '?lang=en'), undefined);
 });
+
+
+test('legacy Next validation checks nested HTML resources and requires an actual canonical tag', async () => {
+  await usingFixture(async directory => {
+    await writeFile(join(directory, 'about/index.html'), html(legacy.slug, 'index,follow', 'next') + '<img src="/existing/missing.webp">');
+    await assert.rejects(validateExport(directory, legacy), /ENOENT/);
+    await writeFile(join(directory, 'index.html'), html(legacy.slug, 'index,follow', 'next').replace(/<link rel="canonical"[^>]*>/, '') + `${origin}/${legacy.slug}/`);
+    await assert.rejects(validateExport(directory, legacy), /Invalid canonical/);
+  }, legacy);
+});
+
+async function transportFixture(callback) {
+  const directory = await mkdtemp(join(tmpdir(), 'transport-static-'));
+  const site = { slug: 'truck-transport', name: 'Transport', category: 'Demo', repository: 'xk2022/xk-corp-truck-transport', ref: 'main' };
+  const routes = ['', 'services/', 'shipping-guide/', 'about/', 'inquiry/'];
+  const home = `${origin}/truck-transport/`;
+  const page = route => `<html><head><meta name="robots" content="noindex,nofollow"><link rel="canonical" href="${home}${route}"><meta property="og:url" content="${home}${route}"><meta property="og:image" content="${home}images/social-card.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="${home}images/social-card.jpg"><link rel="icon" href="/truck-transport/favicon.svg"><link rel="stylesheet" href="/truck-transport/_next/static/app.css"></head><body><h1>Transport</h1></body></html>`;
+  try {
+    await mkdir(join(directory, '_next/static'), { recursive: true });
+    await mkdir(join(directory, 'images'));
+    await writeFile(join(directory, '_next/static/app.css'), 'body{}');
+    await writeFile(join(directory, 'images/social-card.jpg'), 'image bytes');
+    await writeFile(join(directory, 'favicon.svg'), '<svg/>');
+    for (const route of routes) {
+      await mkdir(join(directory, route), { recursive: true });
+      await writeFile(join(directory, route, 'index.html'), page(route));
+    }
+    await writeFile(join(directory, 'sitemap.xml'), `<urlset>${routes.map(route => `<loc>${home}${route}</loc>`).join('')}</urlset>`);
+    await callback({ directory, site, page, home });
+  } finally { await rm(directory, { recursive: true, force: true }); }
+}
+
+test('transport local export requires five pages, noindex and explicit social/icon files', async () => {
+  await transportFixture(async ({ directory, site, page }) => {
+    await validateExport(directory, site);
+    await writeFile(join(directory, 'inquiry/index.html'), page('inquiry/').replace('noindex,nofollow', 'index,follow'));
+    await assert.rejects(validateExport(directory, site), /noindex,nofollow/);
+    await writeFile(join(directory, 'inquiry/index.html'), page('inquiry/'));
+    await rm(join(directory, 'images/social-card.jpg'));
+    await assert.rejects(validateExport(directory, site), /ENOENT/);
+  });
+});
+
+test('transport local export rejects duplicate sitemap entries and changed nested canonical or social URL', async () => {
+  await transportFixture(async ({ directory, site, page, home }) => {
+    await writeFile(join(directory, 'about/index.html'), page('about/').replace(`href="${home}about/"`, `href="${home}"`));
+    await assert.rejects(validateExport(directory, site), /transport canonical/);
+    await writeFile(join(directory, 'about/index.html'), page('about/').replace(`${home}images/social-card.jpg`, `${origin}/other/card.jpg`));
+    await assert.rejects(validateExport(directory, site), /transport social metadata/);
+    await writeFile(join(directory, 'about/index.html'), page('about/'));
+    await writeFile(join(directory, 'sitemap.xml'), `<urlset>${['', 'services/', 'shipping-guide/', 'about/', 'about/'].map(route => `<loc>${home}${route}</loc>`).join('')}</urlset>`);
+    await assert.rejects(validateExport(directory, site), /Transport sitemap/);
+  });
+});

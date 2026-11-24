@@ -1,0 +1,108 @@
+name: Synchronize verified transport
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Serialize sync candidates separately: sharing the deployment group could
+# replace the explicitly dispatched deployment as GitHub retains one pending run.
+# deploy.yml keeps its own complete-publication queue and freshness guard.
+concurrency:
+  group: showcase-transport-sync
+  cancel-in-progress: false
+
+jobs:
+  inspect:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      actions: read
+      checks: read
+    outputs:
+      changed: ${{ steps.candidate.outputs.changed }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24'
+      - run: node --test --test-isolation=none tests/*.test.mjs
+      - name: Inspect latest successful source main push and freeze candidate
+        id: candidate
+        run: node scripts/inspect-transport-sync.mjs
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Retain immutable inspection plan
+        if: steps.candidate.outputs.changed == 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: transport-sync-candidate
+          path: |
+            .release/transport-sync.json
+            .release/candidate-registry.json
+            .release/resolved-sites.json
+          include-hidden-files: true
+          retention-days: 14
+
+  build:
+    needs: inspect
+    if: needs.inspect.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24'
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: transport-sync-candidate
+          path: .release
+      - name: Build every showcase from the candidate snapshot
+        run: node scripts/build-showcases.mjs .release/resolved-sites.json .release/candidate-registry.json
+      - name: Install browsers and run the exact transport source suite against Hub dist
+        run: node scripts/test-transport.mjs .release/resolved-sites.json --install-browsers
+      - name: Retain candidate browser evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: transport-sync-browser-report
+          path: |
+            .release/transport-report/
+            .release/transport-test-results/
+          include-hidden-files: true
+          retention-days: 14
+
+  publish:
+    needs: [inspect, build]
+    if: github.ref == 'refs/heads/main' && needs.inspect.outputs.changed == 'true' && needs.build.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24'
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: transport-sync-candidate
+          path: .release
+      - name: Conditionally pin the tested source and explicitly dispatch publication
+        run: node scripts/publish-transport-sync.mjs
+        env:
+          GH_TOKEN: ${{ github.token }}

@@ -45,11 +45,11 @@ GitHub Pages uses the hub's root `404.html`. For registered Vite sites, that pag
 
 ## Updates and rollback
 
-Run the hub workflow whenever a source update is ready. For rollback, set the affected source's ref to a known-good release tag, review and deploy. Use the published manifest to identify the source commit to tag. A later phase can add authenticated cross-repository triggers.
+Transport is synchronized from its latest passing main push release every 30 minutes; other sources still require a Hub workflow run when an update is ready. For rollback, disable transport synchronization first if transport is affected, then set the affected source ref to a known-good exact SHA or release tag, review and deploy. Use the published manifest and retained resolved-source artifact to identify the exact release. Re-running an old workflow must use its frozen resolved plan, rather than resolving current mutable refs. Re-enable synchronization only after the forward fix is approved.
 
 ## Transport showcase
 
-Register `xk2022/xk-corp-truck-transport` under the unique `truck-transport` slug. The source repository owns the five-page content and inquiry interaction. The hub only supplies build-time `GITHUB_PAGES=true`, `NEXT_PUBLIC_BASE_PATH=/truck-transport` and `NEXT_PUBLIC_SITE_URL=https://showcase.xplorekaleidoscope.com`, then publishes the static export at `/truck-transport/`.
+Register `xk2022/xk-corp-truck-transport` under the unique `truck-transport` slug, pinned to a full source SHA with release gate `.github/workflows/deploy-pages.yml` / `Validate Hub build`. The source repository owns the five-page content and inquiry interaction. The hub only supplies build-time `GITHUB_PAGES=true`, `NEXT_PUBLIC_BASE_PATH=/truck-transport` and `NEXT_PUBLIC_SITE_URL=https://showcase.xplorekaleidoscope.com`, then publishes the static export at `/truck-transport/`.
 
 Before merging registration, run the complete hub build and check the exported page paths, root hub link, canonical URLs and `/truck-transport/sitemap.xml`. After deployment, verify the five pages directly and on refresh, both transport images, inquiry preview and the source SHA in `/manifest.json`. Keep the original independent Pages deployment and its domain settings intact.
 
@@ -72,3 +72,26 @@ Public verification also checks registered card visibility, root robots sitemap/
 A post-deploy verification failure means the workflow failed after Pages may already have published. Inspect the workflow error and the public manifest. If necessary, restore a previously saved known-good source SHA, tag or branch through a reviewed registry change and run a new release. Raw SHAs are now supported directly; a recovery no longer needs to invent a new branch. Preserve the release-plan artifact and successful public manifest for reproducible rollback.
 
 For an intentional retry, start a new workflow against the desired current Hub main. Re-running an older run is refused if its Hub commit or request has been superseded. Do not disable HTTPS verification to make smoke checks pass; on a managed computer use the configured trusted proxy CA and Node's supported proxy environment setting where needed.
+
+
+## Verified transport automation
+
+`deploy.yml` keeps the existing complete-workflow production concurrency queue, frozen SHA resolution, exact source CI gates, deploy freshness checks and public verification. Before Pages artifact upload, `scripts/test-transport.mjs` serves the complete Hub output and checks out the transport SHA recorded in the resolved plan and `dist/manifest.json`. That detached checkout supplies the browser suite and lockfile. Install, browser dependency installation and tests run without Hub API credentials; Chromium, Firefox and WebKit come from the source's Playwright package. Browser reports are uploaded on success or failure, with 14-day retention.
+
+Transport export validation checks every HTML file's local resources. It requires five explicit pages, exact five-route sitemap contents, one nonempty H1 per page, `noindex,nofollow`, case-specific canonical and OG URLs, the 1200×630 social card and the favicon. Public verification independently fetches the five pages, sitemap, card and SVG favicon, including image MIME checks. A successful homepage or partial sitemap cannot hide a broken deep route. The source's browser suite additionally checks interaction and accessibility against the Hub artifact; public verification does not send inquiry data.
+
+`sync-transport.yml` separates metadata inspection, candidate execution and conditional write publication. Its own serialized queue is distinct from the deployment queue: GitHub retains only one pending run per group, so sharing the group could replace the explicitly dispatched publication with a scheduled inspection. The deployment queue and its Hub-main freshness guard remain unchanged. Its read-only inspection selects the newest successful source main **push** run; it then verifies the exact workflow path, source repository, SHA, current run attempt, whole-workflow success and named stable job. It ignores newer documentation-only source HEAD commits, and cannot use a PR/fork run or a partially passing workflow as approval. A newly successful release supersedes an inspected candidate; pending/failed releases are not promoted.
+
+A candidate artifact contains the original registry text/blob, expected Hub main SHA, candidate registry, selected transport SHA and the complete approved resolved plan. The token-free job builds all registered sources from that snapshot, then runs the source suite against the resulting Hub `dist/`. The write job downloads the **original inspection artifact**, not a plan emitted by executed source code. It rechecks current Hub/source metadata, updates `config/showcases.json` using its expected blob SHA, verifies the resulting commit parent and explicitly dispatches `deploy.yml`. It never changes another registration, custom domain, Pages permissions or repository secret.
+
+The schedule is eventual synchronization, not an immediate cross-repository webhook. GitHub can delay scheduled jobs, and inactive repositories may have schedules disabled by GitHub. A manual dispatch uses the same validation and permission boundaries. Protected branches that reject direct GitHub Actions bot commits will fail closed; do not weaken branch rules to make synchronization pass.
+
+Recovery paths:
+
+- Candidate build/test fails: no registry pin or deployment dispatch occurs; inspect the retained browser report and fix source.
+- Hub main or registry changed: the stale candidate stops; a later scheduled/manual synchronization uses the new Hub revision.
+- Conditional commit succeeded but dispatch failed: rerun that run's publish job. It only resumes its exact own prior commit and never repeats the pin commit.
+- An unrelated main change raced with the conditional update: automatic dispatch is withheld, even if the pin was written. Review the commit and dispatch the normal Hub workflow manually.
+- Post-deployment public verification fails: the workflow fails visibly; it does not claim the old release was restored. Disable automatic transport synchronization before intentionally rolling back the pinned source.
+
+This implementation is validated with deterministic unit fixtures for no-op synchronization, rejected source CI, source/Hub races, credential removal, conditional updates, dispatch recovery, exact artifact/source matching and export/public metadata failures. Full source builds and browser runs must use a publicly available, approved source SHA; do not fabricate release evidence for an unpublished working tree.
