@@ -1,4 +1,5 @@
 [
   { "slug": "honest", "name": "宏能興業", "category": "企業詢價型", "repository": "xk2022/xk-lp-honest-diecut", "ref": "main", "env": { "GITHUB_PAGES": "true", "NEXT_PUBLIC_SHOWCASE_BASE_PATH": "/honest" } },
-  { "slug": "march-tangbao", "name": "三月手工湯包", "category": "品牌導購型", "repository": "xk2022/xk-lp-march-tangbao", "ref": "main", "env": { "PAGES_EXPORT": "1" } }
+  { "slug": "march-tangbao", "name": "三月手工湯包", "category": "品牌導購型", "repository": "xk2022/xk-lp-march-tangbao", "ref": "main", "env": { "PAGES_EXPORT": "1" } },
+  { "slug": "hongjia-birdnest", "name": "宏家燕窩", "category": "品牌送禮型", "repository": "xk2022/xk-lp-hongjia-birdnest", "ref": "main", "env": { "GITHUB_PAGES_BUILD": "1", "NEXT_PUBLIC_SHOWCASE_BASE_PATH": "/hongjia-birdnest" } }
 ]
