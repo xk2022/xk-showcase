@@ -58,6 +58,19 @@ test('legacy Next export still requires _next/static assets and a sitemap', asyn
   }, legacy);
 });
 
+test('legacy Next root-home links retain the original contract while Vite remains isolated', async () => {
+  await usingFixture(async directory => {
+    await writeFile(join(directory, 'index.html'), html(legacy.slug, 'index,follow', 'next') + '<a href="/">Showcase home</a>');
+    await validateExport(directory, legacy);
+    await writeFile(join(directory, 'index.html'), html(legacy.slug, 'index,follow', 'next') + '<link href="/another-case/app.css">');
+    await assert.rejects(validateExport(directory, legacy), /Asset escapes case path/);
+  }, legacy);
+  await usingFixture(async directory => {
+    await writeFile(join(directory, 'index.html'), html() + '<a href="/">Outside proposal</a>');
+    await assert.rejects(validateExport(directory, proposal), /Asset escapes case path/);
+  });
+});
+
 test('proposal rejects missing or contradictory robots on a nested page', async () => {
   await usingFixture(async directory => {
     await writeFile(join(directory, 'about/index.html'), html(proposal.slug, 'index,follow'));

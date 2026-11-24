@@ -31,9 +31,13 @@ async function htmlFiles(directory) {
   return files;
 }
 
-export async function validateLocalReferences(html, directory, slug, pagePath = 'index.html') {
+export async function validateLocalReferences(html, directory, slug, pagePath = 'index.html', { legacy = false } = {}) {
   const prefix = `/${slug}/`;
-  const resources = new Set([...html.matchAll(/\b(?:src|href)\s*=\s*(["'])(.*?)\1/gs)].map(([, , value]) => value));
+  // Keep existing Next registrations on the original root-absolute resource contract.
+  // In particular, its root-home href="/" was never treated as a case asset.
+  const resources = new Set(legacy
+    ? [...html.matchAll(/(?:src|href)="(\/[^"#? ]+)(?:\?[^" ]*)?"/g)].map(match => match[1])
+    : [...html.matchAll(/\b(?:src|href)\s*=\s*(["'])(.*?)\1/gs)].map(([, , value]) => value));
   for (const resource of resources) {
     if (resource.startsWith('//')) throw new Error(`Asset escapes case path: ${resource}`);
     if (/^[a-z][a-z\d+.-]*:/i.test(resource) || /^[?#]/.test(resource) || !resource) continue;
@@ -60,10 +64,11 @@ export async function validateExport(directory, site) {
     throw new Error(`Invalid Next.js base path: ${site.slug}`);
   }
 
-  const files = site.framework === 'vite' || site.indexable === false ? await htmlFiles(directory) : [join(directory, 'index.html')];
+  const strict = site.framework === 'vite' || site.indexable === false;
+  const files = strict ? await htmlFiles(directory) : [join(directory, 'index.html')];
   for (const file of files) {
     const content = await readFile(file, 'utf8');
-    await validateLocalReferences(content, directory, site.slug, relative(directory, file).split(sep).join('/'));
+    await validateLocalReferences(content, directory, site.slug, relative(directory, file).split(sep).join('/'), { legacy: !strict });
     if (site.indexable === false) {
       const robots = [...content.matchAll(/<meta\b[^>]*>/gi)].map(match => attributes(match[0])).filter(tag => tag.name?.toLowerCase() === 'robots');
       if (!robots.length || robots.some(tag => {
