@@ -15,7 +15,14 @@ The hub supports Next.js static exports and explicitly configured Vite exports. 
 
 ## Build
 
-Install Node.js 24 and Git, then run `node scripts/build-showcases.mjs` from the repository root. The generated `dist/` contains the hub and all registered static exports; `manifest.json` records the exact source commit of each build. The build aborts before replacing the local output if a source fails.
+Install Node.js 24 and Git, then verify gated source releases before building:
+
+```sh
+node scripts/resolve-sources.mjs /tmp/resolved-sites.json
+node scripts/build-showcases.mjs /tmp/resolved-sites.json
+```
+
+The resolution command may use a read-only `GH_TOKEN` for GitHub metadata requests. Remove `GITHUB_TOKEN` and `GH_TOKEN` from the build command's environment; the builder refuses to run with these tokens. In proxy-based environments, Node.js 24's `NODE_USE_ENV_PROXY=1` may be needed for the verification command. The generated `dist/` contains the hub and all registered static exports; `manifest.json` records the exact source commit and any source CI approval used for that build. The build aborts before replacing the local output if a source fails.
 
 Run `node --test tests/*.test.mjs` for registration, export validation, indexing and root-404 routing checks. GitHub Actions runs these checks before the complete build.
 
@@ -26,6 +33,8 @@ In Settings → Pages choose GitHub Actions and set the custom domain to `showca
 Register a site in `config/showcases.json`. Each repository must export `out/index.html` and support its unique path at build time. Run the Showcase Hub workflow manually after source changes; hub main changes also deploy. Refs may be changed to immutable release tags for controlled releases. See [deployment notes](doc/deployment.md).
 
 The Yuan-Guang PCB entry is a **concept proposal**, with `framework: "vite"`, `indexable: false`, and `listed: false`. It is not included in the homepage's client-case cards or sitemap references. This is a public preview configuration, not access control.
+
+Its release gate requires the exact source commit's `.github/workflows/ci.yml` push run and `verify` job to succeed. Workflow metadata is checked in the separate resolution job; source installation and builds run without that job's token and fetch only the approved SHA. See [release verification](doc/deployment.md#source-release-verification) for the configuration and failure behavior.
 
 ## Transport showcase
 

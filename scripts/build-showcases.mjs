@@ -8,6 +8,7 @@ import { resolveSources, validateResolvedSources, sourceBuildEnvironment } from 
 const sites = JSON.parse(await readFile(new URL('../config/showcases.json', import.meta.url), 'utf8'));
 const output = resolve('dist');
 validateSites(sites);
+if (process.env.GITHUB_TOKEN || process.env.GH_TOKEN) throw new Error('Run the build without GITHUB_TOKEN/GH_TOKEN. Source checks belong in the separate resolution job.');
 const resolved = process.argv[2]
   ? JSON.parse(await readFile(resolve(process.argv[2]), 'utf8'))
   : await resolveSources(sites);
@@ -26,14 +27,14 @@ try {
     run('git', ['remote', 'add', 'origin', `https://github.com/${s.repository}.git`], dir, buildEnvironment);
     run('git', ['fetch', '--quiet', '--depth', '1', 'origin', s.sha], dir, buildEnvironment);
     run('git', ['checkout', '--quiet', '--detach', 'FETCH_HEAD'], dir, buildEnvironment);
-    const sha = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: dir, encoding: 'utf8' }).trim();
+    const sha = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: dir, encoding: 'utf8', env: buildEnvironment }).trim();
     if (sha !== s.sha) throw new Error(`Source checkout mismatch: ${s.slug}`);
     const sourceEnvironment = sourceBuildEnvironment(buildEnvironment, s.env);
     run('npm', ['ci'], dir, sourceEnvironment);
     run('npm', ['run', 'build'], dir, sourceEnvironment);
     await validateExport(join(dir, 'out'), s);
     await cp(join(dir, 'out'), join(staging, s.slug), { recursive: true });
-    manifest.push({ slug: s.slug, repository: s.repository, sha });
+    manifest.push({ slug: s.slug, repository: s.repository, sha, ...(s.release ? { release: s.release } : {}) });
   }
   const template = await readFile(new URL('../src/index.html', import.meta.url), 'utf8');
   const cards = renderCards(sites);
