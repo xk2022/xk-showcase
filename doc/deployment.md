@@ -34,3 +34,9 @@ GitHub Pages uses the hub's root `404.html`. For registered Vite sites, that pag
 ## Updates and rollback
 
 Run the hub workflow whenever a source update is ready. For rollback, set the affected source's ref to a known-good release tag, review and deploy. Use the published manifest to identify the source commit to tag. A later phase can add authenticated cross-repository triggers.
+
+## Transport showcase
+
+Register `xk2022/xk-corp-truck-transport` under the unique `truck-transport` slug. The source repository owns the five-page content and inquiry interaction. The hub only supplies build-time `GITHUB_PAGES=true`, `NEXT_PUBLIC_BASE_PATH=/truck-transport` and `NEXT_PUBLIC_SITE_URL=https://showcase.xplorekaleidoscope.com`, then publishes the static export at `/truck-transport/`.
+
+Before merging registration, run the complete hub build and check the exported page paths, root hub link, canonical URLs and `/truck-transport/sitemap.xml`. After deployment, verify the five pages directly and on refresh, both transport images, inquiry preview and the source SHA in `/manifest.json`. Keep the original independent Pages deployment and its domain settings intact.
