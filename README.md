@@ -17,6 +17,7 @@ The hub supports Next.js static exports and explicitly configured Vite exports. 
 - [宏家燕窩](https://showcase.xplorekaleidoscope.com/hongjia-birdnest/)
 - [御品園港式燒臘](https://showcase.xplorekaleidoscope.com/yupinyuan-bento/)
 - [宏家燕窩 Brand](https://showcase.xplorekaleidoscope.com/hongjia-brand/)
+- [元廣科技｜非官方概念提案](https://showcase.xplorekaleidoscope.com/yuan-guang-pcb/)
 - [澄策企業顧問工作室](https://showcase.xplorekaleidoscope.com/consulting-chengce/)
 - [千剛實業有限公司](https://showcase.xplorekaleidoscope.com/qiangang-windows/)
 - [序程運輸](https://showcase.xplorekaleidoscope.com/truck-transport/)
@@ -41,7 +42,7 @@ In Settings → Pages choose GitHub Actions and set the custom domain to `showca
 
 Register a site in `config/showcases.json`. Each source build or approved static archive must provide the `out/` contents, including `index.html`, with its unique case path already applied. Hub main changes and manual Showcase Hub runs deploy. Transport updates are additionally checked every 30 minutes by the synchronization workflow; the other sources still require a Hub run after source changes. Refs may be changed to immutable release tags or exact SHAs for controlled releases. See [deployment notes](doc/deployment.md).
 
-The Yuan-Guang PCB entry is a **concept proposal**, with `framework: "vite"`, `indexable: false`, and `listed: false`. It is not included in the homepage's client-case cards or sitemap references. This is a public preview configuration, not access control.
+The Yuan-Guang PCB entry is a **concept proposal**, with `framework: "vite"`, `status: "proposal"`, `indexable: false`, and `listed: true`. Its homepage card explicitly labels it an unofficial concept proposal, states that it does not represent a client commission, and uses “查看概念提案” instead of the ordinary case action. It remains excluded from sitemap references and blocked in robots.txt; the source website retains its proposal notices and noindex metadata. This is a public preview configuration, not access control. The listing is prepared for publication; do not report it live until the complete Hub workflow and public verification succeed.
 
 Its release gate requires the exact source commit's `.github/workflows/ci.yml` push run and `verify` job to succeed. Workflow metadata is checked in the separate resolution job; source installation and builds run without that job's token and fetch only the approved SHA. See [release verification](doc/deployment.md#source-release-verification) for the configuration and failure behavior.
 

@@ -3,9 +3,25 @@ import assert from 'node:assert/strict';
 import { mkdtemp, writeFile, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { renderCards, renderGallery, validateSites, validateExport, origin } from '../scripts/static-export.mjs';
+import { renderCards, renderGallery, validateSites, validateExport, buildRobots, origin } from '../scripts/static-export.mjs';
 
 const app = { slug: 'app-preview', name: 'APP preview', category: 'APP', repository: 'xk2022/xk-app-preview', ref: 'main', framework: 'screen', indexable: false };
+
+test('listed concept proposals have a distinct notice and action while remaining excluded from indexing', () => {
+  const proposal = { slug: 'yuan-guang-pcb', name: '元廣科技｜概念提案', category: '企業形象概念提案', repository: 'xk2022/xk-brand-yuan-guang-pcb', ref: 'a'.repeat(40), framework: 'vite', status: 'proposal', listed: true, indexable: false };
+  validateSites([proposal]);
+  const html = renderGallery([proposal]);
+  assert.match(html, /href="\.\/yuan-guang-pcb\/"/);
+  assert.match(html, /yuan-guang-pcb\/_showcase-preview\.jpg/);
+  assert.match(html, /概念提案・非官方網站，未代表正式客戶委託。/);
+  assert.match(html, /查看概念提案/);
+  assert.doesNotMatch(html, /瀏覽展示案例/);
+  assert.match(buildRobots([proposal]), /Disallow: \/yuan-guang-pcb\//);
+  assert.doesNotMatch(buildRobots([proposal]), /Sitemap:/);
+  assert.throws(() => validateSites([{ ...proposal, indexable: true }]), /must remain non-indexable/);
+  assert.throws(() => validateSites([{ ...proposal, indexable: undefined }]), /must remain non-indexable/);
+  assert.throws(() => validateSites([{ ...proposal, status: 'official-client' }]), /Unsupported showcase status/);
+});
 
 test('gallery shows screenshots and labels offline APP previews, while retaining hidden proposals', () => {
   const cards = renderCards([app, { ...app, slug: 'hidden', listed: false }]);
