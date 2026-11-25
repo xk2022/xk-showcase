@@ -163,6 +163,11 @@ export async function verifyPublication({ sites, manifest = sites.map(({ slug, r
     if (site.slug === 'shengfengyang') {
       for (const route of shengfengyangRoutes) pages.add(`${home}${route}`);
     }
+    if (site.slug === 'yuan-guang-pcb') {
+      for (const language of ['', 'en/']) {
+        for (const route of ['', 'about/', 'products/', 'manufacturing/', 'quality/', 'careers/', 'contact/', '404.html']) pages.add(`${home}${language}${route}`);
+      }
+    }
     for (const url of pages) {
       const html = await (await request(url)).text();
       assertCanonical(html, url);

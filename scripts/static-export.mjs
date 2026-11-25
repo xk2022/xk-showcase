@@ -16,6 +16,8 @@ export function validateSites(sites) {
     for (const option of ['indexable', 'listed']) {
       if (site[option] !== undefined && typeof site[option] !== 'boolean') throw new Error(`Invalid ${option}: ${site.slug}`);
     }
+    if (site.status !== undefined && site.status !== 'proposal') throw new Error(`Unsupported showcase status: ${site.slug}`);
+    if (site.status === 'proposal' && site.indexable !== false) throw new Error(`Concept proposals must remain non-indexable: ${site.slug}`);
     validateReleaseConfiguration(site);
     seen.add(site.slug);
   }
@@ -169,7 +171,7 @@ export function buildRobots(sites) {
 }
 
 export function renderCards(sites) {
-  return sites.filter(site => site.listed !== false).map(site => `<a class="card" href="./${site.slug}/"><img src="./${site.slug}/_showcase-preview.jpg" alt="${escape(site.name)} 首頁截圖" width="960" height="540" loading="lazy"><div class="card-body"><small>${escape(projectType(site))} · ${escape(site.category)}</small><h3>${escape(site.name)}</h3><p>${escape(site.purpose || site.category)}</p><span>${site.framework === 'screen' ? '查看畫面預覽' : site.framework === 'interactive' ? '操作互動展示' : '瀏覽展示案例'} →</span></div></a>`).join('\n');
+  return sites.filter(site => site.listed !== false).map(site => `<a class="card" href="./${site.slug}/"><img src="./${site.slug}/_showcase-preview.jpg" alt="${escape(site.name)} 首頁截圖" width="960" height="540" loading="lazy"><div class="card-body"><small>${escape(projectType(site))} · ${escape(site.category)}</small><h3>${escape(site.name)}</h3><p>${escape(site.purpose || site.category)}</p>${site.status === 'proposal' ? '<p>概念提案・非官方網站，未代表正式客戶委託。</p>' : ''}<span>${site.status === 'proposal' ? '查看概念提案' : site.framework === 'screen' ? '查看畫面預覽' : site.framework === 'interactive' ? '操作互動展示' : '瀏覽展示案例'} →</span></div></a>`).join('\n');
 }
 
 const projectType = site => (site.repository?.split('/')[1]?.split('-')[1] || 'XK').toUpperCase();

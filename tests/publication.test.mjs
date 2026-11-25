@@ -54,6 +54,39 @@ function fixture() {
 
 function verify(data) { return verifyPublication({ sites, manifest, origin, fetchImpl: data.fetchImpl, verificationId: 'test-release' }); }
 
+function yuanGuangFixture() {
+  const site = { slug: 'yuan-guang-pcb', repository: 'xk2022/xk-brand-yuan-guang-pcb', ref: sha, sha, framework: 'vite', status: 'proposal', listed: true, indexable: false };
+  const data = fixture();
+  data.put('/manifest.json', JSON.stringify([{ slug: site.slug, repository: site.repository, sha }]), 'application/json');
+  data.put('/', '<a href="./yuan-guang-pcb/">元廣科技｜非官方概念提案</a>');
+  data.put('/robots.txt', 'User-agent: *\nDisallow: /yuan-guang-pcb/\n', 'text/plain');
+  for (const language of ['', 'en/']) {
+    for (const route of ['', 'about/', 'products/', 'manufacturing/', 'quality/', 'careers/', 'contact/', '404.html']) {
+      // No runtime assets are needed to exercise the public route/metadata gate.
+      data.put(`/yuan-guang-pcb/${language}${route}`, `<link rel="canonical" href="${origin}/yuan-guang-pcb/${language}${route}"><meta name="robots" content="noindex,nofollow">`);
+    }
+  }
+  return { ...data, verify: () => verifyPublication({ sites: [site], origin, fetchImpl: data.fetchImpl }) };
+}
+
+test('listed Yuan-Guang proposal verifies seven pages and an error page in both languages without a sitemap', async () => {
+  const data = yuanGuangFixture();
+  const result = await data.verify();
+  assert.equal(result.pages, 16);
+  for (const path of ['/yuan-guang-pcb/about/', '/yuan-guang-pcb/en/contact/', '/yuan-guang-pcb/404.html', '/yuan-guang-pcb/en/404.html']) assert(data.requests.some(({ url }) => url.pathname === path));
+});
+
+test('Yuan-Guang public verification rejects a missing English route or incorrect nested metadata', async () => {
+  const missing = yuanGuangFixture();
+  missing.files.delete('/yuan-guang-pcb/en/contact/');
+  await assert.rejects(missing.verify(), /HTTP 404.*en\/contact/);
+  const metadata = yuanGuangFixture();
+  metadata.put('/yuan-guang-pcb/en/404.html', `<link rel="canonical" href="${origin}/yuan-guang-pcb/en/"><meta name="robots" content="noindex,nofollow">`);
+  await assert.rejects(metadata.verify(), /Incorrect canonical.*en\/404/);
+  metadata.put('/yuan-guang-pcb/en/404.html', `<link rel="canonical" href="${origin}/yuan-guang-pcb/en/404.html"><meta name="robots" content="index,follow">`);
+  await assert.rejects(metadata.verify(), /Missing noindex,nofollow.*en\/404/);
+});
+
 test('published manifest must have exactly the resolved source SHAs without duplicates', () => {
   assert.doesNotThrow(() => assertManifest([...manifest].reverse(), manifest));
   for (const bad of [manifest.slice(1), [...manifest, manifest[0]], manifest.map((entry, i) => i ? entry : { ...entry, sha: 'd'.repeat(40) }), [...manifest, { slug: 'other', repository: 'xk2022/other', sha }]]) {
