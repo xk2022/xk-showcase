@@ -109,3 +109,9 @@ For a deliberate rollback, **disable the synchronization workflow first**, then 
 Transport quality work, validation commands and release evidence are recorded in [transport-quality.md](doc/transport-quality.md).
 
 Transport quality release (2026-11-25, Asia/Taipei): [PR #10](https://github.com/xk2022/xk-showcase/pull/10) is merged. Source `3506dbd7b66233168523e40d6ca387f8a961f237` is published by [main run 45450135876](https://github.com/xk2022/xk-showcase/actions/runs/45450135876): 130 browser tests passed against the actual Hub output, followed by public verification of 9 sites, 16 pages and 134 assets. [Manual synchronization](https://github.com/xk2022/xk-showcase/actions/runs/45450414543) also passed as an expected no-op. Documentation-only `[skip ci]` updates do not replace this verified release.
+
+## Carpentry showcase
+
+Carpentry is a self-initiated woodworker landing-page demonstration with AI-generated space illustrations and a local-only inquiry summary. Its private source is delivered as a reviewed static snapshot pinned to source `91ade724579ed659287a27f8d77e5e1e0ed0292e`, with `/carpentry/` paths and no source-repository visibility change. Registration and a Release alone do not prove a live deployment; the guarded main build and public verification must pass. See [preparation and publication evidence](doc/carpentry-publication.md).
+
+The isolated artifact upload dispatch accepts only the fixed `shengfengyang` (default) or `carpentry` project selector; it retains the existing Hub-local permissions and does not execute source code. All normal Showcase builds continue through the complete source-resolution and Pages publication pipeline.

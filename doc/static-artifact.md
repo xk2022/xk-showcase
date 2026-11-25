@@ -138,3 +138,7 @@ For a new private-source website snapshot:
 5. Run the complete Hub checks and normal guarded deployment, then verify the public site against that resolved plan.
 
 Retain the approved asset bytes and digest for reproducibility. If a Release asset is missing or its bytes differ, the build fails; do not bypass integrity verification. For rollback, restore a previously reviewed URL/digest/source-SHA tuple and run a new complete release. Disable transport synchronization first only when intentionally rolling back transport, as described in [deployment operations](deployment.md#updates-and-rollback). Do not reuse an archive with different source provenance or fabricate private CI evidence to make a release pass.
+
+## Carpentry publisher selection
+
+The isolated upload workflow also supports the reviewed `carpentry` project via `static_artifact_project=carpentry` (`INPUT_PROJECT=carpentry`). The default remains `shengfengyang` for existing dispatches. The selector maps to fixed repository/slug/asset identities; it does not accept arbitrary source or destination values. Carpentry retains its indexable `/carpentry/` export and sitemap, while Shengfengyang retains its non-indexable, unlisted 20-route policy. Both use the same bounded extraction, integrity, draft publication, no-overwrite and isolated-permission checks. See [Carpentry preparation](carpentry-publication.md) for the exact approved bytes, source CI evidence and dispatch inputs.
