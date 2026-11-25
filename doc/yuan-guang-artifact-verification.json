@@ -1,0 +1,502 @@
+{
+  "checkedAt": "2026-11-25T07:49:35.634788+00:00",
+  "repository": "xk2022/xk-brand-yuan-guang-pcb",
+  "sourceSha": "2028ee7058142fdfd546d24023c1b9f296a5b0da",
+  "archive": {
+    "path": "/tmp/yg-reviewed-yuan-guang.zip",
+    "url": "https://github.com/xk2022/xk-website-showcase/releases/download/preserved-showcase-45564113822-v1/yuan-guang-pcb-static.zip",
+    "bytes": 465983,
+    "sha256": "abd4c705644b8a1e6130b66ab4e4cbfdb035db0bb3c06c6712e560e7cd18d7ce",
+    "safeExtraction": "pass",
+    "entries": 35,
+    "extractedDirectory": "/tmp/yg-reviewed-yuan-guang"
+  },
+  "byteComparison": {
+    "sourceDirectory": "/tmp/yg-source-2028/out",
+    "excludedBuildOnly": [
+      ".nojekyll",
+      ".vite/**"
+    ],
+    "files": 35,
+    "identical": true,
+    "missing": [],
+    "extra": [],
+    "mismatched": []
+  },
+  "metadata": {
+    "htmlPages": 16,
+    "languages": 2,
+    "pages": [
+      {
+        "path": "404.html",
+        "lang": "zh-Hant",
+        "title": "找不到頁面｜元廣科技｜XK SYSTEM 概念提案",
+        "canonical": "https://showcase.xplorekaleidoscope.com/yuan-guang-pcb/404.html",
+        "robots": "noindex,nofollow",
+        "metadataAndNonOfficialStatement": "pass"
+      },
+      {
+        "path": "about/index.html",
+        "lang": "zh-Hant",
+        "title": "關於元廣｜元廣科技｜XK SYSTEM 概念提案",
+        "canonical": "https://showcase.xplorekaleidoscope.com/yuan-guang-pcb/about/",
+        "robots": "noindex,nofollow",
+        "metadataAndNonOfficialStatement": "pass"
+      },
+      {
+        "path": "careers/index.html",
+        "lang": "zh-Hant",
+        "title": "人才招募｜元廣科技｜XK SYSTEM 概念提案",
+        "canonical": "https://showcase.xplorekaleidoscope.com/yuan-guang-pcb/careers/",
+        "robots": "noindex,nofollow",
+        "metadataAndNonOfficialStatement": "pass"
+      },
+      {
+        "path": "contact/index.html",
+        "lang": "zh-Hant",
+        "title": "聯絡我們｜元廣科技｜XK SYSTEM 概念提案",
+        "canonical": "https://showcase.xplorekaleidoscope.com/yuan-guang-pcb/contact/",
+        "robots": "noindex,nofollow",
+        "metadataAndNonOfficialStatement": "pass"
+      },
+      {
+        "path": "en/404.html",
+        "lang": "en",
+        "title": "Page not found | Yuan-Guang | XK SYSTEM Concept proposal",
+        "canonical": "https://showcase.xplorekaleidoscope.com/yuan-guang-pcb/en/404.html",
+        "robots": "noindex,nofollow",
+        "metadataAndNonOfficialStatement": "pass"
+      },
+      {
+        "path": "en/about/index.html",
+        "lang": "en",
+        "title": "About | Yuan-Guang | XK SYSTEM Concept proposal",
+        "canonical": "https://showcase.xplorekaleidoscope.com/yuan-guang-pcb/en/about/",
+        "robots": "noindex,nofollow",
+        "metadataAndNonOfficialStatement": "pass"
+      },
+      {
+        "path": "en/careers/index.html",
+        "lang": "en",
+        "title": "Careers | Yuan-Guang | XK SYSTEM Concept proposal",
+        "canonical": "https://showcase.xplorekaleidoscope.com/yuan-guang-pcb/en/careers/",
+        "robots": "noindex,nofollow",
+        "metadataAndNonOfficialStatement": "pass"
+      },
+      {
+        "path": "en/contact/index.html",
+        "lang": "en",
+        "title": "Contact | Yuan-Guang | XK SYSTEM Concept proposal",
+        "canonical": "https://showcase.xplorekaleidoscope.com/yuan-guang-pcb/en/contact/",
+        "robots": "noindex,nofollow",
+        "metadataAndNonOfficialStatement": "pass"
+      },
+      {
+        "path": "en/index.html",
+        "lang": "en",
+        "title": "Home | Yuan-Guang | XK SYSTEM Concept proposal",
+        "canonical": "https://showcase.xplorekaleidoscope.com/yuan-guang-pcb/en/",
+        "robots": "noindex,nofollow",
+        "metadataAndNonOfficialStatement": "pass"
+      },
+      {
+        "path": "en/manufacturing/index.html",
+        "lang": "en",
+        "title": "Manufacturing | Yuan-Guang | XK SYSTEM Concept proposal",
+        "canonical": "https://showcase.xplorekaleidoscope.com/yuan-guang-pcb/en/manufacturing/",
+        "robots": "noindex,nofollow",
+        "metadataAndNonOfficialStatement": "pass"
+      },
+      {
+        "path": "en/products/index.html",
+        "lang": "en",
+        "title": "Products & Services | Yuan-Guang | XK SYSTEM Concept proposal",
+        "canonical": "https://showcase.xplorekaleidoscope.com/yuan-guang-pcb/en/products/",
+        "robots": "noindex,nofollow",
+        "metadataAndNonOfficialStatement": "pass"
+      },
+      {
+        "path": "en/quality/index.html",
+        "lang": "en",
+        "title": "Quality | Yuan-Guang | XK SYSTEM Concept proposal",
+        "canonical": "https://showcase.xplorekaleidoscope.com/yuan-guang-pcb/en/quality/",
+        "robots": "noindex,nofollow",
+        "metadataAndNonOfficialStatement": "pass"
+      },
+      {
+        "path": "index.html",
+        "lang": "zh-Hant",
+        "title": "首頁｜元廣科技｜XK SYSTEM 概念提案",
+        "canonical": "https://showcase.xplorekaleidoscope.com/yuan-guang-pcb/",
+        "robots": "noindex,nofollow",
+        "metadataAndNonOfficialStatement": "pass"
+      },
+      {
+        "path": "manufacturing/index.html",
+        "lang": "zh-Hant",
+        "title": "技術與製造｜元廣科技｜XK SYSTEM 概念提案",
+        "canonical": "https://showcase.xplorekaleidoscope.com/yuan-guang-pcb/manufacturing/",
+        "robots": "noindex,nofollow",
+        "metadataAndNonOfficialStatement": "pass"
+      },
+      {
+        "path": "products/index.html",
+        "lang": "zh-Hant",
+        "title": "產品與服務｜元廣科技｜XK SYSTEM 概念提案",
+        "canonical": "https://showcase.xplorekaleidoscope.com/yuan-guang-pcb/products/",
+        "robots": "noindex,nofollow",
+        "metadataAndNonOfficialStatement": "pass"
+      },
+      {
+        "path": "quality/index.html",
+        "lang": "zh-Hant",
+        "title": "品質管理｜元廣科技｜XK SYSTEM 概念提案",
+        "canonical": "https://showcase.xplorekaleidoscope.com/yuan-guang-pcb/quality/",
+        "robots": "noindex,nofollow",
+        "metadataAndNonOfficialStatement": "pass"
+      }
+    ],
+    "result": "pass"
+  },
+  "publicManifest": {
+    "path": "/tmp/yg-migration-baseline/live-manifest.json",
+    "matchesSourceAndArchive": true
+  },
+  "limitations": [
+    "No browser or private source CI was rerun; these are the already reviewed preserved compiled bytes.",
+    "Metadata and disclaimers are validated statically; runtime source content is unchanged because every runtime file matches the source build byte-for-byte."
+  ],
+  "files": [
+    {
+      "path": "404.html",
+      "bytes": 2286,
+      "sha256": "d500e632c9eae0cc2e2c038919940df5efd3e1aa66caa9c1cc158ba42e36ca4c",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "about/index.html",
+      "bytes": 2285,
+      "sha256": "d968ff4c8db90bd98d47378991939eac9eff497d9365ea4515fe98bdac5e1bae",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "assets/About-DyRgGD8R.js",
+      "bytes": 5064,
+      "sha256": "101ae3e47e92eddc07c0bc9e5ea4f7d2a0198a75e77d77763225c0a91489e647",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "assets/Careers-DpCxH8uV.js",
+      "bytes": 5049,
+      "sha256": "78dd900c9c49ed788c071b8b395e415b8e69542cba9dc49efcef3842a66dc99d",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "assets/Contact-ws1zwoO3.js",
+      "bytes": 8610,
+      "sha256": "75f15b26da5f93b38e154fb3e85b75b3d718840af477e32af7c1080e23dc02b6",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "assets/Manufacturing-pEnMwsyF.js",
+      "bytes": 6974,
+      "sha256": "630a28be52fd5a292595d2aad42df61ca84a185ccb2933d5549a27eea6e242b2",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "assets/Products-Dz-EESRF.js",
+      "bytes": 9198,
+      "sha256": "57339ef222ec880a3ffb8970887d1610b7b1c617e4c8aeeec7aed21adbb9557e",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "assets/Quality-Dga6EcqM.js",
+      "bytes": 5673,
+      "sha256": "25fad93ffa493bf3f9ef80e23513e750e9eb4965db5a258e0185a52f6bde624e",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "assets/SourceNote-Bi_528Gf.js",
+      "bytes": 758,
+      "sha256": "d17573c54184911fa5ce7b904a0a07fbe73e6d767aa68cc06f9c2f3d0dbb6abb",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "assets/check-Be-1s0lO.js",
+      "bytes": 116,
+      "sha256": "ae0167c08da753a2053b1d641351712c9ab0bcfde16b425e02d116e3a475b949",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "assets/index-B62ADvq8.js",
+      "bytes": 254587,
+      "sha256": "98e056bd5a5dc57308d6d00e1d237f95712e22ea5bda982ba5b50a29279b83ef",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "assets/index-C_7XihD9.css",
+      "bytes": 23093,
+      "sha256": "c03c4203d392ed2a60003987a7c8cf673c4c0a9f054bbfdde03bb2fabe48ac9d",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "assets/inner-BpYZjXDZ.css",
+      "bytes": 20327,
+      "sha256": "93389aa587f189ee5eaedabc13895a7f56b4a17b3d9bd0f19187e50a1330ab08",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "assets/plus-5IDXdiyL.js",
+      "bytes": 150,
+      "sha256": "733e65ef65a8785c848506913580938cfff1ae2a5dd7e5b960e29d798abe6fae",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "assets/shield-check-B4NpG140.js",
+      "bytes": 316,
+      "sha256": "facbe8720c20763922bb65902167fd623ae8058c3d291757d96a35996d611a92",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "careers/index.html",
+      "bytes": 2317,
+      "sha256": "897387c1fe5f405687b41301be7bc45c78c020132e29105666747249d8327aff",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "contact/index.html",
+      "bytes": 2331,
+      "sha256": "b62258fa980ec5f45796afa2e5a150d03d8e241724448b6f6cec0c61ee3e6bca",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "en/404.html",
+      "bytes": 2341,
+      "sha256": "54c328b1bed2aaa3b2f21c368328b92480f31f96e55cb7878a8ada99bb1db987",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "en/about/index.html",
+      "bytes": 2348,
+      "sha256": "16fea72c6e4a4a85a3db171d51345bbedcdf74c2ddd101328f51e97e40a3bb2f",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "en/careers/index.html",
+      "bytes": 2402,
+      "sha256": "9391746b85d3703de78d05fb29ab9ce3d936c0df21b6e952304abe08225aabdd",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "en/contact/index.html",
+      "bytes": 2416,
+      "sha256": "b1e3c1c2ca0ae9685473d20c6b81ec3083a1a886bcd8cbb394728b91eaa0d87a",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "en/index.html",
+      "bytes": 2327,
+      "sha256": "54e7e9ba969e93f6e32734e0c9fa6b01e22a96f7449f3ced9e6b0359242757ee",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "en/manufacturing/index.html",
+      "bytes": 2442,
+      "sha256": "5664ff34ce4a0c8ce88da9818c135b3d00fa19c6ebf18c3bbbd62f9cf2ae80e5",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "en/products/index.html",
+      "bytes": 2421,
+      "sha256": "9037049533c9bda05ab64402d41ae0e79fecb304c3c932d922948253fde546c9",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "en/quality/index.html",
+      "bytes": 2418,
+      "sha256": "e67eedcc9b009e64999fa03a91a08c3003bf55f192d4e4e5ba106e2506464d80",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "favicon.svg",
+      "bytes": 246,
+      "sha256": "d94a25974e7a8f0b03653e2977e92e6830cd8f35332bb6abffe36e7ee7334f73",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "images/detail.webp",
+      "bytes": 82074,
+      "sha256": "e7ca080d01154f006dc9247609d1f60ee442f0d75607cba907abcc0b339d061d",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "images/hero.webp",
+      "bytes": 186386,
+      "sha256": "559b3aa37350e1f221ac8caaedf898c93ee83a6cc9876a0a42896ffadd73c428",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "images/manufacturing.webp",
+      "bytes": 67522,
+      "sha256": "3ed6f8b2ebef14ba6702d7a314d366027bf36235a6906c775d21671db41626db",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "index.html",
+      "bytes": 2277,
+      "sha256": "50301338b15dd07dc8b96bb43117c8cdc5976e22f3405d2d084deac03a52c3e1",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "manufacturing/index.html",
+      "bytes": 2348,
+      "sha256": "4d722438f4a03dd6165d1d4e50bc0c8810351475b6603a2bab93c635250af80d",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "products/index.html",
+      "bytes": 2324,
+      "sha256": "275e3a26e369f5c3b0ae9abfe30f22120a0b763723ec1b7be25be662c5d77562",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "quality/index.html",
+      "bytes": 2331,
+      "sha256": "1b55bcdad4cd3105715fd44467ae6596c6effafc15eb73eb1ad7b66ef6978949",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "robots.txt",
+      "bytes": 171,
+      "sha256": "34ce158a0e74b5f259e87b8a325e31c664e8993260f46b3bad935eb0768ed369",
+      "sourceBuildByteIdentical": true
+    },
+    {
+      "path": "xk-logo-white.svg",
+      "bytes": 5920,
+      "sha256": "3ef6fe4c3968992e1c18df2f05233f39ffebd9da26dd9be91e7be81c02087250",
+      "sourceBuildByteIdentical": true
+    }
+  ],
+  "hubValidation": {
+    "module": "/workspace/xk-website-showcase/scripts/static-export.mjs",
+    "moduleSha256": "c72996fe25f0c91871149ab4d4989e6ecb13ba1e517046aeb44926aa58892146",
+    "framework": "vite",
+    "indexable": false,
+    "result": "pass",
+    "scope": "All 16 HTML pages, local references, true Vite JS/CSS, both 404 pages, noindex/nofollow, no sitemap"
+  },
+  "provenance": {
+    "releaseTag": "preserved-showcase-45564113822-v1",
+    "releaseId": 457782041,
+    "releaseAssetId": 790551304,
+    "previousPublication": {
+      "repository": "xk2022/xk-website-showcase",
+      "runId": 45564113822,
+      "runAttempt": 1,
+      "hubSha": "d7addf5c4f617e531abb2aa74b19c1416f33aa22",
+      "artifactId": 14998919879,
+      "artifactSha256": "dcc8b5f3e6ef8d7e5d86b4ec5c70b24a234f456a2b6e54c561f66b27f0401b2c"
+    },
+    "previousSourceRelease": {
+      "sha": "2028ee7058142fdfd546d24023c1b9f296a5b0da",
+      "workflow": ".github/workflows/ci.yml",
+      "job": "verify",
+      "run_id": 45419126636,
+      "run_attempt": 1,
+      "run_url": "https://github.com/xk2022/xk-brand-yuan-guang-pcb/actions/runs/45419126636",
+      "verified_at": "2026-11-25T06:55:00.242Z"
+    },
+    "currentPublication": {
+      "runId": 45569747028,
+      "headSha": "50d8ed67dd8b3c8dc4cd6323859e0c95a905a623",
+      "conclusion": "success",
+      "artifacts": [
+        {
+          "id": 15001797243,
+          "name": "github-pages",
+          "size_in_bytes": 15085925,
+          "url": "https://api.github.com/repos/xk2022/xk-website-showcase/actions/artifacts/15001797243",
+          "archive_download_url": "https://api.github.com/repos/xk2022/xk-website-showcase/actions/artifacts/15001797243/zip",
+          "expired": false,
+          "created_at": "2026-11-25T07:39:53Z",
+          "expires_at": "2026-11-26T07:39:52Z",
+          "updated_at": "2026-11-25T07:39:53Z",
+          "digest": "sha256:e9ce53ec985aa1cbf5a36541f81a8e19ab3643b964e23e76bd774fc4cc8cd7f0",
+          "workflow_run": {
+            "id": 45569747028,
+            "repository_id": 1469796623,
+            "head_repository_id": 1469796623,
+            "head_branch": "main",
+            "head_sha": "50d8ed67dd8b3c8dc4cd6323859e0c95a905a623"
+          }
+        },
+        {
+          "id": 15001542995,
+          "name": "transport-browser-report",
+          "size_in_bytes": 993,
+          "url": "https://api.github.com/repos/xk2022/xk-website-showcase/actions/artifacts/15001542995",
+          "archive_download_url": "https://api.github.com/repos/xk2022/xk-website-showcase/actions/artifacts/15001542995/zip",
+          "expired": false,
+          "created_at": "2026-11-25T07:39:51Z",
+          "expires_at": "2026-12-09T07:39:51Z",
+          "updated_at": "2026-11-25T07:39:51Z",
+          "digest": "sha256:2c6aaeed44554b140f653083efa56d9c441cf041e586e9bc946073187623ee69",
+          "workflow_run": {
+            "id": 45569747028,
+            "repository_id": 1469796623,
+            "head_repository_id": 1469796623,
+            "head_branch": "main",
+            "head_sha": "50d8ed67dd8b3c8dc4cd6323859e0c95a905a623"
+          }
+        },
+        {
+          "id": 15001318172,
+          "name": "resolved-sources",
+          "size_in_bytes": 4079,
+          "url": "https://api.github.com/repos/xk2022/xk-website-showcase/actions/artifacts/15001318172",
+          "archive_download_url": "https://api.github.com/repos/xk2022/xk-website-showcase/actions/artifacts/15001318172/zip",
+          "expired": false,
+          "created_at": "2026-11-25T07:39:02Z",
+          "expires_at": "2026-12-09T07:39:01Z",
+          "updated_at": "2026-11-25T07:39:02Z",
+          "digest": "sha256:0de53d707b688b851196f52d77647894bea724a360ee2db607e08d9ed1941997",
+          "workflow_run": {
+            "id": 45569747028,
+            "repository_id": 1469796623,
+            "head_repository_id": 1469796623,
+            "head_branch": "main",
+            "head_sha": "50d8ed67dd8b3c8dc4cd6323859e0c95a905a623"
+          }
+        }
+      ],
+      "jobs": [
+        {
+          "id": 139053184241,
+          "name": "resolve",
+          "conclusion": "success"
+        },
+        {
+          "id": 139053186096,
+          "name": "publish-static-artifact",
+          "conclusion": "skipped"
+        },
+        {
+          "id": 139053186368,
+          "name": "preserve-published-snapshots",
+          "conclusion": "skipped"
+        },
+        {
+          "id": 139053364293,
+          "name": "build",
+          "conclusion": "success"
+        },
+        {
+          "id": 139053733941,
+          "name": "deploy",
+          "conclusion": "success"
+        }
+      ]
+    }
+  }
+}

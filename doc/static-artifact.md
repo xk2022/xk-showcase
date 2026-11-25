@@ -39,7 +39,7 @@ A registration selects exactly one input path: source build, optionally with `re
 
 The resolver copies this reviewed identity into the frozen resolved plan and sets the resolved source SHA to `sourceSha`. It makes no commit or CI requests to the private source API. The builder checks that the plan still matches the reviewed registration before consuming it. The published manifest records the source SHA and the static-artifact identity.
 
-The URL and hash above identify the candidate snapshot being prepared. Their presence in documentation or the registry does not establish that Pages has published it.
+The URL and hash above identify the approved Shengfengyang snapshot. It is included in the eighteen-entry publication verified by [Pages run45569747028](https://github.com/xk2022/xk-website-showcase/actions/runs/45569747028). The other sixteen former Git inputs now use the existing [preservation Release](private-source-preservation.md); Carpentry retains its separately reviewed export. This does not make an unverified later registry/listing change live.
 
 ## Archive contents and preparation evidence
 
@@ -99,7 +99,7 @@ Both assets are uploaded to a draft release before the release is made public. T
 
 A dispatch may target the feature branch because this workflow file already exists on Hub main, but only after the authorized task has reviewed that branch's exact SHA, workflow permissions and helper implementation. The branch checkout determines the code holding the short-lived write token; never dispatch arbitrary unreviewed branch code. The bootstrap retains the existing serialized publication queue and does not receive Pages/OIDC permissions.
 
-After upload, independently check that the public Release URL downloads the expected SHA-256 and that its manifest/Release body matches the delivery checksum, source SHA and publishing run. Keep preparation-time source CI evidence in PR #12 and this document; it is not a generated Release-manifest field. This bootstrap does not query private CI. Then run the normal workflow with the bootstrap inputs left empty. It must still resolve all 17 registrations, validate/build the complete Hub, run the transport browser suite, enforce the main-revision freshness guard, deploy through the isolated Pages job, and verify the public manifest, routes and assets.
+After upload, independently check that the public Release URL downloads the expected SHA-256 and that its manifest/Release body matches the delivery checksum, source SHA and publishing run. Keep preparation-time source CI evidence in the applicable reviewed preparation record; it is not a newly generated private-CI result. This bootstrap does not query private CI. Then run the normal workflow with the bootstrap inputs empty. It must resolve all eighteen current registrations, validate/materialize the complete Hub, run transport validation appropriate to its input mode, enforce the freshness guard, deploy through the isolated Pages job, and verify the public manifest, routes and assets. Yuan-Guang already has a preserved archive and needs no new upload dispatch for its listing.
 
 A successful upload is not a live website result. Record bootstrap upload evidence separately from the subsequent Pages workflow and live verification. If validation or upload fails, retain the source pin and digest, inspect the failure and retry only the reviewed bootstrap; do not add a long-lived source token or weaken the normal deployment guard.
 
@@ -107,7 +107,7 @@ A successful upload is not a live website result. Record bootstrap upload eviden
 
 Artifact mode changes input acquisition only. For Shengfengyang, `validateExport` checks the same 20 required routes: five top-level content pages and 15 product details. Each retains the `/shengfengyang/` path, a page-specific canonical URL, one nonempty H1, `noindex,nofollow`, and valid local CSS, JavaScript, image and font resources. The proposal has no Sitemap, is absent from homepage cards, and receives the root robots Disallow entry. These flags are indexing and gallery controls, not authentication.
 
-The complete release still includes all 17 registrations. Other 16 sites keep their existing source policies and CI gates. The existing transport browser suite runs against the actual combined Hub output; Pages/OIDC deployment permissions remain in the isolated deploy job. Hub main freshness, serialized publication and post-deployment public manifest/route/asset verification remain required.
+The complete release includes eighteen registrations, currently all reviewed static inputs. Sixteen preserve their exact prior public output and original source-gate evidence as history; they do not claim that newer private commits or private CI were checked. Git-built public-source gates remain supported for that separate mode. Current transport validation checks preserved ZIP/runtime-byte identity and runs fresh Hub-owned Chromium smoke against the combined output; the historical exact-source suite is marked `REUSED_NOT_RERUN`. Transport synchronization is a read-only no-op in artifact mode. Pages/OIDC permissions remain isolated, and freshness, serialization and public verification remain required.
 
 For local validation after installing the documented dependencies:
 
@@ -137,7 +137,7 @@ For a new private-source website snapshot:
 4. Upload the ZIP as a new versioned Hub Release asset, directly or through the reviewed isolated bootstrap above. Then review a registry change updating `ref` and all `staticArtifact` fields together. Do not add private-source tokens or change repository visibility.
 5. Run the complete Hub checks and normal guarded deployment, then verify the public site against that resolved plan.
 
-Retain the approved asset bytes and digest for reproducibility. If a Release asset is missing or its bytes differ, the build fails; do not bypass integrity verification. For rollback, restore a previously reviewed URL/digest/source-SHA tuple and run a new complete release. Disable transport synchronization first only when intentionally rolling back transport, as described in [deployment operations](deployment.md#updates-and-rollback). Do not reuse an archive with different source provenance or fabricate private CI evidence to make a release pass.
+Retain the approved asset bytes and digest for reproducibility. If a Release asset is missing or its bytes differ, the build fails; do not bypass integrity verification. For rollback, restore a reviewed URL/digest/source-SHA tuple and run a new complete release. Artifact-mode transport synchronization is already a read-only no-op; disable synchronization first only for an intentional Git-built transport rollback. Do not reuse an archive with different source provenance or fabricate private CI evidence to make a release pass.
 
 ## Carpentry publisher selection
 
