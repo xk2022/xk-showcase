@@ -2,7 +2,7 @@
 
 Central static publishing for independently maintained showcase repositories.
 
-The gallery captures each listed site's real built homepage using Chromium during CI. APP entries are offline screenshot-only previews: their frontend runs only in an isolated local browser, with API and external network requests blocked. No backend, admin app, or production data is published. Empty repositories are tracked as pending, not displayed as finished work.
+The gallery captures each listed site's real built homepage using Chromium during CI. APP entries default to offline screenshot-only previews. Rotaract is a narrowly scoped exception: its pinned, CI-gated interactive build uses synthetic data only, disables backend connections using CSP, and is browser-verified with network requests blocked. No backend or production data is published. Empty repositories are tracked as pending, not displayed as finished work.
 
 To build locally, run `npm ci` and `npx playwright install chromium` before the existing build command.
 

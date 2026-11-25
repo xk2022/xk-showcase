@@ -2,7 +2,7 @@ import { cp, mkdir, readFile, writeFile, mkdtemp, rm } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import { join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
-import { validateSites, validateExport, buildRobots, renderCards, renderNotFound, escape, origin } from './static-export.mjs';
+import { validateSites, validateExport, buildRobots, renderGallery, renderNotFound, escape, origin } from './static-export.mjs';
 import { capturePreview } from './capture-preview.mjs';
 import { materializeStaticArtifact } from './static-artifact.mjs';
 import { resolveSources, validateResolvedSources, sourceBuildEnvironment } from './release.mjs';
@@ -47,6 +47,13 @@ try {
         await capturePreview(join(frontend, 'dist'), '/', join(target, '_showcase-preview.jpg'));
         await writeFile(join(target, 'index.html'), `<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><link rel="canonical" href="${origin}/${s.slug}/"><title>${escape(s.name)}｜畫面預覽</title><style>body{font-family:system-ui;margin:32px auto;max-width:1200px;padding:0 20px}img{width:100%;height:auto;border:1px solid #ddd}</style></head><body><a href="${origin}/">返回展示中心</a><h1>${escape(s.name)}</h1><p>前端畫面預覽（未連線後端，非正式系統）。</p><img src="./_showcase-preview.jpg" alt="${escape(s.name)} 首頁截圖"></body></html>`);
         await validateExport(target, s);
+      } else if (s.framework === 'interactive') {
+        const frontend = join(dir, 'frontend');
+        run('npm', ['ci'], frontend, sourceEnvironment);
+        run('npm', ['run', 'build'], frontend, sourceEnvironment);
+        await validateExport(join(frontend, 'dist'), s);
+        await cp(join(frontend, 'dist'), target, { recursive: true });
+        await capturePreview(staging, `/${s.slug}/`, join(target, '_showcase-preview.jpg'), { interactive: true });
       } else {
         run('npm', ['ci'], dir, sourceEnvironment);
         run('npm', ['run', 'build'], dir, sourceEnvironment);
@@ -58,7 +65,7 @@ try {
     manifest.push({ slug: s.slug, repository: s.repository, sha: s.sha, ...(s.release ? { release: s.release } : {}), ...(s.staticArtifact ? { staticArtifact: { ...s.staticArtifact } } : {}) });
   }
   const template = await readFile(new URL('../src/index.html', import.meta.url), 'utf8');
-  const cards = renderCards(sites);
+  const cards = renderGallery(sites);
   await writeFile(join(staging, 'index.html'), template.replace('<!-- SHOWCASES -->', cards));
   await writeFile(join(staging, 'robots.txt'), buildRobots(sites));
   await writeFile(join(staging, '404.html'), renderNotFound(sites));
