@@ -20,6 +20,7 @@ The hub supports Next.js static exports and explicitly configured Vite exports. 
 - [澄策企業顧問工作室](https://showcase.xplorekaleidoscope.com/consulting-chengce/)
 - [千剛實業有限公司](https://showcase.xplorekaleidoscope.com/qiangang-windows/)
 - [序程運輸](https://showcase.xplorekaleidoscope.com/truck-transport/)
+- [木作職人](https://showcase.xplorekaleidoscope.com/carpentry/)
 
 ## Build
 
@@ -112,7 +113,7 @@ Transport quality release (2026-11-25, Asia/Taipei): [PR #10](https://github.com
 
 ## Carpentry showcase
 
-Carpentry is a self-initiated woodworker landing-page demonstration with AI-generated space illustrations and a local-only inquiry summary. Its private source is delivered as a reviewed static snapshot pinned to source `91ade724579ed659287a27f8d77e5e1e0ed0292e`, with `/carpentry/` paths and no source-repository visibility change. Registration and a Release alone do not prove a live deployment; the guarded main build and public verification must pass. See [preparation and publication evidence](doc/carpentry-publication.md).
+[木作職人 is live at `/carpentry/`](https://showcase.xplorekaleidoscope.com/carpentry/). This self-initiated woodworker demonstration uses AI space illustrations and a local-only inquiry summary; LINE remains unconfirmed and disabled. Its private source is delivered as a reviewed static snapshot pinned to `91ade724579ed659287a27f8d77e5e1e0ed0292e`, without changing source visibility. [Integration PR #17](https://github.com/xk2022/xk-website-showcase/pull/17) is merged, and [Pages run45569747028](https://github.com/xk2022/xk-website-showcase/actions/runs/45569747028) passed the guarded eighteen-entry build, deployment and public verification. Independent live checks passed for 18 sites, 44 pages and 252 assets, plus Carpentry desktop/mobile interactions and metadata. See [preparation evidence](doc/carpentry-publication.md).
 
 The isolated artifact upload dispatch accepts only the fixed `shengfengyang` (default) or `carpentry` project selector; it retains the existing Hub-local permissions and does not execute source code. All normal Showcase builds continue through the complete source-resolution and Pages publication pipeline.
 
