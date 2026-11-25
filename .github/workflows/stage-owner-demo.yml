@@ -1,0 +1,25 @@
+name: Stage reviewed owner demo
+on:
+  push:
+    branches: [staging/little-me-owner-demo-export]
+permissions: {}
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24'
+      - name: Validate and publish immutable owner demo
+        run: node scripts/publish-static-artifact.mjs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INPUT_PROJECT: little-me-owner-demo
+          INPUT_BLOB_SHA: 23b492bfb982217212f1a61f8c8d923715a6f9bf
+          INPUT_SHA256: b0acc989803e42c476987a6cab9579756332028136e1c8f3e41c751336f12c02
+          INPUT_SOURCE_SHA: 3aaf529e4c93e22dbd99ccea7521665a63946cfd
