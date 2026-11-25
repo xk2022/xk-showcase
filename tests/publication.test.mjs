@@ -247,11 +247,11 @@ function shengfengyangFixture() {
   return { files, put, requests, deepRoute, verify: () => verifyPublication({ sites: [site], origin, fetchImpl }) };
 }
 
-test('Shengfengyang proposal verifies all 13 explicit routes without a sitemap or gallery card', async () => {
+test('Shengfengyang proposal verifies all 20 explicit routes without a sitemap or gallery card', async () => {
   const data = shengfengyangFixture();
   const result = await data.verify();
   assert.equal(result.sites, 1);
-  assert.equal(result.pages, 13);
+  assert.equal(result.pages, 20);
   assert.equal(result.assets, 6);
   for (const route of shengfengyangRoutes) assert(data.requests.includes(`/shengfengyang/${route}`), `Missing explicit publication request: ${route}`);
   assert(data.requests.includes('/shengfengyang/assets/font.woff2'));

@@ -25,7 +25,7 @@ function attributes(tag) {
 
 export const transportRoutes = ['', 'services/', 'shipping-guide/', 'about/', 'inquiry/'];
 export const shengfengyangRoutes = ['', 'story/', 'products/', 'gifting/', 'stores/',
-  ...['pure-pork-floss', 'seaweed-pork-floss', 'original-pork-jerky', 'black-pepper-pork-jerky', 'thai-pork-jerky', 'traditional-pork-shreds', 'pure-pork-fu', 'swordfish-floss'].map(slug => `products/${slug}/`)];
+  ...['pure-pork-floss', 'seaweed-pork-floss', 'original-pork-jerky', 'black-pepper-pork-jerky', 'thai-pork-jerky', 'traditional-pork-shreds', 'pure-pork-fu', 'swordfish-floss', 'chicken-floss', 'north-sea-squid-shreds', 'charcoal-squid-shreds', 'lemon-pork-jerky', 'nut-pork-jerky', 'honey-pepper-pork-strips', 'classic-honey-pork-jerky'].map(slug => `products/${slug}/`)];
 
 // Keep transport's metadata contract in the Hub as well as its source suite.
 // Its sitemap remains an explicit route inventory while its fictional demo is noindex.
