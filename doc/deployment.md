@@ -99,3 +99,11 @@ Recovery paths:
 - Post-deployment public verification fails: the workflow fails visibly; it does not claim the old release was restored. Disable automatic transport synchronization before intentionally rolling back the pinned source.
 
 This implementation is validated with deterministic unit fixtures for no-op synchronization, rejected source CI, source/Hub races, credential removal, conditional updates, dispatch recovery, exact artifact/source matching and export/public metadata failures. Full source builds and browser runs must use a publicly available, approved source SHA; do not fabricate release evidence for an unpublished working tree.
+
+## Shengfengyang proposal
+
+The `shengfengyang` registration is a brand website concept proposal, excluded from the gallery (`listed: false`) and search indexing (`indexable: false`). Its source must build with `NEXT_PUBLIC_BASE_PATH=/shengfengyang`, `SITE_URL=https://showcase.xplorekaleidoscope.com`, and `SHOWCASE_PROPOSAL=1`. That explicit mode removes the source Sitemap; the Hub requires every exported HTML page to retain `noindex,nofollow` and adds a root robots Disallow rule.
+
+Pin an exact successful source SHA and require `.github/workflows/ci.yml` / `Static export (subpath)`. The entire source push workflow must also pass. The Hub validates the five top-level content pages and eight product details locally and after publication, including page-specific canonical URLs, a single nonempty H1, noindex and referenced CSS, JavaScript, image and font assets. Origin-only preconnect and DNS hints are not file references; real links and resources remain isolated under the case path.
+
+The source repository must be publicly readable under the Hub's existing source policy. Registering a private source or publishing the built website does not itself authorize changing the source repository's visibility. Do not merge an unreadable source registration into the publishing branch.

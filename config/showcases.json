@@ -14,5 +14,6 @@
   {"slug":"qingyun-packaging","name":"青雲商店","category":"捆包與包材詢價","repository":"xk2022/xk-lp-qingyun-packaging","ref":"main","env":{"PAGES_EXPORT":"1","NEXT_PUBLIC_SHOWCASE_BASE_PATH":"/qingyun-packaging"}},
   {"slug":"esan-interior","name":"一森室內設計","category":"住宅設計諮詢","repository":"xk2022/xk-lp-esan-interior","ref":"main","env":{"GITHUB_PAGES":"true","NEXT_PUBLIC_SHOWCASE":"1","NEXT_PUBLIC_BASE_PATH":"/esan-interior","SITE_URL":"https://showcase.xplorekaleidoscope.com/esan-interior/"}},
   {"slug":"rotaract","name":"扶青萬花筒 v2.0","category":"APP 畫面預覽","repository":"xk2022/xk-app-rotaract","ref":"main","framework":"screen","indexable":false,"env":{}},
-  {"slug":"little-me-inventory","name":"Little Me 商品與庫存","category":"APP 公開穿搭畫面預覽","repository":"xk2022/xk-app-little-me-inventory","ref":"main","framework":"screen","indexable":false,"env":{"VITE_PUBLIC_ONLY":"true","VITE_BASE_PATH":"/"}}
+  {"slug":"little-me-inventory","name":"Little Me 商品與庫存","category":"APP 公開穿搭畫面預覽","repository":"xk2022/xk-app-little-me-inventory","ref":"main","framework":"screen","indexable":false,"env":{"VITE_PUBLIC_ONLY":"true","VITE_BASE_PATH":"/"}},
+  {"slug":"shengfengyang","name":"昇豐陽食品｜品牌官網提案","category":"品牌形象概念提案","repository":"xk2022/xk-brand-shengfengyang","ref":"ff130d33e7afb2f2e9b4972e4817621698c287b9","releaseGate":{"workflow":".github/workflows/ci.yml","job":"Static export (subpath)"},"indexable":false,"listed":false,"env":{"NEXT_PUBLIC_BASE_PATH":"/shengfengyang","SITE_URL":"https://showcase.xplorekaleidoscope.com","SHOWCASE_PROPOSAL":"1"}}
 ]

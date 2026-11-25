@@ -24,6 +24,8 @@ function attributes(tag) {
 }
 
 export const transportRoutes = ['', 'services/', 'shipping-guide/', 'about/', 'inquiry/'];
+export const shengfengyangRoutes = ['', 'story/', 'products/', 'gifting/', 'stores/',
+  ...['pure-pork-floss', 'seaweed-pork-floss', 'original-pork-jerky', 'black-pepper-pork-jerky', 'thai-pork-jerky', 'traditional-pork-shreds', 'pure-pork-fu', 'swordfish-floss'].map(slug => `products/${slug}/`)];
 
 // Keep transport's metadata contract in the Hub as well as its source suite.
 // Its sitemap remains an explicit route inventory while its fictional demo is noindex.
@@ -71,6 +73,12 @@ export async function validateLocalReferences(html, directory, slug, pagePath = 
   const prefix = `/${slug}/`;
   // Keep existing Next registrations on the original root-absolute resource contract.
   // In particular, its root-home href="/" was never treated as a case asset.
+  // A connection hint names an origin, not a navigable page or fetched file.
+  // Keep actual anchors, stylesheets, scripts and preloads under the case path.
+  html = html.replace(/<link\b[^>]*>/gi, tag => {
+    const rel = attributes(tag).rel?.toLowerCase();
+    return rel === 'preconnect' || rel === 'dns-prefetch' ? '' : tag;
+  });
   const resources = new Set(legacy
     ? [...html.matchAll(/(?:src|href)="(\/[^"#? ]+)(?:\?[^" ]*)?"/g)].map(match => match[1])
     : [...html.matchAll(/\b(?:src|href)\s*=\s*(["'])(.*?)\1/gs)].map(([, , value]) => value));
@@ -114,6 +122,16 @@ export async function validateExport(directory, site) {
         const tokens = (tag.content || '').toLowerCase().split(/[\s,]+/);
         return !tokens.includes('noindex') || !tokens.includes('nofollow') || tokens.includes('index') || tokens.includes('follow');
       })) throw new Error(`Missing noindex,nofollow in ${site.slug}/${relative(directory, file)}`);
+    }
+  }
+  if (site.slug === 'shengfengyang') {
+    for (const route of shengfengyangRoutes) {
+      const content = await readFile(join(directory, route, 'index.html'), 'utf8');
+      const expected = `${origin}/${site.slug}/${route}`;
+      const canonical = [...content.matchAll(/<link\b[^>]*>/gi)].map(match => attributes(match[0])).filter(tag => tag.rel?.toLowerCase() === 'canonical');
+      if (canonical.length !== 1 || canonical[0].href !== expected) throw new Error(`Incorrect Shengfengyang canonical: ${expected}`);
+      const headings = [...content.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)];
+      if (headings.length !== 1 || !headings[0][1].replace(/<[^>]*>/g, '').trim()) throw new Error(`Shengfengyang page must have one nonempty H1: ${expected}`);
     }
   }
   if (site.indexable === false) {
