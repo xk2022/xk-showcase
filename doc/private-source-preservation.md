@@ -35,3 +35,6 @@ Automatic transport source synchronization becomes an explicit read-only no-op f
 ## Delivery evidence
 
 The integration PR records the actual preservation run, verified public Release assets, complete eighteen-entry build, fresh transport smoke, main Pages run and public verification separately. Publishing snapshots alone is not proof that the new combined website is live. The original failed source-resolution run is retained in PR history; checks are not relabeled as successful.
+
+
+Preservation [run45569035046](https://github.com/xk2022/xk-website-showcase/actions/runs/45569035046) succeeded from reviewed Hub revision `7ff48165b8461d005246a42d40400e2b15601104`. All public ZIPs are independently downloaded through the bounded materializer, hash-checked and export-validated before final registry acceptance. The registry preserves the exact previous source tuples, not newer private source HEADs. Final guarded Pages evidence is in PR17.
