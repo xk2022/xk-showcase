@@ -45,3 +45,7 @@ The Carpentry registration pins `ref` and `staticArtifact.sourceSha` to the exac
 Before merge run the complete Hub test/build workflow for all 18 registrations, including the exact transport source browser suite. Normal main deployment keeps source-resolution gates, credential-free builds, the freshness guard, isolated Pages/OIDC permissions, and public manifest/routes/assets verification. Upload, PR CI, main build, Pages deployment and actual live verification are separate evidence stages and must be reported separately in the PR.
 
 Subsequent source README-only commits do not relabel this static ZIP as a different source revision. A new runtime snapshot needs a new exact source pin, ZIP digest and reviewed release.
+
+## Verified static release
+
+Isolated upload [run 45567355868](https://github.com/xk2022/xk-website-showcase/actions/runs/45567355868) succeeded using reviewed Hub commit `0b7b4b74de048343f0d9b4303bb0fee05498774d`. The public ZIP and `release-manifest.json` were downloaded without source credentials and independently checked against the exact digest/source identity above. The archive is now a verified input; actual Pages status is recorded separately in the integration PR.
