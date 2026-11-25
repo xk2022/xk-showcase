@@ -27,7 +27,20 @@ test('gallery groups by type or shared brand, lists purposes, and hides unlisted
   assert.match(html, /引導詢價/);
   assert.match(html, /建立信任/);
   assert.equal((html.match(/href="\.\/lp-demo\/"/g) || []).length, 2);
+  assert.equal((html.match(/href="\.\/app-preview\/"/g) || []).length, 1);
   assert.doesNotMatch(html, /hidden/);
+});
+
+test('brand view requires at least two listed works and does not count hidden works', () => {
+  const first = { ...app, brand: '單件品牌' };
+  const hidden = { ...first, slug: 'hidden', listed: false };
+  const one = renderGallery([first, hidden]);
+  assert.match(one, /目前尚無符合條件的品牌/);
+  assert.equal((one.match(/href="\.\/app-preview\/"/g) || []).length, 1);
+  const two = renderGallery([first, { ...first, slug: 'second' }, hidden]);
+  assert.match(two, /單件品牌 <small class="count">2 件/);
+  const three = renderGallery([first, { ...first, slug: 'second' }, { ...first, slug: 'third' }]);
+  assert.match(three, /單件品牌 <small class="count">3 件/);
 });
 
 test('APP screenshot-only export has no sitemap and requires its local screenshot', async () => {
