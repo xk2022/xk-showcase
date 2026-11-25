@@ -115,3 +115,7 @@ Transport quality release (2026-11-25, Asia/Taipei): [PR #10](https://github.com
 Carpentry is a self-initiated woodworker landing-page demonstration with AI-generated space illustrations and a local-only inquiry summary. Its private source is delivered as a reviewed static snapshot pinned to source `91ade724579ed659287a27f8d77e5e1e0ed0292e`, with `/carpentry/` paths and no source-repository visibility change. Registration and a Release alone do not prove a live deployment; the guarded main build and public verification must pass. See [preparation and publication evidence](doc/carpentry-publication.md).
 
 The isolated artifact upload dispatch accepts only the fixed `shengfengyang` (default) or `carpentry` project selector; it retains the existing Hub-local permissions and does not execute source code. All normal Showcase builds continue through the complete source-resolution and Pages publication pipeline.
+
+## Preserving private-source showcases
+
+The existing Git-built sources are now private. Their last successfully published runtime output is preserved as checksum-pinned public static snapshots, retaining each exact old source SHA; this does not deploy newer private source code. The fixed previous Pages artifact, original gate evidence, bounded one-time publisher and fresh compiled-output transport checks are documented in [private-source preservation](doc/private-source-preservation.md). Private-source updates now require reviewed snapshot promotion; automatic transport source synchronization is a read-only no-op in artifact mode.

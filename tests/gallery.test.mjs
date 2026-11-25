@@ -61,3 +61,16 @@ test('interactive mode is limited to a gated synthetic Rotaract release', () => 
   assert.match(renderCards([demo]), /操作互動展示/);
   for (const bad of [{ ...demo, ref: 'main' }, { ...demo, env: {} }, { ...demo, slug: 'another-app' }, { ...demo, indexable: true }, { ...demo, releaseGate: undefined }]) assert.throws(() => validateSites([bad]), /Interactive preview/);
 });
+
+
+test('preserved interactive output accepts only the exact already-published Rotaract snapshot', () => {
+  const sourceSha = 'fd8374eca0d840d64790552a6562e05c1a8bc76b';
+  const site = { slug: 'rotaract', repository: 'xk2022/xk-app-rotaract', framework: 'interactive', indexable: false, ref: sourceSha, env: { VITE_SHOWCASE_DEMO: 'true' }, staticArtifact: { url: 'https://github.com/xk2022/xk-website-showcase/releases/download/preserved-showcase-45564113822-v1/rotaract-static.zip', sha256: 'a'.repeat(64), sourceSha } };
+  assert.doesNotThrow(() => validateSites([site]));
+  for (const changed of [
+    { env: { VITE_SHOWCASE_DEMO: 'false' } },
+    { indexable: true },
+    { ref: 'b'.repeat(40), staticArtifact: { ...site.staticArtifact, sourceSha: 'b'.repeat(40) } },
+    { staticArtifact: { ...site.staticArtifact, url: site.staticArtifact.url.replace('45564113822', '99999999999') } },
+  ]) assert.throws(() => validateSites([{ ...site, ...changed }]));
+});

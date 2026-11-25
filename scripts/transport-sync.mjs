@@ -1,5 +1,6 @@
 import { isSha, resolveSources, validateResolvedSources } from './release.mjs';
 import { verifyRelease, validateReleaseEvidence } from './release-gate.mjs';
+import { validateSites } from './static-export.mjs';
 
 export const transportRepository = 'xk2022/xk-corp-truck-transport';
 export const transportGate = { workflow: '.github/workflows/deploy-pages.yml', job: 'Validate Hub build' };
@@ -10,7 +11,7 @@ const formatRegistry = sites => `[\n${sites.map(site => `  ${JSON.stringify(site
 
 export function transportRegistration(sites) {
   const rows = sites.filter(site => site.slug === 'truck-transport');
-  if (rows.length !== 1 || rows[0].repository !== transportRepository || !same(rows[0].releaseGate, transportGate) || !isSha(rows[0].ref)) throw new Error('Transport sync requires the trusted repository, exact pinned SHA and Validate Hub build release gate');
+  if (rows.length !== 1 || rows[0].repository !== transportRepository || rows[0].staticArtifact !== undefined || !same(rows[0].releaseGate, transportGate) || !isSha(rows[0].ref)) throw new Error('Transport sync requires the trusted repository, exact pinned SHA and Validate Hub build release gate');
   return rows[0];
 }
 
@@ -45,6 +46,14 @@ export async function latestSuccessfulTransport(request) {
 export async function inspectTransportSync({ originalRegistry, hubSha, registryBlobSha }, request) {
   if (!isSha(hubSha) || !isSha(registryBlobSha)) throw new Error('Invalid Hub inspection context');
   const sites = JSON.parse(originalRegistry);
+  const transportRows = sites.filter(site => site.slug === 'truck-transport');
+  if (transportRows.some(site => site.staticArtifact !== undefined)) {
+    // Reviewed static snapshots are promoted through the registry review flow.
+    // They must never probe the private source or prepare an automatic pin update.
+    validateSites(sites);
+    if (transportRows.length !== 1 || transportRows[0].repository !== transportRepository || !isSha(transportRows[0].ref)) throw new Error('Static transport sync requires the trusted repository and exact pinned SHA');
+    return { changed: false, reason: 'Transport uses a reviewed static artifact; automatic source synchronization is disabled' };
+  }
   const transport = transportRegistration(sites);
   const main = await request(`repos/${hubRepository}/commits/main`);
   if (main.sha !== hubSha) return { changed: false, reason: 'Hub main changed; a later sync will inspect the new revision' };

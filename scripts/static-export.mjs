@@ -11,7 +11,8 @@ export function validateSites(sites) {
     if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(site.slug) || seen.has(site.slug) || !/^xk2022\/[a-zA-Z0-9_-]+$/.test(site.repository)) throw new Error('Invalid or duplicate showcase: ' + site.slug);
     if (site.framework !== undefined && !['next', 'vite', 'screen', 'interactive'].includes(site.framework)) throw new Error('Unsupported framework: ' + site.slug);
     if (site.framework === 'screen' && (site.indexable !== false || !site.repository.startsWith('xk2022/xk-app-'))) throw new Error('Screen previews must be non-indexable APP entries');
-    if (site.framework === 'interactive' && (site.slug !== 'rotaract' || site.repository !== 'xk2022/xk-app-rotaract' || site.indexable !== false || site.env?.VITE_SHOWCASE_DEMO !== 'true' || !site.releaseGate || !/^[a-f\d]{40}$/i.test(site.ref))) throw new Error('Interactive preview is restricted to the pinned, gated synthetic Rotaract build');
+    const preservedInteractive = site.slug === 'rotaract' && site.ref === 'fd8374eca0d840d64790552a6562e05c1a8bc76b' && site.staticArtifact?.sourceSha === site.ref && site.staticArtifact?.url === 'https://github.com/xk2022/xk-website-showcase/releases/download/preserved-showcase-45564113822-v1/rotaract-static.zip';
+    if (site.framework === 'interactive' && (site.slug !== 'rotaract' || site.repository !== 'xk2022/xk-app-rotaract' || site.indexable !== false || site.env?.VITE_SHOWCASE_DEMO !== 'true' || (!site.releaseGate && !preservedInteractive) || !/^[a-f\d]{40}$/i.test(site.ref))) throw new Error('Interactive preview is restricted to the pinned, gated synthetic Rotaract build or its exact preserved publication');
     for (const option of ['indexable', 'listed']) {
       if (site[option] !== undefined && typeof site[option] !== 'boolean') throw new Error(`Invalid ${option}: ${site.slug}`);
     }

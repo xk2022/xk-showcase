@@ -129,11 +129,25 @@ test('static artifact bootstrap isolates same-repository write permission from a
     assert(publish.includes(key + ': ${{ inputs.static_artifact_' + input + ' }}'));
   }
   assert.doesNotMatch(publish, /npm |build-showcases\.mjs|test-transport\.mjs|resolve-sources\.mjs|secrets\.|actions: write|pages: write|id-token: write/);
-  assert.equal((workflow.match(/contents: write/g) || []).length, 1);
-  assert.match(resolve, /if: github.event_name != 'workflow_dispatch' \|\| inputs.static_artifact_blob == ''/);
+  assert.equal((workflow.match(/contents: write/g) || []).length, 2);
+  assert.match(resolve, /if: github.event_name != 'workflow_dispatch' \|\| \(inputs.static_artifact_blob == '' && !inputs.preserve_publication\)/);
   assert.match(build, /needs: resolve/);
   assert.doesNotMatch(build, /GH_TOKEN|GITHUB_TOKEN|secrets\.|contents: write|actions: write|pages: write|id-token: write/);
   assert.match(deploy, /if:.*inputs.static_artifact_blob == ''/);
   assert.match(deploy, /needs: build/);
   assert.doesNotMatch(resolve + build + deploy, /contents: write/);
+});
+
+
+test('fixed publication preservation has isolated Hub-only permissions and cannot deploy', async () => {
+ const workflow = await readFile(new URL('../.github/workflows/deploy.yml', import.meta.url), 'utf8');
+ const preserve = workflow.split('\n  preserve-published-snapshots:')[1].split('\n  publish-static-artifact:')[0];
+ assert.match(preserve, /if: github.event_name == 'workflow_dispatch' && inputs.preserve_publication/);
+ assert.match(preserve, /actions: read/);
+ assert.match(preserve, /contents: write/);
+ assert.match(preserve, /persist-credentials: false/);
+ assert.match(preserve, /node scripts\/preserve-published-snapshots\.mjs/);
+ assert.doesNotMatch(preserve, /pages: write|id-token: write|npm |build-showcases|secrets\./);
+ assert.match(workflow, /static_artifact_blob != '' && !inputs.preserve_publication/);
+ assert.match(workflow, /static_artifact_blob == '' && !inputs.preserve_publication/);
 });
