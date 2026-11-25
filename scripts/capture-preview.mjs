@@ -1,7 +1,7 @@
 import { createPreviewServer } from './test-transport.mjs';
 
 // The browser can read only the locally built static export, never external APIs.
-export async function capturePreview(directory, path, output, { interactive = false, anonymousLogistics = false } = {}) {
+export async function capturePreview(directory, path, output, { interactive = false, ownerDemo = false, anonymousLogistics = false } = {}) {
   const { chromium } = await import('playwright');
   const server = await createPreviewServer(directory);
   let browser;
@@ -12,8 +12,8 @@ export async function capturePreview(directory, path, output, { interactive = fa
     await page.route('**/*', route => {
       const url = new URL(route.request().url());
       if (anonymousLogistics && url.origin === server.url && url.pathname === '/api/v1/auth/me' && route.request().method() === 'GET') return route.fulfill({ status: 401, json: { code: 'UNAUTHENTICATED', message: 'Synthetic anonymous preview', timestamp: '2026-11-25T00:00:00+08:00' } });
-      if (interactive && url.origin === server.url && url.pathname === '/favicon.ico') return route.abort();
-      if (interactive && (url.origin !== server.url || !url.pathname.startsWith(path) || ['fetch', 'xhr', 'websocket'].includes(route.request().resourceType()))) {
+      if ((interactive || ownerDemo) && url.origin === server.url && url.pathname === '/favicon.ico') return route.abort();
+      if ((interactive || ownerDemo) && (url.origin !== server.url || !url.pathname.startsWith(path) || ['fetch', 'xhr', 'websocket'].includes(route.request().resourceType()))) {
         denied.push(url.pathname);
         return route.abort();
       }
@@ -24,6 +24,12 @@ export async function capturePreview(directory, path, output, { interactive = fa
     await page.locator('h1').first().waitFor({ state: 'visible' });
     await page.evaluate(() => document.fonts.ready);
     await page.screenshot({ path: output, type: 'jpeg', quality: 78, animations: 'disabled' });
+    if (ownerDemo) {
+      await page.getByRole('button', { name: '查看 LM-101-CREAM-S 異動', exact: true }).click();
+      await page.getByLabel('只看盤點差異').check();
+      await page.getByRole('button', { name: '匯出盤點差異 CSV' }).waitFor();
+      if (denied.length) throw new Error('Owner demo attempted live access: ' + denied.join(', '));
+    }
     if (interactive) {
       await page.getByText('互動示範 · 離線', { exact: true }).waitFor();
       await page.getByText('晨光扶青社（示範）').waitFor();

@@ -28,7 +28,7 @@ try {
       // A static release contains no executable source or install/build lifecycle.
       await materializeStaticArtifact(s, target);
       await validateExport(target, s);
-      if (s.listed !== false) await capturePreview(staging, `/${s.slug}/`, join(target, '_showcase-preview.jpg'));
+      if (s.listed !== false) await capturePreview(staging, `/${s.slug}/`, join(target, '_showcase-preview.jpg'), { ownerDemo: s.slug === 'little-me-owner-demo' });
     } else {
       const dir = join(work, s.slug);
       await mkdir(dir);

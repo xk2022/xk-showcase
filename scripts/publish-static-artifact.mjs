@@ -12,6 +12,11 @@ const manifestName = 'release-manifest.json';
 // Publication inputs select only reviewed projects, never arbitrary repository,
 // slug, asset or release names. Omitted INPUT_PROJECT preserves the original job.
 const projects = {
+  'little-me-owner-demo': {
+    sourceRepository: 'xk2022/xk-app-little-me-inventory',
+    archiveName: 'little-me-owner-demo-static.zip', name: 'Little Me｜店主庫存互動展示',
+    policy: { framework: 'interactive', indexable: false },
+  },
   shengfengyang: {
     sourceRepository: 'xk2022/xk-brand-shengfengyang',
     archiveName: 'shengfengyang-static.zip', name: '昇豐陽食品｜靜態提案',
