@@ -34,7 +34,14 @@ with tarfile.open(fileobj=tar_buffer, mode='w') as t:
             info.type = tarfile.CHRTYPE
         else:
             info.size = entry.get('size', len(content))
-        t.addfile(info, io.BytesIO(content) if kind == 'file' else None)
+        if kind == 'oversized':
+            # A header-only malformed member exercises the pre-stream size guard.
+            # Newer Python versions refuse addfile(nonzero_size, fileobj=None).
+            header = info.tobuf()
+            t.fileobj.write(header)
+            t.offset += len(header)
+        else:
+            t.addfile(info, io.BytesIO(content) if kind == 'file' else None)
 outer = io.BytesIO()
 with zipfile.ZipFile(outer, 'w', compression=zipfile.ZIP_DEFLATED) as z:
     z.writestr(data.get('outerName', 'artifact.tar'), tar_buffer.getvalue())
