@@ -9,7 +9,8 @@ export function validateSites(sites) {
   const seen = new Set();
   for (const site of sites) {
     if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(site.slug) || seen.has(site.slug) || !/^xk2022\/[a-zA-Z0-9_-]+$/.test(site.repository)) throw new Error('Invalid or duplicate showcase: ' + site.slug);
-    if (site.framework !== undefined && !['next', 'vite'].includes(site.framework)) throw new Error('Unsupported framework: ' + site.slug);
+    if (site.framework !== undefined && !['next', 'vite', 'screen'].includes(site.framework)) throw new Error('Unsupported framework: ' + site.slug);
+    if (site.framework === 'screen' && (site.indexable !== false || !site.repository.startsWith('xk2022/xk-app-'))) throw new Error('Screen previews must be non-indexable APP entries');
     for (const option of ['indexable', 'listed']) {
       if (site[option] !== undefined && typeof site[option] !== 'boolean') throw new Error(`Invalid ${option}: ${site.slug}`);
     }
@@ -97,7 +98,7 @@ export async function validateExport(directory, site) {
     if (!tags.some(tag => tag.type === 'module' && tag.src?.startsWith(assetPrefix) && /\.js(?:\?|$)/.test(tag.src)) || !tags.some(tag => tag.rel === 'stylesheet' && tag.href?.startsWith(assetPrefix) && /\.css(?:\?|$)/.test(tag.href))) throw new Error(`Invalid Vite assets: ${site.slug}`);
     await access(join(directory, '404.html'));
     await access(join(directory, 'en/404.html'));
-  } else if (!html.includes(`/${site.slug}/_next/static/`)) {
+  } else if (site.framework !== 'screen' && !html.includes(`/${site.slug}/_next/static/`)) {
     throw new Error(`Invalid Next.js base path: ${site.slug}`);
   }
 
@@ -142,7 +143,7 @@ export function buildRobots(sites) {
 }
 
 export function renderCards(sites) {
-  return sites.filter(site => site.listed !== false).map(site => `<a class="card" href="./${site.slug}/"><small>${escape(site.category)}</small><h2>${escape(site.name)}</h2><span>瀏覽展示案例 →</span></a>`).join('\n');
+  return sites.filter(site => site.listed !== false).map(site => `<a class="card" href="./${site.slug}/"><img src="./${site.slug}/_showcase-preview.jpg" alt="${escape(site.name)} 首頁截圖" width="960" height="540" loading="lazy"><div class="card-body"><small>${escape((site.repository?.split('/')[1]?.split('-')[1] || 'XK').toUpperCase())} · ${escape(site.category)}</small><h2>${escape(site.name)}</h2><span>${site.framework === 'screen' ? '查看畫面預覽' : '瀏覽展示案例'} →</span></div></a>`).join('\n');
 }
 
 export function renderNotFound(sites) {

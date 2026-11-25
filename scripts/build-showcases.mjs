@@ -2,7 +2,8 @@ import { cp, mkdir, readFile, writeFile, mkdtemp, rm } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import { join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
-import { validateSites, validateExport, buildRobots, renderCards, renderNotFound } from './static-export.mjs';
+import { validateSites, validateExport, buildRobots, renderCards, renderNotFound, escape, origin } from './static-export.mjs';
+import { capturePreview } from './capture-preview.mjs';
 import { resolveSources, validateResolvedSources, sourceBuildEnvironment } from './release.mjs';
 
 const sites = JSON.parse(await readFile(process.argv[3] ? resolve(process.argv[3]) : new URL('../config/showcases.json', import.meta.url), 'utf8'));
@@ -30,10 +31,22 @@ try {
     const sha = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: dir, encoding: 'utf8', env: buildEnvironment }).trim();
     if (sha !== s.sha) throw new Error(`Source checkout mismatch: ${s.slug}`);
     const sourceEnvironment = sourceBuildEnvironment(buildEnvironment, s.env);
-    run('npm', ['ci'], dir, sourceEnvironment);
-    run('npm', ['run', 'build'], dir, sourceEnvironment);
-    await validateExport(join(dir, 'out'), s);
-    await cp(join(dir, 'out'), join(staging, s.slug), { recursive: true });
+    const target = join(staging, s.slug);
+    if (s.framework === 'screen') {
+      const frontend = join(dir, 'frontend');
+      run('npm', ['ci'], frontend, sourceEnvironment);
+      run('npm', ['run', 'build'], frontend, sourceEnvironment);
+      await mkdir(target);
+      await capturePreview(join(frontend, 'dist'), '/', join(target, '_showcase-preview.jpg'));
+      await writeFile(join(target, 'index.html'), `<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><link rel="canonical" href="${origin}/${s.slug}/"><title>${escape(s.name)}｜畫面預覽</title><style>body{font-family:system-ui;margin:32px auto;max-width:1200px;padding:0 20px}img{width:100%;height:auto;border:1px solid #ddd}</style></head><body><a href="${origin}/">返回展示中心</a><h1>${escape(s.name)}</h1><p>前端畫面預覽（未連線後端，非正式系統）。</p><img src="./_showcase-preview.jpg" alt="${escape(s.name)} 首頁截圖"></body></html>`);
+      await validateExport(target, s);
+    } else {
+      run('npm', ['ci'], dir, sourceEnvironment);
+      run('npm', ['run', 'build'], dir, sourceEnvironment);
+      await validateExport(join(dir, 'out'), s);
+      await cp(join(dir, 'out'), target, { recursive: true });
+      if (s.listed !== false) await capturePreview(staging, `/${s.slug}/`, join(target, '_showcase-preview.jpg'));
+    }
     manifest.push({ slug: s.slug, repository: s.repository, sha, ...(s.release ? { release: s.release } : {}) });
   }
   const template = await readFile(new URL('../src/index.html', import.meta.url), 'utf8');

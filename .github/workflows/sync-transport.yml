@@ -69,6 +69,8 @@ jobs:
           name: transport-sync-candidate
           path: .release
       - name: Build every showcase from the candidate snapshot
+        run: npm ci && npx playwright install --with-deps chromium
+      - name: Build every showcase with screenshots
         run: node scripts/build-showcases.mjs .release/resolved-sites.json .release/candidate-registry.json
       - name: Install browsers and run the exact transport source suite against Hub dist
         run: node scripts/test-transport.mjs .release/resolved-sites.json --install-browsers

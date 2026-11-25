@@ -12,13 +12,17 @@ Proposal controls are explicit per registration:
 
 | Field | Default | Effect |
 | --- | --- | --- |
-| `framework` | `next` | Use `vite` for real Vite static assets; no fake `_next` directory is needed. |
+| `framework` | `next` | Use `vite` for real Vite static assets; `screen` builds an APP frontend locally and publishes only a screenshot page. |
 | `indexable` | `true` | `false` requires `noindex,nofollow` in every HTML file, rejects `sitemap.xml`, adds a root robots Disallow rule, and omits its sitemap reference. |
 | `listed` | `true` | `false` excludes the site from homepage showcase cards. |
 
 `yuan-guang-pcb` uses `BASE_PATH=/yuan-guang-pcb/`, `framework: "vite"`, `indexable: false`, and `listed: false`. It is a corporate-website concept proposal, not the company's official website or a formally commissioned client case. Preserve its visible proposal notice and fictional-only, non-submitting form.
 
 These controls do **not** restrict access. An unlisted URL, robots directives, a private source repository or lack of a sitemap cannot replace authentication. A proposal that requires restricted access must use a suitable authenticated hosting arrangement.
+
+## Gallery previews
+
+Listed sites receive a real 1440×810 screenshot captured from their exact built release in Chromium. The gallery displays lazy-loaded thumbnails with project type badges. APP screenshot captures are offline, use only public frontend code and block external requests; the deployed preview contains HTML and the screenshot only, never the frontend bundle, backend or database. Empty and private repositories remain outside the public registry. The existing unlisted Yuan-Guang proposal stays unlisted.
 
 ## Source release verification
 

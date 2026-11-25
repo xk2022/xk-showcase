@@ -2,3 +2,4 @@ dist/
 .sources/
 
 .release/
+node_modules/
