@@ -22,7 +22,7 @@ These controls do **not** restrict access. An unlisted URL, robots directives, a
 
 ## Gallery previews
 
-The homepage defaults to grouping by repository type (LP, BRAND, CORP, APP), with an accessible native radio switch for grouping by brand. Registry `brand` and `purpose` fields describe the shared brand and each project's intended business use. Both views omit `listed: false` entries, preserve existing URLs and screenshots, and label offline APP previews separately. Purpose describes demonstrated capability, not a measured customer outcome.
+The homepage defaults to grouping by repository type (LP, BRAND, CORP, APP), with an accessible native radio switch for grouping by brand. Registry `brand` and `purpose` fields describe the shared brand and each project's intended business use. Both views omit `listed: false` entries, preserve existing URLs and screenshots, and label offline APP previews separately. The type view includes every listed work; the brand view only includes brands with at least two listed works. Purpose describes demonstrated capability, not a measured customer outcome.
 
 Listed sites receive a real 1440×810 screenshot captured from their exact built release in Chromium. The gallery displays lazy-loaded thumbnails with project type badges. APP screenshot captures are offline, use only public frontend code and block external requests; the deployed preview contains HTML and the screenshot only, never the frontend bundle, backend or database. Empty and private repositories remain outside the public registry. The existing unlisted Yuan-Guang proposal stays unlisted.
 
