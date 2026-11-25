@@ -100,3 +100,15 @@ test('legacy apparel repository is a non-indexable APP screenshot, not a separat
   assert.match(buildRobots([apparel]), /Disallow: \/apparel-store\//);
   assert.throws(() => validateSites([{ ...apparel, indexable: true }]), /non-indexable/);
 });
+
+test('Little Me owner demo accepts its reviewed static release only', () => {
+  const ref='a'.repeat(40);
+  const site={slug:'little-me-owner-demo',repository:'xk2022/xk-app-little-me-inventory',
+    ref,framework:'interactive',indexable:false,staticArtifact:{sourceSha:ref,sha256:'b'.repeat(64),
+      url:'https://github.com/xk2022/xk-website-showcase/releases/download/little-me-owner-demo-aaaaaaa-v1/little-me-owner-demo-static.zip'}};
+  assert.doesNotThrow(()=>validateSites([site]));
+  for(const change of [{indexable:true},{ref:'main'},{staticArtifact:undefined},{repository:'xk2022/xk-app-other'},
+    {staticArtifact:{...site.staticArtifact,url:site.staticArtifact.url.replace('aaaaaaa','bbbbbbb')}}]){
+    assert.throws(()=>validateSites([{...site,...change}]));
+  }
+});
