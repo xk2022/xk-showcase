@@ -28,6 +28,9 @@ export async function capturePreview(directory, path, output, { interactive = fa
       await page.getByRole('button', { name: '查看 LM-101-CREAM-S 異動', exact: true }).click();
       await page.getByLabel('只看盤點差異').check();
       await page.getByRole('button', { name: '匯出盤點差異 CSV' }).waitFor();
+      await page.locator('.sidebar nav').getByRole('button', { name: '商品管理' }).click();
+      await page.getByRole('button', { name: '新增商品', exact: true }).click();
+      await page.getByRole('dialog', { name: '建立一件新商品' }).getByLabel('款號 *', { exact: true }).waitFor();
       if (denied.length) throw new Error('Owner demo attempted live access: ' + denied.join(', '));
     }
     if (interactive) {

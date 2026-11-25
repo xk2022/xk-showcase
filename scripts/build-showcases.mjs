@@ -26,7 +26,17 @@ try {
     const target = join(staging, s.slug);
     if (s.staticArtifact) {
       // A static release contains no executable source or install/build lifecycle.
-      await materializeStaticArtifact(s, target);
+      // Reviewed exports may be mirrored by digest when GitHub Releases is unavailable.
+      const archive = new URL(`../artifacts/${s.staticArtifact.sha256}.zip`, import.meta.url);
+      const fetchArchive = async (...args) => {
+        try {
+          return new Response(await readFile(archive));
+        } catch (error) {
+          if (error.code !== 'ENOENT') throw error;
+          return fetch(...args);
+        }
+      };
+      await materializeStaticArtifact(s, target, { fetchImpl: fetchArchive });
       await validateExport(target, s);
       if (s.listed !== false) await capturePreview(staging, `/${s.slug}/`, join(target, '_showcase-preview.jpg'), { ownerDemo: s.slug === 'little-me-owner-demo' });
     } else {
