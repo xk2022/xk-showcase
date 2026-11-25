@@ -15,6 +15,19 @@ jobs:
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
         with:
           node-version: '24'
+      - name: Finish draft upload
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          ep="repos/$GITHUB_REPOSITORY/releases/458328307"
+          gh api "$ep" > draft.json
+          jq -e '.draft and .tag_name == "little-me-owner-demo-c8b04b5-v1" and (.assets | length == 0)' draft.json
+          jq -r .body draft.json > release-manifest.json
+          gh api "repos/$GITHUB_REPOSITORY/git/blobs/3a70945ddc53814382909dab42d95b54936e4592" --jq .content | base64 -d > little-me-owner-demo-static.zip
+          echo '58e237e290976eba8a031f9b01a0913009f0ceca474da4ec38c767516c65865b  little-me-owner-demo-static.zip' | sha256sum -c
+          gh release upload little-me-owner-demo-c8b04b5-v1 little-me-owner-demo-static.zip release-manifest.json
+          gh api "$ep" --method PATCH -F draft=false --silent
       - name: Validate and publish immutable owner demo
         run: node scripts/publish-static-artifact.mjs
         env:
