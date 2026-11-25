@@ -2,7 +2,7 @@ import { cp, mkdir, readFile, writeFile, mkdtemp, rm } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import { join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
-import { validateSites, validateExport, buildRobots, renderCards, renderNotFound, escape, origin } from './static-export.mjs';
+import { validateSites, validateExport, buildRobots, renderGallery, renderNotFound, escape, origin } from './static-export.mjs';
 import { capturePreview } from './capture-preview.mjs';
 import { resolveSources, validateResolvedSources, sourceBuildEnvironment } from './release.mjs';
 
@@ -50,7 +50,7 @@ try {
     manifest.push({ slug: s.slug, repository: s.repository, sha, ...(s.release ? { release: s.release } : {}) });
   }
   const template = await readFile(new URL('../src/index.html', import.meta.url), 'utf8');
-  const cards = renderCards(sites);
+  const cards = renderGallery(sites);
   await writeFile(join(staging, 'index.html'), template.replace('<!-- SHOWCASES -->', cards));
   await writeFile(join(staging, 'robots.txt'), buildRobots(sites));
   await writeFile(join(staging, '404.html'), renderNotFound(sites));

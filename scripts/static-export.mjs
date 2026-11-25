@@ -143,7 +143,34 @@ export function buildRobots(sites) {
 }
 
 export function renderCards(sites) {
-  return sites.filter(site => site.listed !== false).map(site => `<a class="card" href="./${site.slug}/"><img src="./${site.slug}/_showcase-preview.jpg" alt="${escape(site.name)} 首頁截圖" width="960" height="540" loading="lazy"><div class="card-body"><small>${escape((site.repository?.split('/')[1]?.split('-')[1] || 'XK').toUpperCase())} · ${escape(site.category)}</small><h2>${escape(site.name)}</h2><span>${site.framework === 'screen' ? '查看畫面預覽' : '瀏覽展示案例'} →</span></div></a>`).join('\n');
+  return sites.filter(site => site.listed !== false).map(site => `<a class="card" href="./${site.slug}/"><img src="./${site.slug}/_showcase-preview.jpg" alt="${escape(site.name)} 首頁截圖" width="960" height="540" loading="lazy"><div class="card-body"><small>${escape(projectType(site))} · ${escape(site.category)}</small><h3>${escape(site.name)}</h3><p>${escape(site.purpose || site.category)}</p><span>${site.framework === 'screen' ? '查看畫面預覽' : '瀏覽展示案例'} →</span></div></a>`).join('\n');
+}
+
+const projectType = site => (site.repository?.split('/')[1]?.split('-')[1] || 'XK').toUpperCase();
+const typeInfo = {
+  LP: ['一頁式網站', '聚焦單一行銷目標，縮短導購、洽詢與需求整理流程。'],
+  BRAND: ['品牌形象網站', '建立品牌認知、產品故事與信任。'],
+  CORP: ['企業網站與平台', '整理企業服務、商務資訊及服務流程。'],
+  APP: ['應用系統', '展示資料管理、日常營運與數位流程。'],
+};
+
+export function renderGallery(sites) {
+  const visible = sites.filter(site => site.listed !== false);
+  const types = new Map();
+  const brands = new Map();
+  for (const site of visible) {
+    const type = projectType(site);
+    const brand = site.brand || site.name;
+    if (!types.has(type)) types.set(type, []);
+    if (!brands.has(brand)) brands.set(brand, []);
+    types.get(type).push(site);
+    brands.get(brand).push(site);
+  }
+  const order = key => Object.keys(typeInfo).includes(key) ? Object.keys(typeInfo).indexOf(key) : 99;
+  const section = (title, subtitle, rows) => `<section class="group"><header class="group-heading"><div><h2>${escape(title)} <small class="count">${rows.length} 件</small></h2>${subtitle ? `<p>${escape(subtitle)}</p>` : ''}</div></header><div class="grid">${renderCards(rows)}</div></section>`;
+  const sortedTypes = [...types].sort(([a], [b]) => order(a) - order(b));
+  const sortedBrands = [...brands].sort(([, a], [, b]) => b.length - a.length);
+  return `<div class="gallery-mode" role="group" aria-label="作品瀏覽方式"><input type="radio" name="gallery-view" id="view-type" checked><input type="radio" name="gallery-view" id="view-brand"><div class="view-controls"><label for="view-type">依網站類型</label><label for="view-brand">依品牌</label><span class="total">${visible.length} 件展示作品</span></div><div class="type-view">${sortedTypes.map(([key, rows]) => section(`${key}｜${typeInfo[key]?.[0] || '其他網站'}`, typeInfo[key]?.[1], rows)).join('')}</div><div class="brand-view">${sortedBrands.map(([name, rows]) => section(name, [...new Set(rows.map(projectType))].join(' · '), [...rows].sort((a,b) => order(projectType(a)) - order(projectType(b))))).join('')}</div></div>`;
 }
 
 export function renderNotFound(sites) {
