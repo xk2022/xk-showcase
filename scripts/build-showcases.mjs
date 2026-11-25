@@ -40,11 +40,11 @@ try {
       if (sha !== s.sha) throw new Error(`Source checkout mismatch: ${s.slug}`);
       const sourceEnvironment = sourceBuildEnvironment(buildEnvironment, s.env);
       if (s.framework === 'screen') {
-        const frontend = join(dir, 'frontend');
+        const frontend = s.repository === 'xk2022/codex-xk-apparel-store' ? dir : join(dir, 'frontend');
         run('npm', ['ci'], frontend, sourceEnvironment);
         run('npm', ['run', 'build'], frontend, sourceEnvironment);
         await mkdir(target);
-        await capturePreview(join(frontend, 'dist'), '/', join(target, '_showcase-preview.jpg'));
+        await capturePreview(join(frontend, 'dist'), '/', join(target, '_showcase-preview.jpg'), { anonymousLogistics: s.slug === 'logistics' && s.repository === 'xk2022/xk-app-logistics' });
         await writeFile(join(target, 'index.html'), `<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><link rel="canonical" href="${origin}/${s.slug}/"><title>${escape(s.name)}｜畫面預覽</title><style>body{font-family:system-ui;margin:32px auto;max-width:1200px;padding:0 20px}img{width:100%;height:auto;border:1px solid #ddd}</style></head><body><a href="${origin}/">返回展示中心</a><h1>${escape(s.name)}</h1><p>前端畫面預覽（未連線後端，非正式系統）。</p><img src="./_showcase-preview.jpg" alt="${escape(s.name)} 首頁截圖"></body></html>`);
         await validateExport(target, s);
       } else if (s.framework === 'interactive') {

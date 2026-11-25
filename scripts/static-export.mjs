@@ -10,7 +10,7 @@ export function validateSites(sites) {
   for (const site of sites) {
     if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(site.slug) || seen.has(site.slug) || !/^xk2022\/[a-zA-Z0-9_-]+$/.test(site.repository)) throw new Error('Invalid or duplicate showcase: ' + site.slug);
     if (site.framework !== undefined && !['next', 'vite', 'screen', 'interactive'].includes(site.framework)) throw new Error('Unsupported framework: ' + site.slug);
-    if (site.framework === 'screen' && (site.indexable !== false || !site.repository.startsWith('xk2022/xk-app-'))) throw new Error('Screen previews must be non-indexable APP entries');
+    if (site.framework === 'screen' && (site.indexable !== false || (!site.repository.startsWith('xk2022/xk-app-') && site.repository !== 'xk2022/codex-xk-apparel-store'))) throw new Error('Screen previews must be non-indexable APP entries');
     const preservedInteractive = site.slug === 'rotaract' && site.ref === 'fd8374eca0d840d64790552a6562e05c1a8bc76b' && site.staticArtifact?.sourceSha === site.ref && site.staticArtifact?.url === 'https://github.com/xk2022/xk-website-showcase/releases/download/preserved-showcase-45564113822-v1/rotaract-static.zip';
     if (site.framework === 'interactive' && (site.slug !== 'rotaract' || site.repository !== 'xk2022/xk-app-rotaract' || site.indexable !== false || site.env?.VITE_SHOWCASE_DEMO !== 'true' || (!site.releaseGate && !preservedInteractive) || !/^[a-f\d]{40}$/i.test(site.ref))) throw new Error('Interactive preview is restricted to the pinned, gated synthetic Rotaract build or its exact preserved publication');
     for (const option of ['indexable', 'listed']) {
@@ -174,7 +174,7 @@ export function renderCards(sites) {
   return sites.filter(site => site.listed !== false).map(site => `<a class="card" href="./${site.slug}/"><img src="./${site.slug}/_showcase-preview.jpg" alt="${escape(site.name)} 首頁截圖" width="960" height="540" loading="lazy"><div class="card-body"><small>${escape(projectType(site))} · ${escape(site.category)}</small><h3>${escape(site.name)}</h3><p>${escape(site.purpose || site.category)}</p>${site.status === 'proposal' ? '<p>概念提案・非官方網站，未代表正式客戶委託。</p>' : ''}<span>${site.status === 'proposal' ? '查看概念提案' : site.framework === 'screen' ? '查看畫面預覽' : site.framework === 'interactive' ? '操作互動展示' : '瀏覽展示案例'} →</span></div></a>`).join('\n');
 }
 
-const projectType = site => (site.repository?.split('/')[1]?.split('-')[1] || 'XK').toUpperCase();
+const projectType = site => site.repository === 'xk2022/codex-xk-apparel-store' ? 'APP' : (site.repository?.split('/')[1]?.split('-')[1] || 'XK').toUpperCase();
 const typeInfo = {
   LP: ['一頁式網站', '聚焦單一行銷目標，縮短導購、洽詢與需求整理流程。'],
   BRAND: ['品牌形象網站', '建立品牌認知、產品故事與信任。'],

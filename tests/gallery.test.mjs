@@ -90,3 +90,13 @@ test('preserved interactive output accepts only the exact already-published Rota
     { staticArtifact: { ...site.staticArtifact, url: site.staticArtifact.url.replace('45564113822', '99999999999') } },
   ]) assert.throws(() => validateSites([{ ...site, ...changed }]));
 });
+
+test('legacy apparel repository is a non-indexable APP screenshot, not a separate type', () => {
+  const apparel = { ...app, slug: 'apparel-store', repository: 'xk2022/codex-xk-apparel-store' };
+  validateSites([apparel]);
+  const html = renderGallery([app, apparel]);
+  assert.match(html, /APP｜應用系統 <small class="count">2 件/);
+  assert.doesNotMatch(html, /XK｜其他網站/);
+  assert.match(buildRobots([apparel]), /Disallow: \/apparel-store\//);
+  assert.throws(() => validateSites([{ ...apparel, indexable: true }]), /non-indexable/);
+});

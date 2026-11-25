@@ -1,7 +1,7 @@
 import { createPreviewServer } from './test-transport.mjs';
 
 // The browser can read only the locally built static export, never external APIs.
-export async function capturePreview(directory, path, output, { interactive = false } = {}) {
+export async function capturePreview(directory, path, output, { interactive = false, anonymousLogistics = false } = {}) {
   const { chromium } = await import('playwright');
   const server = await createPreviewServer(directory);
   let browser;
@@ -11,6 +11,7 @@ export async function capturePreview(directory, path, output, { interactive = fa
     const denied = [];
     await page.route('**/*', route => {
       const url = new URL(route.request().url());
+      if (anonymousLogistics && url.origin === server.url && url.pathname === '/api/v1/auth/me' && route.request().method() === 'GET') return route.fulfill({ status: 401, json: { code: 'UNAUTHENTICATED', message: 'Synthetic anonymous preview', timestamp: '2026-11-25T00:00:00+08:00' } });
       if (interactive && url.origin === server.url && url.pathname === '/favicon.ico') return route.abort();
       if (interactive && (url.origin !== server.url || !url.pathname.startsWith(path) || ['fetch', 'xhr', 'websocket'].includes(route.request().resourceType()))) {
         denied.push(url.pathname);
