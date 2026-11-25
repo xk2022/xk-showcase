@@ -13,7 +13,7 @@ The complete publication is currently blocked: all 16 Git-built registrations
 in main `b20c7248034efcd890d0482f9c900f15c78e2e40` now have private source
 repositories. The existing Hub-scoped workflow token does not grant access to
 those sources. [Run 45567613884](https://github.com/xk2022/xk-website-showcase/actions/runs/45567613884)
-passed its tests but failed source resolution with HTTP 403. Changing only
+passed its tests but failed source resolution with HTTP 403. This listing's own [run 45569296640](https://github.com/xk2022/xk-website-showcase/actions/runs/45569296640) also passed all 102 tests, then failed resolution with HTTP 404 for the private Rotaract source; build and deployment were skipped. Changing only
 Yuan-Guang's card or artifact cannot unblock the other sources. No visibility,
 credential, source gate, or unrelated registration is changed here.
 
