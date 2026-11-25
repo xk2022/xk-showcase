@@ -56,7 +56,7 @@ This snapshot is being prepared for publication; a Release asset or registration
 
 ## Transport showcase
 
-`truck-transport` builds an exact pinned SHA from `xk2022/xk-corp-truck-transport`. Its release gate requires the entire source push workflow `.github/workflows/deploy-pages.yml` and its stable `Validate Hub build` job to succeed for that exact SHA. The hub provides `GITHUB_PAGES=true`, `NEXT_PUBLIC_BASE_PATH=/truck-transport` and `NEXT_PUBLIC_SITE_URL=https://showcase.xplorekaleidoscope.com` to export the five-page site with the correct assets, canonical URLs and sitemap. The inquiry preview remains in browser memory and has no submission endpoint or storage.
+`truck-transport` currently uses the exact preserved public snapshot described below. Its original Git-backed delivery policy builds an exact pinned SHA from `xk2022/xk-corp-truck-transport`. Its release gate requires the entire source push workflow `.github/workflows/deploy-pages.yml` and its stable `Validate Hub build` job to succeed for that exact SHA. The hub provides `GITHUB_PAGES=true`, `NEXT_PUBLIC_BASE_PATH=/truck-transport` and `NEXT_PUBLIC_SITE_URL=https://showcase.xplorekaleidoscope.com` to export the five-page site with the correct assets, canonical URLs and sitemap. The inquiry preview remains in browser memory and has no submission endpoint or storage.
 
 The original [independent deployment](https://xk2022.github.io/xk-corp-truck-transport/) remains available. The hub alone owns the showcase custom domain; generated exports are not committed. Deployment status and the exact built source SHA are available from the Actions run and published `manifest.json`.
 
@@ -82,7 +82,7 @@ The final command verifies the current public site, so it only passes after that
 
 ## Transport release validation and synchronization
 
-Every Hub build now runs the transport browser suite against the **actual complete Hub `dist/`**, served at `/truck-transport/`. The test runner checks out the resolved immutable source SHA, installs that source's locked dependencies and runs its `npm test`; it does not rebuild or test source `main` in place of the Hub artifact. The current source suite includes Chromium, Firefox, WebKit, mobile viewports and axe accessibility checks. CI installs the browsers with the exact source Playwright version. Reports are retained as `transport-browser-report` for 14 days.
+Every Hub build validates transport against the **actual complete Hub `dist/`**, served at `/truck-transport/`. For Git-backed input the runner checks out the resolved immutable source SHA and executes its locked source suite (Chromium, Firefox, WebKit, mobile viewports and axe), without rebuilding source `main`. For the reviewed preserved static input it verifies the public ZIP hash, compares runtime bytes, and runs fresh Hub-owned Chromium checks; its historical exact-source suite is explicitly marked `REUSED_NOT_RERUN`. Reports are retained as `transport-browser-report` for 14 days.
 
 ```sh
 # First resolve the exact approved sources and build the complete Hub.
@@ -109,3 +109,15 @@ For a deliberate rollback, **disable the synchronization workflow first**, then 
 Transport quality work, validation commands and release evidence are recorded in [transport-quality.md](doc/transport-quality.md).
 
 Transport quality release (2026-11-25, Asia/Taipei): [PR #10](https://github.com/xk2022/xk-showcase/pull/10) is merged. Source `3506dbd7b66233168523e40d6ca387f8a961f237` is published by [main run 45450135876](https://github.com/xk2022/xk-showcase/actions/runs/45450135876): 130 browser tests passed against the actual Hub output, followed by public verification of 9 sites, 16 pages and 134 assets. [Manual synchronization](https://github.com/xk2022/xk-showcase/actions/runs/45450414543) also passed as an expected no-op. Documentation-only `[skip ci]` updates do not replace this verified release.
+
+## Carpentry showcase
+
+Carpentry is a self-initiated woodworker landing-page demonstration with AI-generated space illustrations and a local-only inquiry summary. Its private source is delivered as a reviewed static snapshot pinned to source `91ade724579ed659287a27f8d77e5e1e0ed0292e`, with `/carpentry/` paths and no source-repository visibility change. Registration and a Release alone do not prove a live deployment; the guarded main build and public verification must pass. See [preparation and publication evidence](doc/carpentry-publication.md).
+
+The isolated artifact upload dispatch accepts only the fixed `shengfengyang` (default) or `carpentry` project selector; it retains the existing Hub-local permissions and does not execute source code. All normal Showcase builds continue through the complete source-resolution and Pages publication pipeline.
+
+## Preserving private-source showcases
+
+The existing Git-built sources are now private. Their last successfully published runtime output is preserved as checksum-pinned public static snapshots, retaining each exact old source SHA; this does not deploy newer private source code. The fixed previous Pages artifact, original gate evidence, bounded one-time publisher and fresh compiled-output transport checks are documented in [private-source preservation](doc/private-source-preservation.md). Private-source updates now require reviewed snapshot promotion; automatic transport source synchronization is a read-only no-op in artifact mode.
+
+The one-time preservation [run45569035046](https://github.com/xk2022/xk-website-showcase/actions/runs/45569035046) succeeded. Its [public Release](https://github.com/xk2022/xk-website-showcase/releases/tag/preserved-showcase-45564113822-v1) retains all sixteen approved prior outputs and original source-gate evidence. Current eighteen-entry registration uses public hash-pinned static inputs; newer private source commits require a separately reviewed snapshot.

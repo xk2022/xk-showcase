@@ -9,6 +9,8 @@ const repository = 'xk2022/xk-website-showcase';
 const sourceSha = 'a'.repeat(40);
 const tag = 'shengfengyang-aaaaaaa-v1';
 const zipUrl = `https://github.com/${repository}/releases/download/${tag}/shengfengyang-static.zip`;
+const carpentryTag = 'carpentry-aaaaaaa-v1';
+const carpentryZipUrl = `https://github.com/${repository}/releases/download/${carpentryTag}/carpentry-static.zip`;
 const pythonZip = String.raw`
 import io, json, sys, zipfile
 buffer = io.BytesIO()
@@ -23,6 +25,15 @@ function archive(overrides = {}) {
   Object.assign(entries, overrides);
   return execFileSync('python3', ['-c', pythonZip], { input: JSON.stringify(entries), maxBuffer: 5 * 1024 * 1024 });
 }
+function carpentryArchive(overrides = {}) {
+  const entries = {
+    'index.html': `<html><head><link rel="canonical" href="${origin}/carpentry/"></head><body><h1>木作職人</h1><script src="/carpentry/_next/static/app.js"></script></body></html>`,
+    '_next/static/app.js': '/* static browser asset, never executed by this job */',
+    'sitemap.xml': `<urlset><url><loc>${origin}/carpentry/</loc></url></urlset>`,
+    ...overrides,
+  };
+  return execFileSync('python3', ['-c', pythonZip], { input: JSON.stringify(entries), maxBuffer: 5 * 1024 * 1024 });
+}
 function environment(bytes) {
   return {
     INPUT_BLOB_SHA: createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex'),
@@ -31,8 +42,11 @@ function environment(bytes) {
   };
 }
 const response = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: { 'content-type': 'application/json' } });
-function mock(bytes, { existing, uploadStatus = 201, blobOverride = {}, publicBytes = bytes } = {}) {
+function mock(bytes, { existing, uploadStatus = 201, blobOverride = {}, publicBytes = bytes, project } = {}) {
   const env = environment(bytes);
+  if (project !== undefined) env.INPUT_PROJECT = project;
+  const expectedTag = project === 'carpentry' ? carpentryTag : tag;
+  const expectedZipUrl = project === 'carpentry' ? carpentryZipUrl : zipUrl;
   const calls = [];
   let draft;
   return {
@@ -57,14 +71,14 @@ function mock(bytes, { existing, uploadStatus = 201, blobOverride = {}, publicBy
         }
         if (options.method === 'PATCH') {
           assert.equal(calls.filter(call => call.url.hostname === 'uploads.github.com').length, 2);
-          return response({ id: 42, tag_name: tag, draft: false });
+          return response({ id: 42, tag_name: expectedTag, draft: false });
         }
       }
       if (url.hostname === 'uploads.github.com') {
         if (uploadStatus !== 201) return response({ message: 'No' }, uploadStatus);
         return response({ name: url.searchParams.get('name'), state: 'uploaded', size: options.body.length }, 201);
       }
-      if (value === zipUrl) {
+      if (value === expectedZipUrl) {
         assert.equal(options.headers?.Authorization, undefined);
         return new Response(publicBytes);
       }
@@ -72,8 +86,9 @@ function mock(bytes, { existing, uploadStatus = 201, blobOverride = {}, publicBy
     },
   };
 }
-function release(env) {
-  return { tag_name: tag, draft: false, body: JSON.stringify({ sourceRepository: 'xk2022/xk-brand-shengfengyang', sourceSha, sha256: env.INPUT_SHA256 }), assets: [{ name: 'shengfengyang-static.zip' }, { name: 'release-manifest.json' }] };
+function release(env, project = 'shengfengyang') {
+  const carpentry = project === 'carpentry';
+  return { tag_name: carpentry ? carpentryTag : tag, draft: false, body: JSON.stringify({ sourceRepository: carpentry ? 'xk2022/xk-lp-carpentry' : 'xk2022/xk-brand-shengfengyang', sourceSha, sha256: env.INPUT_SHA256 }), assets: [{ name: carpentry ? 'carpentry-static.zip' : 'shengfengyang-static.zip' }, { name: 'release-manifest.json' }] };
 }
 function writes(calls) { return calls.filter(call => ['POST', 'PATCH', 'DELETE'].includes(call.options.method)); }
 
@@ -82,6 +97,7 @@ test('validates inputs before reading a blob or making any publication request',
   for (const bad of [
     { GITHUB_REPOSITORY: 'outsider/repo' }, { INPUT_BLOB_SHA: '../blob' }, { INPUT_SHA256: 'invalid' },
     { INPUT_SOURCE_SHA: 'f'.repeat(39) }, { GITHUB_SHA: 'not-a-commit' }, { GITHUB_RUN_ID: '123/other' }, { GH_TOKEN: '' },
+    ...['unknown', '__proto__', 'xk2022/xk-lp-carpentry', 'CARPENTRY', '../carpentry', ''].map(INPUT_PROJECT => ({ INPUT_PROJECT })),
   ]) {
     let called = false;
     await assert.rejects(publishStaticArtifact({ env: { ...env, ...bad }, fetchImpl: async () => { called = true; throw new Error('Must not fetch'); } }));
@@ -103,6 +119,80 @@ test('publishes verified static ZIP and generated manifest as draft assets befor
   assert.equal(manifest.publication.workflow, '.github/workflows/deploy.yml');
   assert.match(manifest.verification, /does not query private source CI/);
   assert.equal(service.calls.some(call => call.url.pathname.includes('/xk-brand-shengfengyang/')), false);
+});
+
+test('the explicit original selector preserves the Shengfengyang release identity', async () => {
+  const service = mock(archive(), { project: 'shengfengyang' });
+  const result = await publishStaticArtifact(service);
+  assert.equal(result.tag, tag);
+  assert.equal(result.url, zipUrl);
+  const created = JSON.parse(writes(service.calls)[0].options.body);
+  assert.match(created.name, /^昇豐陽食品｜靜態提案 /);
+  assert.equal(JSON.parse(created.body).sourceRepository, 'xk2022/xk-brand-shengfengyang');
+});
+
+test('Carpentry publishes its exact asset, source and manifest using the same isolated draft flow', async () => {
+  const bytes = carpentryArchive();
+  const service = mock(bytes, { project: 'carpentry' });
+  const result = await publishStaticArtifact(service);
+  assert.deepEqual(result, { tag: carpentryTag, url: carpentryZipUrl, sourceSha, sha256: service.env.INPUT_SHA256, reused: false });
+  const mutations = writes(service.calls);
+  assert.deepEqual(mutations.map(call => `${call.url.hostname}:${call.options.method}`), ['api.github.com:POST', 'uploads.github.com:POST', 'uploads.github.com:POST', 'api.github.com:PATCH']);
+  const created = JSON.parse(mutations[0].options.body);
+  assert.equal(created.tag_name, carpentryTag);
+  assert.equal(created.name, '木作職人｜靜態展示 aaaaaaa');
+  const manifest = JSON.parse(mutations[2].options.body);
+  assert.deepEqual(manifest, JSON.parse(created.body));
+  assert.equal(manifest.sourceRepository, 'xk2022/xk-lp-carpentry');
+  assert.equal(manifest.sourceSha, sourceSha);
+  assert.equal(manifest.sha256, service.env.INPUT_SHA256);
+  assert.equal(manifest.staticOnly, true);
+  assert.equal(manifest.publication.repository, repository);
+  assert.equal(manifest.publication.commitSha, service.env.GITHUB_SHA);
+  assert.equal(manifest.publication.runId, service.env.GITHUB_RUN_ID);
+  assert.deepEqual(mutations.filter(call => call.url.hostname === 'uploads.github.com').map(call => call.url.searchParams.get('name')), ['carpentry-static.zip', 'release-manifest.json']);
+  assert.deepEqual(mutations[1].options.body, bytes);
+  assert.equal(service.calls.some(call => /xk-lp-carpentry|shengfengyang/.test(call.url.pathname)), false);
+});
+
+test('a selected project rejects the other project export before reading or writing releases', async () => {
+  for (const [project, bytes] of [['carpentry', archive()], ['shengfengyang', carpentryArchive()]]) {
+    const service = mock(bytes, { project });
+    await assert.rejects(publishStaticArtifact(service), /Invalid canonical URL/);
+    assert.equal(writes(service.calls).length, 0);
+    assert.equal(service.calls.some(call => call.url.pathname.includes('/releases')), false);
+  }
+});
+
+test('Carpentry requires the indexable export sitemap and rejects assets from another case', async () => {
+  const missingSitemap = carpentryArchive({ 'sitemap.xml': undefined });
+  const crossCase = carpentryArchive({ 'index.html': `<html><head><link rel="canonical" href="${origin}/carpentry/"></head><body><h1>木作職人</h1><script src="/carpentry/_next/static/app.js"></script><img src="/shengfengyang/image.jpg"></body></html>` });
+  for (const bytes of [missingSitemap, crossCase]) {
+    const service = mock(bytes, { project: 'carpentry' });
+    await assert.rejects(publishStaticArtifact(service));
+    assert.equal(writes(service.calls).length, 0);
+  }
+});
+
+test('a matching Carpentry public release is revalidated and reused without writes', async () => {
+  const bytes = carpentryArchive();
+  const env = environment(bytes);
+  const service = mock(bytes, { project: 'carpentry', existing: release(env, 'carpentry') });
+  const result = await publishStaticArtifact(service);
+  assert.equal(result.reused, true);
+  assert.equal(result.url, carpentryZipUrl);
+  assert.equal(writes(service.calls).length, 0);
+  assert.equal(service.calls.filter(call => call.url.hostname === 'github.com').length, 1);
+});
+
+test('Carpentry cannot reuse an existing release whose manifest names another source', async () => {
+  const bytes = carpentryArchive();
+  const env = environment(bytes);
+  const existing = release(env, 'carpentry');
+  existing.body = release(env).body;
+  const service = mock(bytes, { project: 'carpentry', existing });
+  await assert.rejects(publishStaticArtifact(service), /Existing static release differs/);
+  assert.equal(writes(service.calls).length, 0);
 });
 
 test('invalid blob metadata, bytes or SHA256 stop before release writes', async () => {

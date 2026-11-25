@@ -6,6 +6,19 @@ on:
     branches: [main]
   workflow_dispatch:
     inputs:
+      preserve_publication:
+        description: 'Preserve the fixed last verified public Showcase output as static snapshots; skips Pages'
+        required: false
+        type: boolean
+        default: false
+      static_artifact_project:
+        description: 'Reviewed private-source project to publish (used only with a blob)'
+        required: false
+        type: choice
+        options:
+          - shengfengyang
+          - carpentry
+        default: shengfengyang
       static_artifact_blob:
         description: 'Optional reviewed static ZIP Git blob SHA; skips website publication'
         required: false
@@ -32,8 +45,34 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  preserve-published-snapshots:
+    if: github.event_name == 'workflow_dispatch' && inputs.preserve_publication
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24'
+      - name: Preserve only the pinned previously published static snapshots
+        run: node scripts/preserve-published-snapshots.mjs
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Retain candidate pinned registrations
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: preserved-registrations
+          path: .release/preserved-registrations.json
+          include-hidden-files: true
+          retention-days: 14
+
   publish-static-artifact:
-    if: github.event_name == 'workflow_dispatch' && inputs.static_artifact_blob != ''
+    if: github.event_name == 'workflow_dispatch' && inputs.static_artifact_blob != '' && !inputs.preserve_publication
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -49,12 +88,13 @@ jobs:
         run: node scripts/publish-static-artifact.mjs
         env:
           GH_TOKEN: ${{ github.token }}
+          INPUT_PROJECT: ${{ inputs.static_artifact_project }}
           INPUT_BLOB_SHA: ${{ inputs.static_artifact_blob }}
           INPUT_SHA256: ${{ inputs.static_artifact_sha256 }}
           INPUT_SOURCE_SHA: ${{ inputs.static_artifact_source }}
 
   resolve:
-    if: github.event_name != 'workflow_dispatch' || inputs.static_artifact_blob == ''
+    if: github.event_name != 'workflow_dispatch' || (inputs.static_artifact_blob == '' && !inputs.preserve_publication)
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -118,7 +158,7 @@ jobs:
           path: dist
 
   deploy:
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && (github.event_name != 'workflow_dispatch' || inputs.static_artifact_blob == '')
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && (github.event_name != 'workflow_dispatch' || (inputs.static_artifact_blob == '' && !inputs.preserve_publication))
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 15

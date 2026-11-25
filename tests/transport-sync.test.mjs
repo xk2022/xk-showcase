@@ -100,6 +100,61 @@ test('an already pinned successful push is a read-only no-op, independent of ski
   assert(mock.calls.every(({ path }) => path !== `repos/${transportRepository}/commits/main`));
 });
 
+const staticTransport = () => {
+  const { releaseGate: omitted, ...registration } = transport;
+  return { ...registration, staticArtifact: {
+    url: 'https://github.com/xk2022/xk-website-showcase/releases/download/preserved-v1/truck-transport-static.zip',
+    sha256: '1'.repeat(64), sourceSha: oldSha,
+  } };
+};
+
+test('a reviewed static transport snapshot skips all metadata reads and never prepares a publishable plan', async () => {
+  const registry = JSON.stringify([...sites.slice(0, -1), staticTransport()]);
+  const calls = [];
+  const request = async (...args) => { calls.push(args); throw new Error('Private metadata must not be requested'); };
+  const result = await inspectTransportSync({ ...input, originalRegistry: registry }, request);
+  assert.deepEqual(result, { changed: false, reason: 'Transport uses a reviewed static artifact; automatic source synchronization is disabled' });
+  assert.equal(result.plan, undefined);
+  assert.deepEqual(calls, []);
+  await assert.rejects(publishTransportSync(result.plan, request), /Invalid transport sync candidate/);
+  assert.deepEqual(calls, []);
+});
+
+test('malformed, untrusted or ambiguous static transport registrations fail before requesting metadata', async () => {
+  const changes = [
+    entry => { entry.repository = 'xk2022/other-private-source'; },
+    entry => { entry.repository = 'outsider/private-source'; },
+    entry => { entry.ref = 'main'; },
+    entry => { entry.staticArtifact.sourceSha = sourceSha; },
+    entry => { entry.staticArtifact.url = 'https://example.com/truck-transport.zip'; },
+    entry => { entry.staticArtifact.sha256 = 'invalid'; },
+    entry => { entry.staticArtifact = null; },
+    entry => { entry.releaseGate = transportGate; },
+  ];
+  for (const change of changes) {
+    const entry = staticTransport();
+    change(entry);
+    const calls = [];
+    await assert.rejects(inspectTransportSync({ ...input, originalRegistry: JSON.stringify([entry]) }, async (...args) => { calls.push(args); }));
+    assert.deepEqual(calls, []);
+  }
+  const calls = [];
+  await assert.rejects(inspectTransportSync({ ...input, originalRegistry: JSON.stringify([staticTransport(), transport]) }, async (...args) => { calls.push(args); }), /duplicate showcase/);
+  assert.deepEqual(calls, []);
+});
+
+test('a forged static transport candidate cannot enter automatic publication or mutate the registry', async () => {
+  const plan = await candidate();
+  const before = staticTransport();
+  const after = { ...before, ref: sourceSha, staticArtifact: { ...before.staticArtifact, sourceSha } };
+  plan.originalRegistry = JSON.stringify([...sites.slice(0, -1), before]);
+  plan.candidateRegistry = JSON.stringify([...sites.slice(0, -1), after]);
+  const calls = [];
+  await assert.rejects(publishTransportSync(plan, async (...args) => { calls.push(args); }), /trusted repository/);
+  assert.deepEqual(calls, []);
+  assert.throws(() => transportRegistration([{ ...before, releaseGate: transportGate }]), /trusted repository/);
+});
+
 test('inspection skips failed source releases and old Hub main without preparing a publishable candidate', async () => {
   for (const state of [
     { successful: [] },
