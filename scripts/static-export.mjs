@@ -9,8 +9,9 @@ export function validateSites(sites) {
   const seen = new Set();
   for (const site of sites) {
     if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(site.slug) || seen.has(site.slug) || !/^xk2022\/[a-zA-Z0-9_-]+$/.test(site.repository)) throw new Error('Invalid or duplicate showcase: ' + site.slug);
-    if (site.framework !== undefined && !['next', 'vite', 'screen'].includes(site.framework)) throw new Error('Unsupported framework: ' + site.slug);
+    if (site.framework !== undefined && !['next', 'vite', 'screen', 'interactive'].includes(site.framework)) throw new Error('Unsupported framework: ' + site.slug);
     if (site.framework === 'screen' && (site.indexable !== false || !site.repository.startsWith('xk2022/xk-app-'))) throw new Error('Screen previews must be non-indexable APP entries');
+    if (site.framework === 'interactive' && (site.slug !== 'rotaract' || site.repository !== 'xk2022/xk-app-rotaract' || site.indexable !== false || site.env?.VITE_SHOWCASE_DEMO !== 'true' || !site.releaseGate || !/^[a-f\d]{40}$/i.test(site.ref))) throw new Error('Interactive preview is restricted to the pinned, gated synthetic Rotaract build');
     for (const option of ['indexable', 'listed']) {
       if (site[option] !== undefined && typeof site[option] !== 'boolean') throw new Error(`Invalid ${option}: ${site.slug}`);
     }
@@ -92,12 +93,18 @@ export async function validateExport(directory, site) {
   const html = await readFile(join(directory, 'index.html'), 'utf8');
   const canonical = [...html.matchAll(/<link\b[^>]*>/gi)].map(match => attributes(match[0])).filter(tag => tag.rel?.toLowerCase() === 'canonical');
   if (canonical.length !== 1 || canonical[0].href !== `${origin}/${site.slug}/`) throw new Error(`Invalid canonical URL: ${site.slug}`);
-  if (site.framework === 'vite') {
+  if (site.framework === 'vite' || site.framework === 'interactive') {
     const tags = [...html.matchAll(/<(?:script|link)\b[^>]*>/g)].map(match => attributes(match[0]));
     const assetPrefix = `/${site.slug}/assets/`;
     if (!tags.some(tag => tag.type === 'module' && tag.src?.startsWith(assetPrefix) && /\.js(?:\?|$)/.test(tag.src)) || !tags.some(tag => tag.rel === 'stylesheet' && tag.href?.startsWith(assetPrefix) && /\.css(?:\?|$)/.test(tag.href))) throw new Error(`Invalid Vite assets: ${site.slug}`);
-    await access(join(directory, '404.html'));
-    await access(join(directory, 'en/404.html'));
+    if (site.framework === 'vite') {
+      await access(join(directory, '404.html'));
+      await access(join(directory, 'en/404.html'));
+    } else {
+      const policy = [...html.matchAll(/<meta\b[^>]*>/gi)].map(match => attributes(match[0])).find(tag => tag['http-equiv']?.toLowerCase() === 'content-security-policy');
+      if (!policy?.content?.split(';').map(value => value.trim()).includes("connect-src 'none'")) throw new Error('Interactive preview requires a network-denying CSP');
+      if (tags.some(tag => tag.src && !tag.src.startsWith(assetPrefix) || tag.rel === 'stylesheet' && !tag.href?.startsWith(assetPrefix))) throw new Error('Interactive preview resources must be local');
+    }
   } else if (site.framework !== 'screen' && !html.includes(`/${site.slug}/_next/static/`)) {
     throw new Error(`Invalid Next.js base path: ${site.slug}`);
   }
@@ -143,7 +150,7 @@ export function buildRobots(sites) {
 }
 
 export function renderCards(sites) {
-  return sites.filter(site => site.listed !== false).map(site => `<a class="card" href="./${site.slug}/"><img src="./${site.slug}/_showcase-preview.jpg" alt="${escape(site.name)} 首頁截圖" width="960" height="540" loading="lazy"><div class="card-body"><small>${escape(projectType(site))} · ${escape(site.category)}</small><h3>${escape(site.name)}</h3><p>${escape(site.purpose || site.category)}</p><span>${site.framework === 'screen' ? '查看畫面預覽' : '瀏覽展示案例'} →</span></div></a>`).join('\n');
+  return sites.filter(site => site.listed !== false).map(site => `<a class="card" href="./${site.slug}/"><img src="./${site.slug}/_showcase-preview.jpg" alt="${escape(site.name)} 首頁截圖" width="960" height="540" loading="lazy"><div class="card-body"><small>${escape(projectType(site))} · ${escape(site.category)}</small><h3>${escape(site.name)}</h3><p>${escape(site.purpose || site.category)}</p><span>${site.framework === 'screen' ? '查看畫面預覽' : site.framework === 'interactive' ? '操作互動展示' : '瀏覽展示案例'} →</span></div></a>`).join('\n');
 }
 
 const projectType = site => (site.repository?.split('/')[1]?.split('-')[1] || 'XK').toUpperCase();

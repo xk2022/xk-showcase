@@ -41,3 +41,10 @@ test('APP screenshot-only export has no sitemap and requires its local screensho
     await assert.rejects(validateExport(dir, app), /must not export sitemap/);
   } finally { await rm(dir, { recursive: true, force: true }); }
 });
+
+test('interactive mode is limited to a gated synthetic Rotaract release', () => {
+  const demo = { ...app, slug: 'rotaract', repository: 'xk2022/xk-app-rotaract', ref: 'a'.repeat(40), framework: 'interactive', env: { VITE_SHOWCASE_DEMO: 'true' }, releaseGate: { workflow: '.github/workflows/ci.yml', job: 'frontend' } };
+  validateSites([demo]);
+  assert.match(renderCards([demo]), /操作互動展示/);
+  for (const bad of [{ ...demo, ref: 'main' }, { ...demo, env: {} }, { ...demo, slug: 'another-app' }, { ...demo, indexable: true }, { ...demo, releaseGate: undefined }]) assert.throws(() => validateSites([bad]), /Interactive preview/);
+});
