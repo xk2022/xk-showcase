@@ -9,7 +9,7 @@ export async function githubRequest(path, { token = process.env.GH_TOKEN || proc
   const headers = { Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
   if (token) headers.Authorization = `Bearer ${token}`;
   let response = await fetchImpl(`https://api.github.com/${path}`, { headers, redirect: 'error', signal: AbortSignal.timeout(15000) });
-  // All registry sources are public. A hub-scoped GITHUB_TOKEN may not have
+  // Git-built registry sources are public. A hub-scoped GITHUB_TOKEN may not have
   // cross-repository checks access (403 or concealed 404); anonymous public
   // reads use the same API and still fail closed if the resource is private/missing.
   if ([403, 404].includes(response.status) && token) {
@@ -33,11 +33,14 @@ export async function resolveSources(sites, request = githubRequest) {
   validateSites(sites);
   const resolved = await Promise.all(sites.map(async site => {
     if (typeof site.ref !== 'string' || !site.ref) throw new Error(`Missing source ref: ${site.slug}`);
+    // The reviewed registry pins a public static archive and its private source SHA.
+    // No private repository metadata or source execution is needed in artifact mode.
+    if (site.staticArtifact) return { ...site, staticArtifact: { ...site.staticArtifact }, sha: site.staticArtifact.sourceSha };
     const commit = await request(`repos/${site.repository}/commits/${encodeURIComponent(site.ref)}`);
     if (!isSha(commit.sha)) throw new Error(`Invalid resolved commit: ${site.slug}`);
     return { ...site, sha: commit.sha };
   }));
-  for (const site of resolved.filter(site => site.repository === brandRepository)) {
+  for (const site of resolved.filter(site => !site.staticArtifact && site.repository === brandRepository)) {
     const data = await request(`repos/${site.repository}/commits/${site.sha}/check-runs?filter=latest&per_page=100`);
     assertSuccessfulBrandChecks(data.check_runs || [], site.sha);
   }
