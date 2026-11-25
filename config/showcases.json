@@ -39,7 +39,7 @@
     "name": "宏家燕窩",
     "category": "品牌送禮型",
     "repository": "xk2022/xk-lp-hongjia-birdnest",
-    "ref": "abbba375911bcf924f0d0feba80515e3710079ad",
+    "ref": "2997f1f0dba5b57ca413cf529aa141b2137a2d98",
     "env": {
       "GITHUB_PAGES_BUILD": "1",
       "NEXT_PUBLIC_SHOWCASE_BASE_PATH": "/hongjia-birdnest"
@@ -47,9 +47,9 @@
     "brand": "宏家燕窩",
     "purpose": "依送禮情境整理個人與企業贈禮需求。",
     "staticArtifact": {
-      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/preserved-showcase-45564113822-v1/hongjia-birdnest-static.zip",
-      "sha256": "ff20e2359c9f49d42638312c5478c8f148715140707c7f6d43045426700f03ec",
-      "sourceSha": "abbba375911bcf924f0d0feba80515e3710079ad"
+      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/hongjia-birdnest-2997f1f-v1/hongjia-birdnest-static.zip",
+      "sha256": "5c91fc3726d94a6ed59c1ca11e78e362c9675b1c3e9e6c2fe73a88e307ed4b5e",
+      "sourceSha": "2997f1f0dba5b57ca413cf529aa141b2137a2d98"
     }
   },
   {
