@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { assertManifest, verifyPublication, verifyWithRetries } from '../scripts/verify-publication.mjs';
+import { shengfengyangRoutes } from '../scripts/static-export.mjs';
 
 const origin = 'https://showcase.example.test';
 const sha = 'a'.repeat(40);
@@ -215,5 +216,70 @@ test('transport social image and icon cannot return a successful non-image respo
     const data = fixture();
     data.put(asset, '{"not":"an image"}', 'application/json');
     await assert.rejects(verify(data), /Incorrect transport asset content type/);
+  }
+});
+
+
+// A separate non-indexable brand fixture keeps legacy publication counts unchanged.
+function shengfengyangFixture() {
+  const site = { slug: 'shengfengyang', repository: 'xk2022/xk-brand-shengfengyang', ref: sha, sha, indexable: false, listed: false };
+  const files = new Map();
+  const put = (path, body, type = 'text/html') => files.set(path, { body, type });
+  put('/manifest.json', JSON.stringify([{ slug: site.slug, repository: site.repository, sha }]), 'application/json');
+  put('/', '<h1>Showcase Hub</h1>');
+  put('/robots.txt', 'User-agent: *\nAllow: /\nDisallow: /shengfengyang/\n', 'text/plain');
+  for (const route of shengfengyangRoutes) put(`/shengfengyang/${route}`, page(site.slug, route, '<meta name="robots" content="noindex,nofollow">'));
+  put('/shengfengyang/assets/site.css', '@font-face{src:url("font.woff2")}', 'text/css');
+  put('/shengfengyang/assets/site.js', '/* javascript */', 'text/javascript');
+  put('/shengfengyang/assets/photo.webp', 'image bytes', 'image/webp');
+  put('/shengfengyang/assets/icon.svg', '<svg/>', 'image/svg+xml');
+  put('/shengfengyang/assets/font.woff2', 'font bytes', 'font/woff2');
+  const deepRoute = '/shengfengyang/products/swordfish-floss/';
+  put(deepRoute, page(site.slug, 'products/swordfish-floss/', '<meta name="robots" content="noindex,nofollow">') + '<img src="/shengfengyang/assets/detail-only.webp">');
+  put('/shengfengyang/assets/detail-only.webp', 'detail image bytes', 'image/webp');
+  const requests = [];
+  const fetchImpl = async input => {
+    const url = new URL(input);
+    requests.push(url.pathname);
+    const file = files.get(url.pathname);
+    return new Response(file?.body || 'Not found', { status: file ? 200 : 404, headers: { 'content-type': file?.type || 'text/plain' } });
+  };
+  return { files, put, requests, deepRoute, verify: () => verifyPublication({ sites: [site], origin, fetchImpl }) };
+}
+
+test('Shengfengyang proposal verifies all 20 explicit routes without a sitemap or gallery card', async () => {
+  const data = shengfengyangFixture();
+  const result = await data.verify();
+  assert.equal(result.sites, 1);
+  assert.equal(result.pages, 20);
+  assert.equal(result.assets, 6);
+  for (const route of shengfengyangRoutes) assert(data.requests.includes(`/shengfengyang/${route}`), `Missing explicit publication request: ${route}`);
+  assert(data.requests.includes('/shengfengyang/assets/font.woff2'));
+  assert(data.requests.includes('/shengfengyang/assets/detail-only.webp'));
+  assert(data.requests.includes('/shengfengyang/sitemap.xml'));
+});
+
+test('Shengfengyang missing deep product or deep-only asset fails despite a healthy homepage', async () => {
+  const missingPage = shengfengyangFixture();
+  missingPage.files.delete(missingPage.deepRoute);
+  await assert.rejects(missingPage.verify(), /HTTP 404.*products\/swordfish-floss/);
+  const missingAsset = shengfengyangFixture();
+  missingAsset.files.delete('/shengfengyang/assets/detail-only.webp');
+  await assert.rejects(missingAsset.verify(), /HTTP 404.*detail-only/);
+});
+
+test('Shengfengyang nested pages require their own canonical, noindex and one nonempty H1', async () => {
+  const route = 'products/swordfish-floss/';
+  const correct = page('shengfengyang', route, '<meta name="robots" content="noindex,nofollow">');
+  for (const [html, error] of [
+    [correct.replace(`${origin}/shengfengyang/${route}`, `${origin}/shengfengyang/`), /Incorrect canonical.*swordfish-floss/],
+    [correct.replace('noindex,nofollow', 'index,follow'), /Missing noindex,nofollow.*swordfish-floss/],
+    [correct + '<h1>Duplicate</h1>', /one nonempty H1.*swordfish-floss/],
+    [correct.replace('<h1>Example</h1>', ''), /one nonempty H1.*swordfish-floss/],
+    [correct.replace('<h1>Example</h1>', '<h1><span> </span></h1>'), /one nonempty H1.*swordfish-floss/],
+  ]) {
+    const data = shengfengyangFixture();
+    data.put(data.deepRoute, html);
+    await assert.rejects(data.verify(), error);
   }
 });

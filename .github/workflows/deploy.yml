@@ -5,6 +5,22 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      static_artifact_blob:
+        description: 'Optional reviewed static ZIP Git blob SHA; skips website publication'
+        required: false
+        type: string
+        default: ''
+      static_artifact_sha256:
+        description: 'Expected SHA-256 of the reviewed static ZIP'
+        required: false
+        type: string
+        default: ''
+      static_artifact_source:
+        description: 'Exact private source commit represented by the static ZIP'
+        required: false
+        type: string
+        default: ''
 
 permissions:
   contents: read
@@ -16,7 +32,29 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  publish-static-artifact:
+    if: github.event_name == 'workflow_dispatch' && inputs.static_artifact_blob != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24'
+      - name: Validate reviewed static bytes and publish a pinned release asset
+        run: node scripts/publish-static-artifact.mjs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INPUT_BLOB_SHA: ${{ inputs.static_artifact_blob }}
+          INPUT_SHA256: ${{ inputs.static_artifact_sha256 }}
+          INPUT_SOURCE_SHA: ${{ inputs.static_artifact_source }}
+
   resolve:
+    if: github.event_name != 'workflow_dispatch' || inputs.static_artifact_blob == ''
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -80,7 +118,7 @@ jobs:
           path: dist
 
   deploy:
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && (github.event_name != 'workflow_dispatch' || inputs.static_artifact_blob == '')
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 15

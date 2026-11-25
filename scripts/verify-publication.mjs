@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
-import { origin as defaultOrigin, validateSites, transportRoutes, assertTransportPage, assertTransportSitemap } from './static-export.mjs';
+import { origin as defaultOrigin, validateSites, transportRoutes, shengfengyangRoutes, assertTransportPage, assertTransportSitemap } from './static-export.mjs';
 
 const shaPattern = /^[a-f0-9]{40}$/;
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -160,11 +160,18 @@ export async function verifyPublication({ sites, manifest = sites.map(({ slug, r
     if (site.slug === 'truck-transport') {
       for (const route of transportRoutes) pages.add(`${home}${route}`);
     }
+    if (site.slug === 'shengfengyang') {
+      for (const route of shengfengyangRoutes) pages.add(`${home}${route}`);
+    }
     for (const url of pages) {
       const html = await (await request(url)).text();
       assertCanonical(html, url);
       // Vite proposals may render their heading in JavaScript; Brand pages are static HTML.
       if (site.slug === 'hongjia-brand' && [...html.matchAll(/<h1\b/gi)].length !== 1) throw new Error(`Brand page must have one H1: ${url}`);
+      if (site.slug === 'shengfengyang') {
+        const headings = [...html.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)];
+        if (headings.length !== 1 || !headings[0][1].replace(/<[^>]*>/g, '').trim()) throw new Error(`Shengfengyang page must have one nonempty H1: ${url}`);
+      }
       if (site.indexable === false) assertNoindex(html, url);
       if (site.slug === 'hongjia-brand') await verifyAsset(assertBrandSocial(html, base), url, site);
       if (site.slug === 'truck-transport') {

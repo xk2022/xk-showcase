@@ -182,3 +182,35 @@ test('transport local export rejects duplicate sitemap entries and changed neste
     await assert.rejects(validateExport(directory, site), /Transport sitemap/);
   });
 });
+
+test('connection hints may name an origin while real root resources still fail isolation', async () => {
+  await usingFixture(async directory => {
+    await validateLocalReferences('<link rel="preconnect" href="/" crossorigin=""><link href="/" rel="dns-prefetch">', directory, proposal.slug);
+    for (const tag of ['<a href="/">Home</a>', '<link rel="stylesheet" href="/">', '<link rel="preload" href="/">', '<img src="/">', '<script src="/"></script>']) {
+      await assert.rejects(validateLocalReferences(tag, directory, proposal.slug), /Asset escapes case path/);
+    }
+  });
+});
+
+test('Shengfengyang requires every brand and product detail route with its own canonical and H1', async () => {
+  const { shengfengyangRoutes } = await import('../scripts/static-export.mjs');
+  const site = { ...legacy, slug: 'shengfengyang', indexable: false, listed: false };
+  const directory = await mkdtemp(join(tmpdir(), 'shengfengyang-static-'));
+  const page = route => `<html><head><meta name="robots" content="noindex,nofollow"><link rel="canonical" href="${origin}/shengfengyang/${route}"><link rel="preconnect" href="/"></head><body><h1>食品提案</h1><script src="/shengfengyang/_next/static/app.js"></script></body></html>`;
+  try {
+    await mkdir(join(directory, '_next/static'), { recursive: true });
+    await writeFile(join(directory, '_next/static/app.js'), '/* script */');
+    for (const route of shengfengyangRoutes) {
+      await mkdir(join(directory, route), { recursive: true });
+      await writeFile(join(directory, route, 'index.html'), page(route));
+    }
+    await validateExport(directory, site);
+    const deep = 'products/swordfish-floss/';
+    await rm(join(directory, deep, 'index.html'));
+    await assert.rejects(validateExport(directory, site), /ENOENT/);
+    await writeFile(join(directory, deep, 'index.html'), page(''));
+    await assert.rejects(validateExport(directory, site), /Shengfengyang canonical/);
+    await writeFile(join(directory, deep, 'index.html'), page(deep).replace('<h1>食品提案</h1>', ''));
+    await assert.rejects(validateExport(directory, site), /one nonempty H1/);
+  } finally { await rm(directory, { recursive: true, force: true }); }
+});

@@ -33,6 +33,17 @@ export function sourceEnvironment(environment = process.env, configured = {}) {
 
 export function validateReleaseConfiguration(site) {
   if (typeof site.ref !== 'string' || !site.ref || site.ref.startsWith('-') || !/^[a-zA-Z\d_./-]+$/.test(site.ref) || site.ref.includes('..')) throw new Error(`Invalid source ref: ${site.slug}`);
+  if (site.staticArtifact !== undefined) {
+    const artifact = site.staticArtifact;
+    const archiveURL = /^https:\/\/github\.com\/xk2022\/xk-website-showcase\/releases\/download\/[a-zA-Z\d][a-zA-Z\d._-]*\/[a-zA-Z\d][a-zA-Z\d._-]*\.zip$/;
+    if (!artifact || typeof artifact !== 'object' || Array.isArray(artifact)
+      || Object.keys(artifact).sort().join(',') !== 'sha256,sourceSha,url'
+      || typeof artifact.url !== 'string' || !archiveURL.test(artifact.url) || artifact.url.includes('..')
+      || typeof artifact.sha256 !== 'string' || !/^[a-f\d]{64}$/i.test(artifact.sha256)
+      || typeof artifact.sourceSha !== 'string' || !/^[a-f\d]{40}$/.test(artifact.sourceSha)
+      || site.ref !== artifact.sourceSha) throw new Error(`Invalid pinned static artifact: ${site.slug}`);
+    if (site.releaseGate !== undefined) throw new Error(`Static artifact cannot use a source release gate: ${site.slug}`);
+  }
   if (site.releaseGate === undefined) return;
   if (!site.releaseGate || !/^\.github\/workflows\/[a-zA-Z\d_-]+\.ya?ml$/.test(site.releaseGate.workflow) || typeof site.releaseGate.job !== 'string' || !site.releaseGate.job.trim()) throw new Error(`Invalid release gate: ${site.slug}`);
 }
