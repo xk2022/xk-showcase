@@ -39,7 +39,7 @@ A registration selects exactly one input path: source build, optionally with `re
 
 The resolver copies this reviewed identity into the frozen resolved plan and sets the resolved source SHA to `sourceSha`. It makes no commit or CI requests to the private source API. The builder checks that the plan still matches the reviewed registration before consuming it. The published manifest records the source SHA and the static-artifact identity.
 
-The URL and hash above identify the approved Shengfengyang snapshot. It is included in the eighteen-entry publication verified by [Pages run45569747028](https://github.com/xk2022/xk-website-showcase/actions/runs/45569747028). The other sixteen former Git inputs now use the existing [preservation Release](private-source-preservation.md); Carpentry retains its separately reviewed export. This does not make an unverified later registry/listing change live.
+The URL and hash above are the first approved Shengfengyang snapshot, retained here as a schema/history example. The current registry includes the later [arrow update](shengfengyang-arrow-publication.md); always use its reviewed current tuple for publication. It is included in the eighteen-entry publication verified by [Pages run45569747028](https://github.com/xk2022/xk-website-showcase/actions/runs/45569747028). The other sixteen former Git inputs now use the existing [preservation Release](private-source-preservation.md); Carpentry retains its separately reviewed export. This does not make an unverified later registry/listing change live.
 
 ## Archive contents and preparation evidence
 
