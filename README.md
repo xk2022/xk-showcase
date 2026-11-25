@@ -2,6 +2,10 @@
 
 Central static publishing for independently maintained showcase repositories.
 
+The gallery captures each listed site's real built homepage using Chromium during CI. APP entries are offline screenshot-only previews: their frontend runs only in an isolated local browser, with API and external network requests blocked. No backend, admin app, or production data is published. Empty repositories are tracked as pending, not displayed as finished work.
+
+To build locally, run `npm ci` and `npx playwright install chromium` before the existing build command.
+
 The hub supports Next.js static exports and explicitly configured Vite exports. Concept proposals can be excluded from the showcase cards and search indexing while retaining their proposal notices; publication does not establish a client relationship or an official company website.
 
 - [宏能興業](https://showcase.xplorekaleidoscope.com/honest/)

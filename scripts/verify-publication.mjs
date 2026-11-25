@@ -103,6 +103,7 @@ export async function verifyPublication({ sites, manifest = sites.map(({ slug, r
   assertManifest(published, manifest);
   const index = await (await request('/')).text();
   const hubLinks = new Set(tags(index, 'a').map(tag => tag.href).filter(Boolean).map(href => new URL(href, `${base}/`).href));
+  const galleryImages = new Set(tags(index, 'img').map(tag => tag.src).filter(Boolean).map(src => new URL(src, `${base}/`).href));
   const robots = await (await request('/robots.txt')).text();
   const robotLines = new Set(robots.split(/\r?\n/).map(line => line.trim()));
 
@@ -133,6 +134,7 @@ export async function verifyPublication({ sites, manifest = sites.map(({ slug, r
   for (const site of sites) {
     const home = `${base}/${site.slug}/`;
     if (hubLinks.has(home) !== (site.listed !== false)) throw new Error(`Incorrect showcase card visibility: ${site.slug}`);
+    if (galleryImages.has(`${home}_showcase-preview.jpg`)) await verifyAsset(`${home}_showcase-preview.jpg`, home, site);
     const pages = new Set([home]);
     if (site.indexable === false) {
       if (!robotLines.has(`Disallow: /${site.slug}/`) || robotLines.has(`Sitemap: ${home}sitemap.xml`)) throw new Error(`Incorrect proposal robots policy: ${site.slug}`);

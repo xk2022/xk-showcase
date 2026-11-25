@@ -3,7 +3,7 @@ import { verifyRelease, validateReleaseEvidence } from './release-gate.mjs';
 
 export const transportRepository = 'xk2022/xk-corp-truck-transport';
 export const transportGate = { workflow: '.github/workflows/deploy-pages.yml', job: 'Validate Hub build' };
-export const hubRepository = 'xk2022/xk-showcase';
+export const hubRepository = 'xk2022/xk-website-showcase';
 const registryPath = 'config/showcases.json';
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 const formatRegistry = sites => `[\n${sites.map(site => `  ${JSON.stringify(site)}`).join(',\n')}\n]\n`;

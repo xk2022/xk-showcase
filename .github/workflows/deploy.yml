@@ -58,6 +58,8 @@ jobs:
         with:
           name: resolved-sources
           path: .release
+      - name: Install screenshot browser
+        run: npm ci && npx playwright install --with-deps chromium
       - name: Build detached exact source commits without API credentials
         run: node scripts/build-showcases.mjs .release/resolved-sites.json
       - name: Run exact transport source browser suite against Hub output
