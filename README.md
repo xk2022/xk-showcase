@@ -2,6 +2,10 @@
 
 Central static publishing for independently maintained showcase repositories.
 
+**Public Showcase:** [https://showcase.xplorekaleidoscope.com/](https://showcase.xplorekaleidoscope.com/) · **Source registry:** [config/showcases.json](config/showcases.json)
+
+Current publication is managed here; source repositories retain CI and do not need independent Pages for portfolio display. Git-built inputs must remain publicly readable until their reviewed static-artifact migration has been validated. A source changed to private before migration blocks the next full build; it does not itself change the last published Hub artifact. Do not claim a new release until source resolution, build and live verification pass.
+
 The gallery captures each listed site's real built homepage using Chromium during CI. APP entries default to offline screenshot-only previews. Rotaract is a narrowly scoped exception: its pinned, CI-gated interactive build uses synthetic data only, disables backend connections using CSP, and is browser-verified with network requests blocked. No backend or production data is published. Empty repositories are tracked as pending, not displayed as finished work.
 
 To build locally, run `npm ci` and `npx playwright install chromium` before the existing build command.
