@@ -22,6 +22,7 @@ The hub supports Next.js static exports and explicitly configured Vite exports. 
 - [千剛實業有限公司](https://showcase.xplorekaleidoscope.com/qiangang-windows/)
 - [序程運輸](https://showcase.xplorekaleidoscope.com/truck-transport/)
 - [木作職人](https://showcase.xplorekaleidoscope.com/carpentry/)
+- [蕋咖啡 Rui Café｜非官方品牌網站提案](https://showcase.xplorekaleidoscope.com/rui-cafe/)
 
 ## Build
 
@@ -48,7 +49,7 @@ Yuan-Guang reuses its existing reviewed [preserved snapshot](doc/yuan-guang-publ
 
 ## Private-source static snapshots
 
-蕋咖啡 Rui Café is prepared as a listed, non-indexable brand proposal at `/rui-cafe/`, pinned to merged source `e32cc6d7bf330c1a487e9dbf2983443cffebdb70` and a reviewed public static Release. The proposal retains visible AI illustration and unofficial-site notices. Local and public release checks require all seven routes and their individual canonical URLs and H1s. See [Rui Café preparation and publication](doc/rui-cafe-publication.md) for source CI, ZIP identity, upload and release evidence. A successful upload alone does not establish a live site.
+[蕋咖啡 Rui Café is live at `/rui-cafe/`](https://showcase.xplorekaleidoscope.com/rui-cafe/) as a listed, non-indexable brand proposal, pinned to merged source `e32cc6d7bf330c1a487e9dbf2983443cffebdb70` and reviewed ZIP SHA-256 `638ae61cea47df4c5b920e0f3fd17d9c462a6b0d48767375ff8faecffcb3fe39`. [PR #25](https://github.com/xk2022/xk-website-showcase/pull/25) merged as `406357a9f3f3f30b83ddd7e89630f7e1ec06a6d6`; normal [Pages run 45729426575](https://github.com/xk2022/xk-website-showcase/actions/runs/45729426575) passed the complete build, guarded deployment and public HTTPS verification. The proposal retains visible AI illustration and unofficial-site notices. Local checks passed 138 tests and verified 22 sites, 69 pages and 273 assets across 367 requests; all seven Rui routes require their own canonical URLs and H1s. Source CI, PR CI, isolated upload and publication evidence are recorded in [Rui Café preparation and publication](doc/rui-cafe-publication.md). Existing source and runtime pins remain unchanged.
 
 All eighteen current registrations use `staticArtifact: { url, sha256, sourceSha }` rather than source `releaseGate` fields. Shengfengyang and Carpentry retain their individually reviewed exports; the other sixteen retain the exact prior public runtime output through the preservation Release. The Hub consumes only the reviewed public ZIP of deployable files; source files, Git history, environment files, server output and source maps are excluded. This does not grant permission to change repository visibility.
 
