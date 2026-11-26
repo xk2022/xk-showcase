@@ -95,7 +95,7 @@ The bootstrap job checks out the reviewed Hub branch without persisted Git crede
 
 The helper also validates the GitHub-provided `GITHUB_REPOSITORY` against the fixed Hub repository, plus `GITHUB_SHA` and `GITHUB_RUN_ID`. Its JSON result contains `tag`, `url`, `sha256`, `sourceSha` and `reused`. The tag is `shengfengyang-<sourceSha first seven characters>-v1`; assets are `shengfengyang-static.zip` and `release-manifest.json`. The generated manifest records `schemaVersion`, `sourceRepository`, `sourceSha`, `sha256`, `staticOnly`, `publication` (Hub repository, commit, workflow and run identity), and a statement that the job validates compiled output without querying private CI.
 
-Both assets are uploaded to a draft release before the release is made public. The helper never overwrites an existing asset: an existing public release can be reused only when its source SHA, digest and expected assets match, and its public ZIP passes integrity and export validation again. A mismatched release, incomplete draft, missing asset or duplicate asset fails closed for inspection.
+Both assets are uploaded to a draft release before the release is made public. The helper never overwrites an existing asset: an existing public release can be reused only when its source SHA, digest and expected assets match, and its public ZIP passes integrity and export validation again. A mismatched release, incomplete public release or duplicate asset fails closed for inspection. Existing selectors retain their draft rejection; the narrowly scoped [Rotaract recovery](#rotaract-publisher-and-upload-recovery) below can complete only a matching helper-generated draft after verifying every existing asset.
 
 A dispatch may target the feature branch because this workflow file already exists on Hub main, but only after the authorized task has reviewed that branch's exact SHA, workflow permissions and helper implementation. The branch checkout determines the code holding the short-lived write token; never dispatch arbitrary unreviewed branch code. The bootstrap retains the existing serialized publication queue and does not receive Pages/OIDC permissions.
 
@@ -128,6 +128,29 @@ node scripts/verify-publication.mjs .release/resolved-sites.json
 Do not label a candidate live based solely on a local build, a ZIP upload or a successful source CI run. Record the actual Hub commit, deployment workflow, published manifest and public verification results. A failure after Pages accepts an artifact is reported as a failed verification; it does not automatically restore the previous deployment.
 
 ## Updates and recovery
+
+### Rotaract publisher and upload recovery
+
+The fixed `rotaract` selector maps only to private source `xk2022/xk-app-rotaract`, `/rotaract/`, `rotaract-<sourceSha first seven characters>-v1` and `rotaract-static.zip` on this public Hub. It requires the synthetic interactive export, local Vite assets, exact canonical URL, noindex without a sitemap and `connect-src 'none'`. It uses the existing bounded extraction and Hub-local job; no repository/slug/asset override, private-source API read, source execution, extra secret or permission is added. Both Release creation and publication explicitly set the GitHub API `make_latest` field to `"false"`; other project publication behavior is unchanged.
+
+During RK-DEMO-02 preparation, the direct managed `uploads.github.com` upload returned HTTP 401 for the manifest asset. Subsequent reads of the attempted Release tag and ID returned 404; this does not establish a published artifact. The approved 127,433-byte ZIP was instead staged as Hub Git blob `a09ec7d633e50e2853034e123686a2b656b52187`, without a tree, commit or ref. Its ZIP SHA-256 is `57a8600d3f242ef70ec16612c5e1294982022c7ca29e70f7cf40bdd6f636f441`, and source SHA is `57be84dc1858db3146918afa53eff388782c7133`. Preparation-time source CI is recorded in [Rotaract publication](rotaract-publication.md), separately from this compiled-output publisher's evidence.
+
+After the exact fallback branch code and permissions are reviewed and pushed, the isolated dispatch uses only these bounded inputs:
+
+```sh
+gh workflow run deploy.yml --repo xk2022/xk-website-showcase \
+  --ref feat/RK-DEMO-02-rotaract-showcase \
+  -f static_artifact_project=rotaract \
+  -f static_artifact_blob=a09ec7d633e50e2853034e123686a2b656b52187 \
+  -f static_artifact_sha256=57a8600d3f242ef70ec16612c5e1294982022c7ca29e70f7cf40bdd6f636f441 \
+  -f static_artifact_source=57be84dc1858db3146918afa53eff388782c7133
+```
+
+This selects only `publish-static-artifact`, with normal resolve/build/Pages jobs skipped. The expected URL is `https://github.com/xk2022/xk-website-showcase/releases/download/rotaract-57be84d-v1/rotaract-static.zip`. Independently redownload it and compare the actual ZIP hash and generated manifest before promoting the registry. Source CI, bootstrap success and the subsequent complete Pages run remain distinct evidence. Do not claim the command above has run until its actual workflow result is recorded.
+
+If a prior helper upload stopped after draft creation, only Rotaract can resume it. Because GitHub's by-tag endpoint can omit drafts, a 404 triggers a Hub-only Release inventory with at most three pages of 100 entries. The inventory must be complete, have at most one exact-tag candidate, and refresh that candidate by its numeric ID; ambiguity, pagination exhaustion and changed identity stop before writes. Its tag, source repository/SHA, ZIP digest, canonical helper-generated manifest, fixed publication workflow/repository and target commit must all match. Every already uploaded asset must have the expected name, a unique identity, `uploaded` state, exact size and GitHub-generated SHA-256 digest matching the reviewed ZIP or original manifest bytes. The helper validates the entire existing asset list before any write, then uploads only missing assets and publishes without changing Latest. The original manifest retains its first preparation-run identity; the successful retry returns `resumed: true` and its run is recorded separately.
+
+Unknown/direct-upload draft bodies, missing digests, unexpected or duplicate assets, changed bytes and mismatched provenance fail closed before writes. The helper never deletes or replaces an asset, and it does not convert an unknown draft. Inspect such a draft through authorized repository access before choosing a separately reviewed recovery. Other projects retain their existing draft rejection.
 
 ### Rui Café publisher selection
 
