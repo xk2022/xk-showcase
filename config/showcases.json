@@ -302,15 +302,15 @@
     "name": "Little Me 店主後台 Demo",
     "category": "APP 店主後台互動展示",
     "brand": "Little Me",
-    "purpose": "新增商品與照片、管理顏色尺寸、入庫、模擬上架與盤點；資料儲存在此瀏覽器。",
+    "purpose": "店務總覽、商品與穿搭、IG 手動接單、庫存盤點、預購到貨分配與模擬出貨；範例資料儲存在此瀏覽器。",
     "repository": "xk2022/xk-app-little-me-inventory",
-    "ref": "c8b04b5cf76cee3ff9549e4a1bfb095873892c4e",
+    "ref": "53385dc0bff1753b29a664a246e4f8a486daec73",
     "framework": "interactive",
     "indexable": false,
     "staticArtifact": {
-      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/little-me-owner-demo-c8b04b5-v1/little-me-owner-demo-static.zip",
-      "sha256": "58e237e290976eba8a031f9b01a0913009f0ceca474da4ec38c767516c65865b",
-      "sourceSha": "c8b04b5cf76cee3ff9549e4a1bfb095873892c4e"
+      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/little-me-owner-demo-53385dc-v1/little-me-owner-demo-static.zip",
+      "sha256": "800ae01edb59706f9538ac07de86b4770494d821c1ddfe1759de474f9db0271d",
+      "sourceSha": "53385dc0bff1753b29a664a246e4f8a486daec73"
     }
   },
   {
