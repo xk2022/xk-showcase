@@ -382,7 +382,7 @@
     "name": "蕋咖啡 Rui Café｜品牌網站提案",
     "category": "品牌形象概念提案",
     "repository": "xk2022/xk-brand-rui-cafe",
-    "ref": "e32cc6d7bf330c1a487e9dbf2983443cffebdb70",
+    "ref": "00880db13b70649f75710b0e0d754c9db1d82e8b",
     "framework": "next",
     "status": "proposal",
     "indexable": false,
@@ -394,9 +394,9 @@
       "NEXT_PUBLIC_SITE_URL": "https://showcase.xplorekaleidoscope.com"
     },
     "staticArtifact": {
-      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/rui-cafe-e32cc6d-v1/rui-cafe-static.zip",
-      "sha256": "638ae61cea47df4c5b920e0f3fd17d9c462a6b0d48767375ff8faecffcb3fe39",
-      "sourceSha": "e32cc6d7bf330c1a487e9dbf2983443cffebdb70"
+      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/rui-cafe-00880db-v1/rui-cafe-static.zip",
+      "sha256": "2a7bbddd35a3cbb65caed54e1c2b681de59e9060adb7a966201d2bf496ccdac7",
+      "sourceSha": "00880db13b70649f75710b0e0d754c9db1d82e8b"
     }
   }
 ]

@@ -55,3 +55,17 @@ Hub 本機驗證與公開驗證都逐一要求七個頁面的獨立 canonical �
 | 公開版本核對 | [manifest.json](https://showcase.xplorekaleidoscope.com/manifest.json) 包含 22 個展示項目；Rui 來源 SHA、Release URL 及 ZIP SHA-256 與本文件及登記完全一致 |
 
 本次發布維持上述來源與快照固定值，既有 21 筆登記及其來源／快照身分未變更。公開驗證由正常發布工作流程執行，與隔離上傳成功分別記錄；後續文件補記不變更已發布 runtime bytes 或來源 pin。
+
+
+## 2026-11-26 箭頭呈現修正
+
+使用者要求避免藍底箭頭圖示。來源 [PR #3](https://github.com/xk2022/xk-brand-rui-cafe/pull/3) 將共用 Unicode 箭頭改為 inline SVG，使用 `fill="none"`、`stroke="currentColor"`，避免裝置轉為彩色 Emoji；首頁、內頁、外連與頁尾沿用同一元件。門市頁的葉片樣式收窄至直接子層 SVG，避免箭頭被放大。連結、功能與內容不變。
+
+- 合併來源：`00880db13b70649f75710b0e0d754c9db1d82e8b`。
+- exact main [CI run 45731420347](https://github.com/xk2022/xk-brand-rui-cafe/actions/runs/45731420347) 成功，涵蓋 Lint、Type Check、雙路徑 Build／靜態驗證及 31 項瀏覽器測試。
+- 本機亦通過子路徑 Build、398 本機資源／連結檢查、Hub validator 與 31/31 Chromium 測試；桌面首頁和手機門市截圖確認箭頭透明底、線條與尺寸正常。
+- 快照 `rui-cafe-00880db-v1/rui-cafe-static.zip`，793,432 bytes、61 檔案，SHA-256 `2a7bbddd35a3cbb65caed54e1c2b681de59e9060adb7a966201d2bf496ccdac7`。
+- 隔離上傳 [run 45731706967](https://github.com/xk2022/xk-website-showcase/actions/runs/45731706967) 成功；公開重下載的 ZIP 雜湊與來源 manifest 一致。
+- 原有 21 筆登記不變；Rui 的 ref 與 staticArtifact 一起更新，保留 proposal、listed 與 noindex 政策。舊快照保留供回復使用。
+
+本次沿用固定 Rui 隔離上傳與正常整站 Pages 發布流程，不提交產物、不加入新憑證或放寬權限。發布與公開驗證的實際結果另由本次整合 PR 及其 Pages run 留存。
