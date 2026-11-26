@@ -38,7 +38,11 @@ try {
       };
       await materializeStaticArtifact(s, target, { fetchImpl: fetchArchive });
       await validateExport(target, s);
-      if (s.listed !== false) await capturePreview(staging, `/${s.slug}/`, join(target, '_showcase-preview.jpg'), { ownerDemo: s.slug === 'little-me-owner-demo' });
+      if (s.listed !== false) await capturePreview(staging, `/${s.slug}/`, join(target, '_showcase-preview.jpg'), {
+        ownerDemo: s.slug === 'little-me-owner-demo',
+        interactive: s.slug === 'rotaract' && s.framework === 'interactive',
+        rotaractWorkspace: s.slug === 'rotaract' && s.staticArtifact.url === `https://github.com/xk2022/xk-website-showcase/releases/download/rotaract-${s.sha.slice(0,7)}-v1/rotaract-static.zip`,
+      });
     } else {
       const dir = join(work, s.slug);
       await mkdir(dir);

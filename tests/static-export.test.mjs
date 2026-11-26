@@ -52,6 +52,31 @@ test('Vite proposal validates actual JS, CSS, directory routes and every HTML fi
   });
 });
 
+test('interactive Rotaract snapshots still require network denial, local Vite assets and noindex', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'rotaract-static-'));
+  const site = { slug: 'rotaract', framework: 'interactive', indexable: false };
+  const page = `<html><head><link rel="canonical" href="${origin}/rotaract/"><meta name="robots" content="noindex,nofollow"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'none'"><link rel="stylesheet" href="/rotaract/assets/app.css"></head><body><h1>Synthetic demo</h1><script type="module" src="/rotaract/assets/app.js"></script></body></html>`;
+  try {
+    await mkdir(join(directory, 'assets'));
+    await writeFile(join(directory, 'assets/app.js'), '/* compiled synthetic browser output */');
+    await writeFile(join(directory, 'assets/app.css'), 'body{}');
+    await writeFile(join(directory, 'index.html'), page);
+    await validateExport(directory, site);
+    for (const changed of [
+      page.replace("connect-src 'none'", "connect-src 'self'"),
+      page.replace('</body>', '<script src="https://external.example/app.js"></script></body>'),
+      page.replace('noindex,nofollow', 'index,follow'),
+      page.replace('/rotaract/assets/app.css', '/other/assets/app.css'),
+    ]) {
+      await writeFile(join(directory, 'index.html'), changed);
+      await assert.rejects(validateExport(directory, site));
+    }
+    await writeFile(join(directory, 'index.html'), page);
+    await writeFile(join(directory, 'sitemap.xml'), '<urlset/>');
+    await assert.rejects(validateExport(directory, site), /must not export sitemap/);
+  } finally { await rm(directory, { recursive: true, force: true }); }
+});
+
 test('legacy Next export still requires _next/static assets and a sitemap', async () => {
   await usingFixture(async directory => {
     await validateExport(directory, legacy);

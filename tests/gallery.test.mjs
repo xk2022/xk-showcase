@@ -91,6 +91,22 @@ test('preserved interactive output accepts only the exact already-published Rota
   ]) assert.throws(() => validateSites([{ ...site, ...changed }]));
 });
 
+test('reviewed Rotaract static updates retain fixed identity, full provenance and demo controls', () => {
+  const ref = 'b'.repeat(40);
+  const site = { slug: 'rotaract', repository: 'xk2022/xk-app-rotaract', framework: 'interactive', indexable: false, ref, env: { VITE_SHOWCASE_DEMO: 'true' }, staticArtifact: { url: 'https://github.com/xk2022/xk-website-showcase/releases/download/rotaract-bbbbbbb-v1/rotaract-static.zip', sha256: 'a'.repeat(64), sourceSha: ref } };
+  assert.doesNotThrow(() => validateSites([site]));
+  for (const changed of [
+    { repository: 'xk2022/xk-app-other' }, { slug: 'other' }, { indexable: true },
+    { env: {} }, { env: { VITE_SHOWCASE_DEMO: 'false' } }, { ref: 'main' },
+    { staticArtifact: undefined }, { staticArtifact: { ...site.staticArtifact, sourceSha: 'c'.repeat(40) } },
+    { staticArtifact: { ...site.staticArtifact, sha256: 'invalid' } },
+    { staticArtifact: { ...site.staticArtifact, url: site.staticArtifact.url.replace('bbbbbbb', 'ccccccc') } },
+    { staticArtifact: { ...site.staticArtifact, url: site.staticArtifact.url.replace('rotaract-static', 'other-static') } },
+    { staticArtifact: { ...site.staticArtifact, url: site.staticArtifact.url.replace('xk-website-showcase', 'other-hub') } },
+    { releaseGate: { workflow: '.github/workflows/ci.yml', job: 'frontend' } },
+  ]) assert.throws(() => validateSites([{ ...site, ...changed }]));
+});
+
 test('legacy apparel repository is a non-indexable APP screenshot, not a separate type', () => {
   const apparel = { ...app, slug: 'apparel-store', repository: 'xk2022/codex-xk-apparel-store' };
   validateSites([apparel]);

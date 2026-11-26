@@ -12,8 +12,11 @@ export function validateSites(sites) {
     if (site.framework !== undefined && !['next', 'vite', 'screen', 'interactive'].includes(site.framework)) throw new Error('Unsupported framework: ' + site.slug);
     if (site.framework === 'screen' && (site.indexable !== false || (!site.repository.startsWith('xk2022/xk-app-') && site.repository !== 'xk2022/codex-xk-apparel-store'))) throw new Error('Screen previews must be non-indexable APP entries');
     const preservedInteractive = site.slug === 'rotaract' && site.ref === 'fd8374eca0d840d64790552a6562e05c1a8bc76b' && site.staticArtifact?.sourceSha === site.ref && site.staticArtifact?.url === 'https://github.com/xk2022/xk-website-showcase/releases/download/preserved-showcase-45564113822-v1/rotaract-static.zip';
+    // A new private-source demo is promoted only through a reviewed, immutable
+    // Hub release registration; never accept an arbitrary interactive archive.
+    const reviewedRotaract = site.slug === 'rotaract' && /^[a-f0-9]{40}$/.test(site.ref) && site.staticArtifact?.sourceSha === site.ref && site.staticArtifact.url === `https://github.com/xk2022/xk-website-showcase/releases/download/rotaract-${site.ref.slice(0,7)}-v1/rotaract-static.zip`;
     const ownerDemo = site.slug === 'little-me-owner-demo' && site.repository === 'xk2022/xk-app-little-me-inventory' && site.indexable === false && /^[a-f0-9]{40}$/.test(site.ref) && site.staticArtifact?.sourceSha === site.ref && site.staticArtifact.url === `https://github.com/xk2022/xk-website-showcase/releases/download/little-me-owner-demo-${site.ref.slice(0,7)}-v1/little-me-owner-demo-static.zip`;
-    if (site.framework === 'interactive' && !ownerDemo && (site.slug !== 'rotaract' || site.repository !== 'xk2022/xk-app-rotaract' || site.indexable !== false || site.env?.VITE_SHOWCASE_DEMO !== 'true' || (!site.releaseGate && !preservedInteractive) || !/^[a-f\d]{40}$/i.test(site.ref))) throw new Error('Interactive preview requires an approved pinned demo');
+    if (site.framework === 'interactive' && !ownerDemo && (site.slug !== 'rotaract' || site.repository !== 'xk2022/xk-app-rotaract' || site.indexable !== false || site.env?.VITE_SHOWCASE_DEMO !== 'true' || (!site.releaseGate && !preservedInteractive && !reviewedRotaract) || !/^[a-f\d]{40}$/i.test(site.ref))) throw new Error('Interactive preview requires an approved pinned demo');
     for (const option of ['indexable', 'listed']) {
       if (site[option] !== undefined && typeof site[option] !== 'boolean') throw new Error(`Invalid ${option}: ${site.slug}`);
     }
