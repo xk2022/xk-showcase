@@ -13,6 +13,8 @@ const carpentryTag = 'carpentry-aaaaaaa-v1';
 const carpentryZipUrl = `https://github.com/${repository}/releases/download/${carpentryTag}/carpentry-static.zip`;
 const ruiTag = 'rui-cafe-aaaaaaa-v1';
 const ruiZipUrl = `https://github.com/${repository}/releases/download/${ruiTag}/rui-cafe-static.zip`;
+const rotaractTag = 'rotaract-aaaaaaa-v1';
+const rotaractZipUrl = `https://github.com/${repository}/releases/download/${rotaractTag}/rotaract-static.zip`;
 const pythonZip = String.raw`
 import io, json, sys, zipfile
 buffer = io.BytesIO()
@@ -42,6 +44,15 @@ function ruiArchive(overrides = {}) {
   Object.assign(entries, overrides);
   return execFileSync('python3', ['-c', pythonZip], { input: JSON.stringify(entries), maxBuffer: 5 * 1024 * 1024 });
 }
+function rotaractArchive(overrides = {}) {
+  const entries = {
+    'index.html': `<html><head><meta name="robots" content="noindex,nofollow"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'none'"><link rel="canonical" href="${origin}/rotaract/"><link rel="stylesheet" href="/rotaract/assets/app.css"></head><body><h1>Synthetic interactive demo</h1><script type="module" src="/rotaract/assets/app.js"></script></body></html>`,
+    'assets/app.js': '/* compiled browser output, not executed by upload helper */',
+    'assets/app.css': 'body{}',
+    ...overrides,
+  };
+  return execFileSync('python3', ['-c', pythonZip], { input: JSON.stringify(entries), maxBuffer: 5 * 1024 * 1024 });
+}
 function environment(bytes) {
   return {
     INPUT_BLOB_SHA: createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex'),
@@ -50,11 +61,11 @@ function environment(bytes) {
   };
 }
 const response = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: { 'content-type': 'application/json' } });
-function mock(bytes, { existing, uploadStatus = 201, blobOverride = {}, publicBytes = bytes, project } = {}) {
+function mock(bytes, { existing, uploadStatus = 201, blobOverride = {}, publicBytes = bytes, project, releasePages, releaseDetail = existing } = {}) {
   const env = environment(bytes);
   if (project !== undefined) env.INPUT_PROJECT = project;
-  const expectedTag = project === 'rui-cafe' ? ruiTag : project === 'carpentry' ? carpentryTag : tag;
-  const expectedZipUrl = project === 'rui-cafe' ? ruiZipUrl : project === 'carpentry' ? carpentryZipUrl : zipUrl;
+  const expectedTag = project === 'rotaract' ? rotaractTag : project === 'rui-cafe' ? ruiTag : project === 'carpentry' ? carpentryTag : tag;
+  const expectedZipUrl = project === 'rotaract' ? rotaractZipUrl : project === 'rui-cafe' ? ruiZipUrl : project === 'carpentry' ? carpentryZipUrl : zipUrl;
   const calls = [];
   let draft;
   return {
@@ -70,7 +81,9 @@ function mock(bytes, { existing, uploadStatus = 201, blobOverride = {}, publicBy
       }
       if (url.hostname === 'api.github.com') {
         if (url.pathname.includes('/git/blobs/')) return response({ sha: env.INPUT_BLOB_SHA, size: bytes.length, encoding: 'base64', content: bytes.toString('base64'), ...blobOverride });
-        if (url.pathname.includes('/releases/tags/')) return existing ? response(existing) : response({ message: 'Not Found' }, 404);
+        if (url.pathname.includes('/releases/tags/')) return existing && !(project === 'rotaract' && existing.draft) ? response(existing) : response({ message: 'Not Found' }, 404);
+        if (url.pathname === `/repos/${repository}/releases` && options.method === 'GET') return response(releasePages ? releasePages[Number(url.searchParams.get('page')) - 1] : existing ? [existing] : []);
+        if (url.pathname === `/repos/${repository}/releases/42` && options.method === 'GET') return response(releaseDetail);
         if (options.method === 'POST') {
           draft = JSON.parse(options.body);
           assert.equal(draft.draft, true);
@@ -78,7 +91,7 @@ function mock(bytes, { existing, uploadStatus = 201, blobOverride = {}, publicBy
           return response({ id: 42, ...draft }, 201);
         }
         if (options.method === 'PATCH') {
-          assert.equal(calls.filter(call => call.url.hostname === 'uploads.github.com').length, 2);
+          assert.equal(calls.filter(call => call.url.hostname === 'uploads.github.com').length, existing?.draft ? 2 - existing.assets.length : 2);
           return response({ id: 42, tag_name: expectedTag, draft: false });
         }
       }
@@ -139,6 +152,130 @@ test('the explicit original selector preserves the Shengfengyang release identit
   assert.equal(JSON.parse(created.body).sourceRepository, 'xk2022/xk-brand-shengfengyang');
 });
 
+test('Rotaract publishes only its fixed synthetic export with isolated provenance and no Latest change', async () => {
+  const bytes = rotaractArchive();
+  const service = mock(bytes, { project: 'rotaract' });
+  assert.deepEqual(await publishStaticArtifact(service), { tag: rotaractTag, url: rotaractZipUrl, sourceSha, sha256: service.env.INPUT_SHA256, reused: false });
+  const mutations = writes(service.calls);
+  const created = JSON.parse(mutations[0].options.body);
+  assert.equal(created.tag_name, rotaractTag);
+  assert.equal(created.make_latest, 'false');
+  assert.equal(JSON.parse(mutations.at(-1).options.body).make_latest, 'false');
+  const manifest = JSON.parse(mutations[2].options.body);
+  assert.equal(manifest.sourceRepository, 'xk2022/xk-app-rotaract');
+  assert.equal(manifest.sourceSha, sourceSha);
+  assert.equal(manifest.sha256, service.env.INPUT_SHA256);
+  assert.equal(manifest.staticOnly, true);
+  assert.match(manifest.verification, /does not query private source CI/);
+  assert.deepEqual(mutations.filter(call => call.url.hostname === 'uploads.github.com').map(call => call.url.searchParams.get('name')), ['rotaract-static.zip', 'release-manifest.json']);
+  assert.equal(service.calls.some(call => call.url.pathname.includes('/xk-app-rotaract/')), false);
+});
+
+test('Rotaract rejects missing CSP, external or cross-case assets, indexing and non-export files before Release access', async () => {
+  const base = `<html><head><meta name="robots" content="noindex,nofollow"><meta http-equiv="Content-Security-Policy" content="connect-src 'none'"><link rel="canonical" href="${origin}/rotaract/"><link rel="stylesheet" href="/rotaract/assets/app.css"></head><body><script type="module" src="/rotaract/assets/app.js"></script></body></html>`;
+  for (const overrides of [
+    { 'index.html': base.replace("connect-src 'none'", "connect-src 'self'") },
+    { 'index.html': base.replace('</body>', '<script src="https://external.invalid/app.js"></script></body>') },
+    { 'index.html': base.replace('/rotaract/assets/app.css', '/other/assets/app.css') },
+    { 'index.html': base.replace('noindex,nofollow', 'index,follow') },
+    { 'sitemap.xml': '<urlset/>' }, { '.env': 'PRIVATE=value' }, { 'src/main.ts': 'source' },
+    { 'assets/app.js.map': '{}' },
+  ]) {
+    const service = mock(rotaractArchive(overrides), { project: 'rotaract' });
+    await assert.rejects(publishStaticArtifact(service));
+    assert.equal(writes(service.calls).length, 0);
+    assert.equal(service.calls.some(call => call.url.pathname.includes('/releases')), false);
+  }
+});
+
+function rotaractDraft(bytes, names = []) {
+  const env = environment(bytes);
+  const manifest = {
+    schemaVersion: 1, sourceRepository: 'xk2022/xk-app-rotaract', sourceSha, sha256: env.INPUT_SHA256, staticOnly: true,
+    publication: { repository, commitSha: 'c'.repeat(40), workflow: '.github/workflows/deploy.yml', runId: '123455', runUrl: `https://github.com/${repository}/actions/runs/123455` },
+    verification: 'Verified compiled static export only; this publication job does not query private source CI.',
+  };
+  const body = JSON.stringify(manifest, null, 2);
+  const contents = { 'rotaract-static.zip': bytes, 'release-manifest.json': Buffer.from(body + '\n') };
+  return { id: 42, tag_name: rotaractTag, draft: true, prerelease: true, target_commitish: manifest.publication.commitSha, body,
+    assets: names.map((name, i) => ({ id: 101 + i, name, state: 'uploaded', size: contents[name].length, digest: `sha256:${createHash('sha256').update(contents[name]).digest('hex')}` })) };
+}
+
+test('a verified Rotaract partial draft resumes by adding only missing assets and preserving its original manifest', async () => {
+  const bytes = rotaractArchive();
+  for (const names of [[], ['rotaract-static.zip'], ['release-manifest.json'], ['rotaract-static.zip', 'release-manifest.json']]) {
+    const existing = rotaractDraft(bytes, names);
+    const service = mock(bytes, { project: 'rotaract', existing });
+    const result = await publishStaticArtifact(service);
+    assert.equal(result.resumed, true);
+    assert.equal(result.reused, false);
+    assert.equal(service.calls.filter(call => call.url.pathname === `/repos/${repository}/releases` && call.options.method === 'GET').length, 1);
+    assert.equal(service.calls.filter(call => call.url.pathname === `/repos/${repository}/releases/42` && call.options.method === 'GET').length, 1);
+    const mutations = writes(service.calls);
+    assert.equal(mutations.some(call => call.url.hostname === 'api.github.com' && call.options.method === 'POST'), false);
+    const uploaded = mutations.filter(call => call.url.hostname === 'uploads.github.com');
+    assert.deepEqual(uploaded.map(call => call.url.searchParams.get('name')), ['rotaract-static.zip', 'release-manifest.json'].filter(name => !names.includes(name)));
+    const manifestUpload = uploaded.find(call => call.url.searchParams.get('name') === 'release-manifest.json');
+    if (manifestUpload) assert.equal(manifestUpload.options.body.toString(), existing.body + '\n');
+    assert.equal(mutations.some(call => call.options.method === 'DELETE'), false);
+    assert.equal(JSON.parse(mutations.at(-1).options.body).make_latest, 'false');
+  }
+});
+
+test('Rotaract draft inventory is bounded, unambiguous and refreshed by fixed release ID before writes', async () => {
+  const bytes = rotaractArchive();
+  const existing = rotaractDraft(bytes);
+  const unrelated = Array.from({ length: 100 }, (_, index) => ({ id: index + 1000, tag_name: `unrelated-${index}` }));
+  const paginated = mock(bytes, { project: 'rotaract', existing, releasePages: [unrelated, [existing]] });
+  assert.equal((await publishStaticArtifact(paginated)).resumed, true);
+  assert.equal(paginated.calls.filter(call => call.url.searchParams.has('page')).length, 2);
+  for (const options of [
+    { releasePages: [[existing, { ...existing, id: 43 }]] },
+    { releasePages: [unrelated, unrelated, unrelated] },
+    { releasePages: [{}] },
+    { releasePages: [[{ ...existing, id: '../other' }]] },
+    { releasePages: [[existing]], releaseDetail: { ...existing, tag_name: 'changed-tag' } },
+    { releasePages: [[existing]], releaseDetail: { ...existing, id: 43 } },
+  ]) {
+    const service = mock(bytes, { project: 'rotaract', existing, ...options });
+    await assert.rejects(publishStaticArtifact(service));
+    assert.equal(writes(service.calls).length, 0);
+    assert(service.calls.filter(call => call.url.searchParams.has('page')).length <= 3);
+  }
+});
+
+test('Rotaract mismatched or unverified partial drafts fail before writes and never replace assets', async () => {
+  const bytes = rotaractArchive();
+  for (const change of [
+    draft => { draft.assets[0].digest = 'sha256:' + '0'.repeat(64); },
+    draft => { delete draft.assets[0].digest; },
+    draft => { draft.assets[0].size++; },
+    draft => { draft.assets[0].state = 'starter'; },
+    draft => { draft.assets.push({ ...draft.assets[0] }); },
+    draft => { draft.assets[0].name = 'unexpected.zip'; },
+    draft => { draft.target_commitish = 'd'.repeat(40); },
+    draft => { draft.body = JSON.stringify({ sourceRepository: 'xk2022/xk-app-rotaract', sourceSha, sha256: environment(bytes).INPUT_SHA256 }); },
+    draft => { draft.body = draft.body.replace(sourceSha, 'd'.repeat(40)); },
+    draft => { draft.body = draft.body.replace('xk2022/xk-website-showcase', 'outsider/repository'); },
+  ]) {
+    const existing = rotaractDraft(bytes, ['rotaract-static.zip']);
+    change(existing);
+    const service = mock(bytes, { project: 'rotaract', existing });
+    await assert.rejects(publishStaticArtifact(service));
+    assert.equal(writes(service.calls).length, 0);
+  }
+});
+
+test('a matching public Rotaract release is revalidated without writes or Latest changes', async () => {
+  const bytes = rotaractArchive();
+  const existing = { ...rotaractDraft(bytes, ['rotaract-static.zip', 'release-manifest.json']), draft: false };
+  const service = mock(bytes, { project: 'rotaract', existing });
+  const result = await publishStaticArtifact(service);
+  assert.equal(result.reused, true);
+  assert.equal(writes(service.calls).length, 0);
+  assert.equal(service.calls.filter(call => call.url.hostname === 'github.com').length, 1);
+});
+
 test('Rui Cafe publishes its fixed seven-route proposal and manifest without private source access', async () => {
   const bytes = ruiArchive();
   const service = mock(bytes, { project: 'rui-cafe' });
@@ -190,7 +327,7 @@ test('Carpentry publishes its exact asset, source and manifest using the same is
 });
 
 test('a selected project rejects the other project export before reading or writing releases', async () => {
-  for (const [project, bytes] of [['carpentry', archive()], ['shengfengyang', carpentryArchive()]]) {
+  for (const [project, bytes] of [['carpentry', archive()], ['shengfengyang', carpentryArchive()], ['rotaract', carpentryArchive()], ['carpentry', rotaractArchive()]]) {
     const service = mock(bytes, { project });
     await assert.rejects(publishStaticArtifact(service), /Invalid canonical URL/);
     assert.equal(writes(service.calls).length, 0);

@@ -32,7 +32,7 @@ The ZIP contains only the contents of the final frontend `dist/`, with `index.ht
 
 Use a versioned public Hub Release asset after the source commit and ZIP are reviewed. Independently redownload the published ZIP and verify its SHA-256 and source provenance before changing the registry. Direct Release creation/upload is preferred for this task when authorized local GitHub access supports it.
 
-The existing isolated upload bootstrap currently has no `rotaract` selector. If direct upload fails, first review a narrowly scoped fixed Rotaract selector and its validation tests; do not pass another project's selector or an arbitrary source/destination. The established fallback can then stage only the reviewed public ZIP as an untracked Hub Git blob and dispatch the reviewed branch with project/blob/SHA-256/source inputs. Such a run must select only the upload job, retain Hub-local `contents: write`, skip Pages and private CI, validate compiled output, and record its actual result separately. No fallback change or dispatch is implied by this preparation record.
+Direct CLI asset upload returned HTTP 401 from `uploads.github.com` after the source main CI passed. The failed attempt was not treated as a published archive or promoted into the registry. A narrowly scoped `rotaract` selector was therefore added to the existing isolated uploader and workflow choice, with no permission expansion. The reviewed ZIP was staged as the untracked Hub Git blob `a09ec7d633e50e2853034e123686a2b656b52187`; it is not added to a source tree or commit. The branch dispatch uses only the fixed project/blob/SHA-256/source inputs, retains the existing Hub-local `contents: write`, and skips normal build/Pages/private CI. Rotaract creation and publication explicitly preserve `make_latest: false`; unknown drafts or different bytes are rejected rather than overwritten. Actual isolated-upload and redownload evidence is recorded below and in PR #29.
 
 After the registry promotion, normal Hub CI must run the full unit suite, frozen resolution, complete token-free build, fresh Rotaract smoke and preserved transport validation. Merge only the passing reviewed change. Main publication retains the serialized queue, main freshness guard, isolated Pages/OIDC job and public verification of the complete manifest, homepage cards, indexing rules, routes and assets. A ZIP upload or source CI success alone is not website publication. A failed post-deploy verification is reported as failed and does not imply automatic rollback.
 
@@ -40,14 +40,14 @@ After the registry promotion, normal Hub CI must run the full unit suite, frozen
 
 | Evidence | Result |
 | --- | --- |
-| Source PR and merged full SHA | Pending actual source merge |
-| Exact merged-source CI run / attempt | Pending actual successful main run |
-| Offline build, browser acceptance and archive inspection | Candidate export passed Hub static validation and fresh Chromium workbench/private-roster/history/mailbox smoke; actual initial-homepage thumbnail inspected. Source candidate local validation passed lint/typecheck, 98 Vitest tests, normal/showcase build isolation and 30 Showcase journeys across desktop/tablet/mobile with zero actual API/external requests; final source CI and archive evidence remain pending. |
-| Final ZIP bytes / SHA-256 | Pending approved archive |
+| Source PR and merged full SHA | [PR #19](https://github.com/xk2022/xk-app-rotaract/pull/19), `57be84dc1858db3146918afa53eff388782c7133`; final feature `736e92c8460400b5b7114a75be72a26a70c57e32` |
+| Exact merged-source CI run / attempt | [45753099434](https://github.com/xk2022/xk-app-rotaract/actions/runs/45753099434), attempt 1, four jobs success: 98 frontend / 225 backend / 30 Showcase / 18 real-backend E2E; normal/showcase isolation and proxy protection passed |
+| Offline build, browser acceptance and archive inspection | Exact merged-source export and its ZIP passed safe extraction, static validation and fresh Chromium workbench/private-roster/history/mailbox smoke. Main Showcase artifact 15086438629 independently downloaded: JUnit 30/0/0/0, 30 screenshots, 30 zero-network/zero-error files, HTML and ZIP integrity; actual initial-homepage thumbnail inspected. |
+| Final ZIP bytes / SHA-256 | 127,433 bytes, 5 deployed HTML/CSS/JavaScript files; `57a8600d3f242ef70ec16612c5e1294982022c7ca29e70f7cf40bdd6f636f441`; no source/maps/environment/server files |
 | Public Release URL and redownload verification | Pending actual upload |
 | Non-Rotaract registry comparison | 21/21 rows match baseline during preparation; repeat after final promotion |
-| Hub unit tests | `env -u GH_TOKEN -u GITHUB_TOKEN node --test --test-isolation=none tests/*.test.mjs`: 140/140 passed during preparation |
-| Complete Hub build and browser smoke | Pending approved archive and final registry |
+| Hub unit tests | `env -u GH_TOKEN -u GITHUB_TOKEN node --test --test-isolation=none tests/*.test.mjs`: 140/140 passed during initial preparation; uploader-focused 30/30 and complete 146/146 passed after the scoped fallback |
+| Complete Hub build and browser smoke | Preparation PR #29 [run 45752313750](https://github.com/xk2022/xk-website-showcase/actions/runs/45752313750), head `1e7edb5711b1fbe13c49b6d48b85637d9ec87b32`, passed full baseline build and preserved transport runtime checks; this used the old registry, so final promoted-tuple validation is still required |
 | Hub PR / merged SHA | Pending reviewed Hub change |
 | Main Pages run / deployment | Pending actual guarded publication |
 | Public manifest / thumbnail / interaction checks | Pending actual live verification |

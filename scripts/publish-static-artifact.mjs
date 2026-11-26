@@ -12,6 +12,11 @@ const manifestName = 'release-manifest.json';
 // Publication inputs select only reviewed projects, never arbitrary repository,
 // slug, asset or release names. Omitted INPUT_PROJECT preserves the original job.
 const projects = {
+  rotaract: {
+    sourceRepository: 'xk2022/xk-app-rotaract',
+    archiveName: 'rotaract-static.zip', name: '扶青萬花筒｜合成資料互動展示',
+    policy: { framework: 'interactive', indexable: false, env: { VITE_SHOWCASE_DEMO: 'true' } },
+  },
   'rui-cafe': {
     sourceRepository: 'xk2022/xk-brand-rui-cafe',
     archiveName: 'rui-cafe-static.zip', name: '蕋咖啡 Rui Café｜非官方品牌網站提案',
@@ -114,21 +119,7 @@ export async function publishStaticArtifact({ env = process.env, fetchImpl = fet
     await materializeStaticArtifact(site, local, { fetchImpl: async () => new Response(bytes) });
     await validateExport(local, site);
 
-    const existing = await api(`/repos/${repository}/releases/tags/${tag}`, { allow404: true });
-    if (existing) {
-      let recorded;
-      try { recorded = JSON.parse(existing.body); } catch { throw new Error('Existing static release has no verifiable manifest body'); }
-      if (existing.tag_name !== tag || existing.draft !== false || recorded.sourceSha !== input.sourceSha || recorded.sha256 !== input.sha256 || recorded.sourceRepository !== sourceRepository) throw new Error('Existing static release differs or is still a draft; inspect it without overwriting assets');
-      for (const name of [archiveName, manifestName]) {
-        if ((existing.assets ?? []).filter(asset => asset.name === name).length !== 1) throw new Error('Existing static release is incomplete or has duplicate assets');
-      }
-      const published = join(temporary, 'existing-public-export');
-      await materializeStaticArtifact(site, published, { fetchImpl });
-      await validateExport(published, site);
-      return { tag, url: downloadUrl, sha256: input.sha256, sourceSha: input.sourceSha, reused: true };
-    }
-
-    const manifest = {
+    const generatedManifest = {
       schemaVersion: 1, sourceRepository, sourceSha: input.sourceSha, sha256: input.sha256,
       staticOnly: true,
       publication: {
@@ -138,12 +129,84 @@ export async function publishStaticArtifact({ env = process.env, fetchImpl = fet
       },
       verification: 'Verified compiled static export only; this publication job does not query private source CI.',
     };
-    const created = await api(`/repos/${repository}/releases`, { method: 'POST', body: {
-      tag_name: tag, target_commitish: input.hubSha,
-      name: `${name} ${input.sourceSha.slice(0, 7)}`,
-      body: JSON.stringify(manifest, null, 2), draft: true, prerelease: true,
-    } });
-    if (!Number.isSafeInteger(created.id) || created.id < 1 || created.tag_name !== tag || created.draft !== true) throw new Error('Unexpected draft release response');
+    let manifest = generatedManifest;
+    let created;
+    let existing = await api(`/repos/${repository}/releases/tags/${tag}`, { allow404: true });
+    if (!existing && input.project === 'rotaract') {
+      // GitHub's by-tag endpoint can omit unpublished drafts. Prove absence
+      // through a bounded Hub-only inventory before creating another draft.
+      const matches = [];
+      let complete = false;
+      for (let page = 1; page <= 3; page++) {
+        const releases = await api(`/repos/${repository}/releases?per_page=100&page=${page}`);
+        if (!Array.isArray(releases) || releases.length > 100) throw new Error('Invalid Hub release inventory');
+        matches.push(...releases.filter(release => release.tag_name === tag));
+        if (matches.length > 1) throw new Error('Multiple Rotaract releases have the expected tag; refusing ambiguous recovery');
+        if (releases.length < 100) { complete = true; break; }
+      }
+      if (!complete) throw new Error('Hub release inventory exceeds Rotaract recovery bounds');
+      if (matches.length) {
+        const id = matches[0].id;
+        if (!Number.isSafeInteger(id) || id < 1) throw new Error('Invalid Rotaract release identity');
+        existing = await api(`/repos/${repository}/releases/${id}`);
+        if (existing.id !== id || existing.tag_name !== tag) throw new Error('Rotaract release changed during recovery lookup');
+      }
+    }
+    if (existing) {
+      let recorded;
+      try { recorded = JSON.parse(existing.body); } catch { throw new Error('Existing static release has no verifiable manifest body'); }
+      if (existing.tag_name !== tag || recorded.sourceSha !== input.sourceSha || recorded.sha256 !== input.sha256 || recorded.sourceRepository !== sourceRepository) throw new Error('Existing static release differs; inspect it without overwriting assets');
+      if (existing.draft === true && input.project === 'rotaract') {
+        // Resume only this helper's matching Rotaract draft. GitHub-generated
+        // asset digests prove identity before missing assets can be added.
+        const publication = recorded.publication;
+        if (!Number.isSafeInteger(existing.id) || existing.id < 1 || existing.prerelease !== true || !Array.isArray(existing.assets)
+          || Object.keys(recorded).sort().join(',') !== Object.keys(generatedManifest).sort().join(',')
+          || recorded.schemaVersion !== 1 || recorded.staticOnly !== true || recorded.verification !== generatedManifest.verification
+          || !publication || Object.keys(publication).sort().join(',') !== Object.keys(generatedManifest.publication).sort().join(',')
+          || publication.repository !== repository || publication.workflow !== generatedManifest.publication.workflow
+          || !/^[a-f0-9]{40}$/.test(publication.commitSha ?? '') || existing.target_commitish !== publication.commitSha
+          || !/^[1-9][0-9]{0,19}$/.test(publication.runId ?? '') || typeof publication.runId !== 'string'
+          || publication.runUrl !== `https://github.com/${repository}/actions/runs/${publication.runId}`
+          || existing.body !== JSON.stringify(recorded, null, 2)) throw new Error('Existing Rotaract draft has unverified publication provenance');
+        created = existing;
+        manifest = recorded;
+      } else {
+        if (existing.draft !== false) throw new Error('Existing static release is still a draft; inspect it without overwriting assets');
+        for (const name of [archiveName, manifestName]) {
+          if ((existing.assets ?? []).filter(asset => asset.name === name).length !== 1) throw new Error('Existing static release is incomplete or has duplicate assets');
+        }
+        const published = join(temporary, 'existing-public-export');
+        await materializeStaticArtifact(site, published, { fetchImpl });
+        await validateExport(published, site);
+        return { tag, url: downloadUrl, sha256: input.sha256, sourceSha: input.sourceSha, reused: true };
+      }
+    }
+
+    const assets = new Map([
+      [archiveName, { content: bytes, type: 'application/zip' }],
+      [manifestName, { content: Buffer.from(JSON.stringify(manifest, null, 2) + '\n'), type: 'application/json' }],
+    ]);
+    const present = new Set();
+    if (created) {
+      // Check every existing asset before making any write, including assets
+      // whose upload succeeded before an earlier attempt failed.
+      for (const asset of created.assets) {
+        const expected = assets.get(asset.name);
+        if (!expected || present.has(asset.name) || !Number.isSafeInteger(asset.id) || asset.id < 1
+          || asset.state !== 'uploaded' || asset.size !== expected.content.length
+          || asset.digest !== `sha256:${createHash('sha256').update(expected.content).digest('hex')}`) throw new Error('Existing Rotaract draft asset differs or has no verified digest; refusing to overwrite');
+        present.add(asset.name);
+      }
+    } else {
+      created = await api(`/repos/${repository}/releases`, { method: 'POST', body: {
+        tag_name: tag, target_commitish: input.hubSha,
+        name: `${name} ${input.sourceSha.slice(0, 7)}`,
+        body: JSON.stringify(manifest, null, 2), draft: true, prerelease: true,
+        ...(input.project === 'rotaract' ? { make_latest: 'false' } : {}),
+      } });
+      if (!Number.isSafeInteger(created.id) || created.id < 1 || created.tag_name !== tag || created.draft !== true) throw new Error('Unexpected draft release response');
+    }
 
     async function upload(name, content, type) {
       const response = await fetchImpl(`https://uploads.github.com/repos/${repository}/releases/${created.id}/assets?name=${encodeURIComponent(name)}`, {
@@ -155,11 +218,12 @@ export async function publishStaticArtifact({ env = process.env, fetchImpl = fet
       const uploaded = await jsonResponse(response, 1024 * 1024);
       if (uploaded.name !== name || uploaded.state !== 'uploaded' || uploaded.size !== content.length) throw new Error('Unexpected static release asset upload response');
     }
-    await upload(archiveName, bytes, 'application/zip');
-    await upload(manifestName, Buffer.from(JSON.stringify(manifest, null, 2) + '\n'), 'application/json');
-    const published = await api(`/repos/${repository}/releases/${created.id}`, { method: 'PATCH', body: { draft: false, prerelease: true } });
+    for (const [name, asset] of assets) {
+      if (!present.has(name)) await upload(name, asset.content, asset.type);
+    }
+    const published = await api(`/repos/${repository}/releases/${created.id}`, { method: 'PATCH', body: { draft: false, prerelease: true, ...(input.project === 'rotaract' ? { make_latest: 'false' } : {}) } });
     if (published.draft !== false || published.tag_name !== tag) throw new Error('Static release was not published');
-    return { tag, url: downloadUrl, sha256: input.sha256, sourceSha: input.sourceSha, reused: false };
+    return { tag, url: downloadUrl, sha256: input.sha256, sourceSha: input.sourceSha, reused: false, ...(existing?.draft ? { resumed: true } : {}) };
   } finally {
     await rm(temporary, { recursive: true, force: true });
   }
