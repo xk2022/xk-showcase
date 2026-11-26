@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
-import { origin as defaultOrigin, validateSites, transportRoutes, shengfengyangRoutes, assertTransportPage, assertTransportSitemap } from './static-export.mjs';
+import { origin as defaultOrigin, validateSites, transportRoutes, shengfengyangRoutes, ruiCafeRoutes, assertTransportPage, assertTransportSitemap } from './static-export.mjs';
 
 const shaPattern = /^[a-f0-9]{40}$/;
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -163,6 +163,9 @@ export async function verifyPublication({ sites, manifest = sites.map(({ slug, r
     if (site.slug === 'shengfengyang') {
       for (const route of shengfengyangRoutes) pages.add(`${home}${route}`);
     }
+    if (site.slug === 'rui-cafe') {
+      for (const route of ruiCafeRoutes) pages.add(`${home}${route}`);
+    }
     if (site.slug === 'yuan-guang-pcb') {
       for (const language of ['', 'en/']) {
         for (const route of ['', 'about/', 'products/', 'manufacturing/', 'quality/', 'careers/', 'contact/', '404.html']) pages.add(`${home}${language}${route}`);
@@ -173,9 +176,10 @@ export async function verifyPublication({ sites, manifest = sites.map(({ slug, r
       assertCanonical(html, url);
       // Vite proposals may render their heading in JavaScript; Brand pages are static HTML.
       if (site.slug === 'hongjia-brand' && [...html.matchAll(/<h1\b/gi)].length !== 1) throw new Error(`Brand page must have one H1: ${url}`);
-      if (site.slug === 'shengfengyang') {
+      if (site.slug === 'shengfengyang' || site.slug === 'rui-cafe') {
+        const name = site.slug === 'rui-cafe' ? 'Rui Café' : 'Shengfengyang';
         const headings = [...html.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)];
-        if (headings.length !== 1 || !headings[0][1].replace(/<[^>]*>/g, '').trim()) throw new Error(`Shengfengyang page must have one nonempty H1: ${url}`);
+        if (headings.length !== 1 || !headings[0][1].replace(/<[^>]*>/g, '').trim()) throw new Error(`${name} page must have one nonempty H1: ${url}`);
       }
       if (site.indexable === false) assertNoindex(html, url);
       if (site.slug === 'hongjia-brand') await verifyAsset(assertBrandSocial(html, base), url, site);

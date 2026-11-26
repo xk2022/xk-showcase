@@ -4,7 +4,7 @@ import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { runInNewContext } from 'node:vm';
-import { origin, validateSites, validateExport, validateLocalReferences, buildRobots, renderCards, renderNotFound } from '../scripts/static-export.mjs';
+import { origin, ruiCafeRoutes, validateSites, validateExport, validateLocalReferences, buildRobots, renderCards, renderNotFound } from '../scripts/static-export.mjs';
 
 const proposal = { slug: 'yuan-guang-pcb', name: '元廣科技｜概念提案', category: '提案', repository: 'xk2022/xk-brand-yuan-guang-pcb', ref: 'main', framework: 'vite', indexable: false, listed: false };
 const legacy = { slug: 'existing', name: 'Existing', category: 'Brand', repository: 'xk2022/existing', ref: 'main' };
@@ -212,5 +212,39 @@ test('Shengfengyang requires every brand and product detail route with its own c
     await assert.rejects(validateExport(directory, site), /Shengfengyang canonical/);
     await writeFile(join(directory, deep, 'index.html'), page(deep).replace('<h1>食品提案</h1>', ''));
     await assert.rejects(validateExport(directory, site), /one nonempty H1/);
+  } finally { await rm(directory, { recursive: true, force: true }); }
+});
+
+test('Rui Café requires all seven proposal pages with individual canonicals and a single nonempty H1', async () => {
+  const site = { slug: 'rui-cafe', repository: 'xk2022/xk-brand-rui-cafe', ref: 'a'.repeat(40), framework: 'next', status: 'proposal', indexable: false, listed: true };
+  const directory = await mkdtemp(join(tmpdir(), 'rui-cafe-static-'));
+  const page = route => `<html><head><meta name="robots" content="noindex,nofollow"><link rel="canonical" href="${origin}/rui-cafe/${route}"></head><body><h1>蕋咖啡</h1><script src="/rui-cafe/_next/static/app.js"></script></body></html>`;
+  try {
+    await mkdir(join(directory, '_next/static'), { recursive: true });
+    await writeFile(join(directory, '_next/static/app.js'), '/* static browser asset */');
+    for (const route of ruiCafeRoutes) {
+      await mkdir(join(directory, route), { recursive: true });
+      await writeFile(join(directory, route, 'index.html'), page(route));
+    }
+    await validateExport(directory, site);
+    // The fixture deliberately has no links to these pages: required routes
+    // cannot disappear unnoticed merely because no homepage link reaches them.
+    for (const route of ruiCafeRoutes.slice(1)) {
+      await rm(join(directory, route, 'index.html'));
+      await assert.rejects(validateExport(directory, site), /ENOENT/);
+      await writeFile(join(directory, route, 'index.html'), page(route));
+    }
+    const path = join(directory, 'cakes/index.html');
+    await writeFile(path, page(''));
+    await assert.rejects(validateExport(directory, site), /Rui Café canonical.*cakes/);
+    for (const heading of ['', '<h1> </h1>', '<h1>蕋咖啡</h1><h1>重複標題</h1>']) {
+      await writeFile(path, page('cakes/').replace('<h1>蕋咖啡</h1>', heading));
+      await assert.rejects(validateExport(directory, site), /Rui Café page must have one nonempty H1.*cakes/);
+    }
+    await writeFile(path, page('cakes/').replace('noindex,nofollow', 'index,follow'));
+    await assert.rejects(validateExport(directory, site), /Missing noindex,nofollow.*cakes/);
+    await writeFile(path, page('cakes/'));
+    await writeFile(join(directory, 'sitemap.xml'), '<urlset/>');
+    await assert.rejects(validateExport(directory, site), /Non-indexable proposal must not export sitemap/);
   } finally { await rm(directory, { recursive: true, force: true }); }
 });

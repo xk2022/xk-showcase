@@ -29,6 +29,7 @@ function attributes(tag) {
 }
 
 export const transportRoutes = ['', 'services/', 'shipping-guide/', 'about/', 'inquiry/'];
+export const ruiCafeRoutes = ['', 'about/', 'menu/', 'cakes/', 'space/', 'news/', 'visit/'];
 export const shengfengyangRoutes = ['', 'story/', 'products/', 'gifting/', 'stores/',
   ...['pure-pork-floss', 'seaweed-pork-floss', 'original-pork-jerky', 'black-pepper-pork-jerky', 'thai-pork-jerky', 'traditional-pork-shreds', 'pure-pork-fu', 'swordfish-floss', 'chicken-floss', 'north-sea-squid-shreds', 'charcoal-squid-shreds', 'lemon-pork-jerky', 'nut-pork-jerky', 'honey-pepper-pork-strips', 'classic-honey-pork-jerky'].map(slug => `products/${slug}/`)];
 
@@ -135,14 +136,16 @@ export async function validateExport(directory, site) {
       })) throw new Error(`Missing noindex,nofollow in ${site.slug}/${relative(directory, file)}`);
     }
   }
-  if (site.slug === 'shengfengyang') {
-    for (const route of shengfengyangRoutes) {
+  if (site.slug === 'shengfengyang' || site.slug === 'rui-cafe') {
+    const routes = site.slug === 'rui-cafe' ? ruiCafeRoutes : shengfengyangRoutes;
+    const name = site.slug === 'rui-cafe' ? 'Rui Café' : 'Shengfengyang';
+    for (const route of routes) {
       const content = await readFile(join(directory, route, 'index.html'), 'utf8');
       const expected = `${origin}/${site.slug}/${route}`;
       const canonical = [...content.matchAll(/<link\b[^>]*>/gi)].map(match => attributes(match[0])).filter(tag => tag.rel?.toLowerCase() === 'canonical');
-      if (canonical.length !== 1 || canonical[0].href !== expected) throw new Error(`Incorrect Shengfengyang canonical: ${expected}`);
+      if (canonical.length !== 1 || canonical[0].href !== expected) throw new Error(`Incorrect ${name} canonical: ${expected}`);
       const headings = [...content.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)];
-      if (headings.length !== 1 || !headings[0][1].replace(/<[^>]*>/g, '').trim()) throw new Error(`Shengfengyang page must have one nonempty H1: ${expected}`);
+      if (headings.length !== 1 || !headings[0][1].replace(/<[^>]*>/g, '').trim()) throw new Error(`${name} page must have one nonempty H1: ${expected}`);
     }
   }
   if (site.indexable === false) {

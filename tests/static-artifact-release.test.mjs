@@ -124,6 +124,7 @@ test('static artifact bootstrap isolates same-repository write permission from a
   assert.match(publish, /run: node scripts\/publish-static-artifact\.mjs/);
   assert.match(publish, /GH_TOKEN: \$\{\{ github.token \}\}/);
   assert.match(header, /static_artifact_project:[\s\S]*?type: choice[\s\S]*?- shengfengyang[\s\S]*?- carpentry/);
+  assert.match(header, /static_artifact_project:[\s\S]*?options:[\s\S]*?- rui-cafe/);
   assert(publish.includes('INPUT_PROJECT: ${{ inputs.static_artifact_project }}'));
   for (const [key, input] of [['INPUT_BLOB_SHA', 'blob'], ['INPUT_SHA256', 'sha256'], ['INPUT_SOURCE_SHA', 'source']]) {
     assert(publish.includes(key + ': ${{ inputs.static_artifact_' + input + ' }}'));

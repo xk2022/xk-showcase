@@ -12,6 +12,11 @@ const manifestName = 'release-manifest.json';
 // Publication inputs select only reviewed projects, never arbitrary repository,
 // slug, asset or release names. Omitted INPUT_PROJECT preserves the original job.
 const projects = {
+  'rui-cafe': {
+    sourceRepository: 'xk2022/xk-brand-rui-cafe',
+    archiveName: 'rui-cafe-static.zip', name: '蕋咖啡 Rui Café｜非官方品牌網站提案',
+    policy: { framework: 'next', status: 'proposal', indexable: false, listed: true },
+  },
   'little-me-owner-demo': {
     sourceRepository: 'xk2022/xk-app-little-me-inventory',
     archiveName: 'little-me-owner-demo-static.zip', name: 'Little Me｜店主庫存互動展示',
