@@ -1,6 +1,6 @@
 # Rotaract RK-DEMO-02 publication
 
-This record prepares the synthetic interactive workbench at `/rotaract/`. It does not establish a live release until the source merge, exact source CI, reviewed ZIP, complete Hub CI, guarded Pages deployment and public verification below have actual evidence.
+This record binds the reviewed synthetic workbench source and public static snapshot for `/rotaract/`. Exact Hub merge SHA, final CI, guarded Pages run and public operation results are maintained in the [PR #29 delivery record](https://github.com/xk2022/xk-website-showcase/pull/29). Source/ZIP validation is distinct from website publication; an available Release alone does not establish a live website update.
 
 ## Source and delivery boundary
 
@@ -44,12 +44,13 @@ After the registry promotion, normal Hub CI must run the full unit suite, frozen
 | Exact merged-source CI run / attempt | [45753099434](https://github.com/xk2022/xk-app-rotaract/actions/runs/45753099434), attempt 1, four jobs success: 98 frontend / 225 backend / 30 Showcase / 18 real-backend E2E; normal/showcase isolation and proxy protection passed |
 | Offline build, browser acceptance and archive inspection | Exact merged-source export and its ZIP passed safe extraction, static validation and fresh Chromium workbench/private-roster/history/mailbox smoke. Main Showcase artifact 15086438629 independently downloaded: JUnit 30/0/0/0, 30 screenshots, 30 zero-network/zero-error files, HTML and ZIP integrity; actual initial-homepage thumbnail inspected. |
 | Final ZIP bytes / SHA-256 | 127,433 bytes, 5 deployed HTML/CSS/JavaScript files; `57a8600d3f242ef70ec16612c5e1294982022c7ca29e70f7cf40bdd6f636f441`; no source/maps/environment/server files |
-| Public Release URL and redownload verification | Pending actual upload |
-| Non-Rotaract registry comparison | 21/21 rows match baseline during preparation; repeat after final promotion |
+| Public Release URL and redownload verification | [rotaract-57be84d-v1](https://github.com/xk2022/xk-website-showcase/releases/tag/rotaract-57be84d-v1), Release 458954340; isolated [run 45755409869](https://github.com/xk2022/xk-website-showcase/actions/runs/45755409869) @ `889718d` succeeded, only publisher eligible and all normal jobs skipped. Public credential-free ZIP/manifest redownload matched all 127,433 bytes, SHA-256 and source/run provenance; ZIP asset 794312744 |
+| Non-Rotaract registry comparison | 21/21 rows match baseline after final promotion; the complete locally built manifest also exactly matches the saved pre-publication manifest for all 21 other entries |
 | Hub unit tests | `env -u GH_TOKEN -u GITHUB_TOKEN node --test --test-isolation=none tests/*.test.mjs`: 140/140 passed during initial preparation; uploader-focused 30/30 and complete 146/146 passed after the scoped fallback |
-| Complete Hub build and browser smoke | Preparation PR #29 [run 45752313750](https://github.com/xk2022/xk-website-showcase/actions/runs/45752313750), head `1e7edb5711b1fbe13c49b6d48b85637d9ec87b32`, passed full baseline build and preserved transport runtime checks; this used the old registry, so final promoted-tuple validation is still required |
-| Hub PR / merged SHA | Pending reviewed Hub change |
-| Main Pages run / deployment | Pending actual guarded publication |
-| Public manifest / thumbnail / interaction checks | Pending actual live verification |
+| Initial preparation CI | [45752313750](https://github.com/xk2022/xk-website-showcase/actions/runs/45752313750) @ `1e7edb5` and [45755074588](https://github.com/xk2022/xk-website-showcase/actions/runs/45755074588) @ `889718d` passed full baseline build and preserved transport checks, with Pages skipped; these old-registry runs are separate from the final promoted-tuple checks |
+| Complete final local Hub build and browser smoke | 146/146 tests; resolved all 22 fixed sources including Rotaract `57be84d`, complete token-free build, fresh workbench/history smoke and generated initial-homepage thumbnail passed. Transport `3506dbd7...` exact preserved runtime bytes plus fresh Hub smoke passed; original source suite from 45564113822 was reused, NOT rerun |
+| Hub PR / merged SHA | [PR #29](https://github.com/xk2022/xk-website-showcase/pull/29) records the final reviewed head, candidate CI and merge SHA; the final delivery record is authoritative for status after this file is committed |
+| Main Pages run / deployment | Exact merged-main [Showcase Hub workflow](https://github.com/xk2022/xk-website-showcase/actions/workflows/deploy.yml) run and guarded Pages outcome are linked in the PR #29 delivery record; ZIP upload is not Pages publication |
+| Public manifest / thumbnail / interaction checks | Target: [public Rotaract](https://showcase.xplorekaleidoscope.com/rotaract/), [manifest](https://showcase.xplorekaleidoscope.com/manifest.json), and actual `_showcase-preview.jpg`. PR #29 final delivery records the exact public version, full publication verifier, same 30-case desktop/tablet/mobile UI run and the post-deploy comparison of the other 21 entries |
 
-Update each row from real command or workflow results. Keep source preparation, compiled-archive validation and actual public publication distinct. For rollback, restore the complete reviewed prior tuple and run a new normal release; do not weaken the interactive validator or substitute unreviewed bytes.
+Keep source preparation, compiled-archive validation and actual public publication distinct. The PR delivery record binds the final commit and workflow results without requiring this source file to predict its own commit SHA. For rollback, restore the complete reviewed prior tuple and run a new normal release; do not weaken the interactive validator or substitute unreviewed bytes.
