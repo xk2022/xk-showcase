@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { createHash, randomBytes } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { publishStaticArtifact } from '../scripts/publish-static-artifact.mjs';
-import { origin, shengfengyangRoutes } from '../scripts/static-export.mjs';
+import { origin, shengfengyangRoutes, ruiCafeRoutes } from '../scripts/static-export.mjs';
 
 const repository = 'xk2022/xk-website-showcase';
 const sourceSha = 'a'.repeat(40);
@@ -11,6 +11,8 @@ const tag = 'shengfengyang-aaaaaaa-v1';
 const zipUrl = `https://github.com/${repository}/releases/download/${tag}/shengfengyang-static.zip`;
 const carpentryTag = 'carpentry-aaaaaaa-v1';
 const carpentryZipUrl = `https://github.com/${repository}/releases/download/${carpentryTag}/carpentry-static.zip`;
+const ruiTag = 'rui-cafe-aaaaaaa-v1';
+const ruiZipUrl = `https://github.com/${repository}/releases/download/${ruiTag}/rui-cafe-static.zip`;
 const pythonZip = String.raw`
 import io, json, sys, zipfile
 buffer = io.BytesIO()
@@ -34,6 +36,12 @@ function carpentryArchive(overrides = {}) {
   };
   return execFileSync('python3', ['-c', pythonZip], { input: JSON.stringify(entries), maxBuffer: 5 * 1024 * 1024 });
 }
+function ruiArchive(overrides = {}) {
+  const entries = Object.fromEntries(ruiCafeRoutes.map(route => [`${route}index.html`, `<html><head><meta name="robots" content="noindex,nofollow"><link rel="canonical" href="${origin}/rui-cafe/${route}"></head><body><h1>蕋咖啡提案</h1><script src="/rui-cafe/_next/static/app.js"></script></body></html>`]));
+  entries['_next/static/app.js'] = '/* browser output only */';
+  Object.assign(entries, overrides);
+  return execFileSync('python3', ['-c', pythonZip], { input: JSON.stringify(entries), maxBuffer: 5 * 1024 * 1024 });
+}
 function environment(bytes) {
   return {
     INPUT_BLOB_SHA: createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex'),
@@ -45,8 +53,8 @@ const response = (data, status = 200) => new Response(JSON.stringify(data), { st
 function mock(bytes, { existing, uploadStatus = 201, blobOverride = {}, publicBytes = bytes, project } = {}) {
   const env = environment(bytes);
   if (project !== undefined) env.INPUT_PROJECT = project;
-  const expectedTag = project === 'carpentry' ? carpentryTag : tag;
-  const expectedZipUrl = project === 'carpentry' ? carpentryZipUrl : zipUrl;
+  const expectedTag = project === 'rui-cafe' ? ruiTag : project === 'carpentry' ? carpentryTag : tag;
+  const expectedZipUrl = project === 'rui-cafe' ? ruiZipUrl : project === 'carpentry' ? carpentryZipUrl : zipUrl;
   const calls = [];
   let draft;
   return {
@@ -129,6 +137,32 @@ test('the explicit original selector preserves the Shengfengyang release identit
   const created = JSON.parse(writes(service.calls)[0].options.body);
   assert.match(created.name, /^昇豐陽食品｜靜態提案 /);
   assert.equal(JSON.parse(created.body).sourceRepository, 'xk2022/xk-brand-shengfengyang');
+});
+
+test('Rui Cafe publishes its fixed seven-route proposal and manifest without private source access', async () => {
+  const bytes = ruiArchive();
+  const service = mock(bytes, { project: 'rui-cafe' });
+  assert.deepEqual(await publishStaticArtifact(service), { tag: ruiTag, url: ruiZipUrl, sourceSha, sha256: service.env.INPUT_SHA256, reused: false });
+  const mutations = writes(service.calls);
+  const created = JSON.parse(mutations[0].options.body);
+  assert.equal(created.tag_name, ruiTag);
+  assert.equal(created.name, '蕋咖啡 Rui Café｜非官方品牌網站提案 aaaaaaa');
+  const manifest = JSON.parse(mutations[2].options.body);
+  assert.equal(manifest.sourceRepository, 'xk2022/xk-brand-rui-cafe');
+  assert.equal(manifest.sourceSha, sourceSha);
+  assert.equal(manifest.sha256, service.env.INPUT_SHA256);
+  assert.equal(manifest.staticOnly, true);
+  assert.deepEqual(mutations.filter(call => call.url.hostname === 'uploads.github.com').map(call => call.url.searchParams.get('name')), ['rui-cafe-static.zip', 'release-manifest.json']);
+  assert.equal(service.calls.some(call => call.url.pathname.includes('/xk-brand-rui-cafe/')), false);
+});
+
+test('Rui Cafe cannot publish an incomplete route or an indexable sitemap', async () => {
+  for (const bytes of [ruiArchive({ 'visit/index.html': '<h1>Incomplete</h1>' }), ruiArchive({ 'sitemap.xml': '<urlset/>' })]) {
+    const service = mock(bytes, { project: 'rui-cafe' });
+    await assert.rejects(publishStaticArtifact(service));
+    assert.equal(writes(service.calls).length, 0);
+    assert.equal(service.calls.some(call => call.url.pathname.includes('/releases')), false);
+  }
 });
 
 test('Carpentry publishes its exact asset, source and manifest using the same isolated draft flow', async () => {

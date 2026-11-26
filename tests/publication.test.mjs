@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { assertManifest, verifyPublication, verifyWithRetries } from '../scripts/verify-publication.mjs';
-import { shengfengyangRoutes } from '../scripts/static-export.mjs';
+import { shengfengyangRoutes, ruiCafeRoutes } from '../scripts/static-export.mjs';
 
 const origin = 'https://showcase.example.test';
 const sha = 'a'.repeat(40);
@@ -315,4 +315,81 @@ test('Shengfengyang nested pages require their own canonical, noindex and one no
     data.put(data.deepRoute, html);
     await assert.rejects(data.verify(), error);
   }
+});
+
+function ruiCafeFixture() {
+  const site = { slug: 'rui-cafe', repository: 'xk2022/xk-brand-rui-cafe', ref: sha, sha, framework: 'next', status: 'proposal', indexable: false, listed: true };
+  const files = new Map();
+  const put = (path, body, type = 'text/html') => files.set(path, { body, type });
+  put('/manifest.json', JSON.stringify([{ slug: site.slug, repository: site.repository, sha }]), 'application/json');
+  put('/', '<a href="./rui-cafe/">蕋咖啡 Rui Café｜非官方品牌網站提案</a>');
+  put('/robots.txt', 'User-agent: *\nAllow: /\nDisallow: /rui-cafe/\n', 'text/plain');
+  for (const route of ruiCafeRoutes) put(`/rui-cafe/${route}`, page(site.slug, route, '<meta name="robots" content="noindex,nofollow">'));
+  put('/rui-cafe/assets/site.css', '@font-face{src:url("font.woff2")}', 'text/css');
+  put('/rui-cafe/assets/site.js', '/* browser asset */', 'text/javascript');
+  put('/rui-cafe/assets/photo.webp', 'image bytes', 'image/webp');
+  put('/rui-cafe/assets/icon.svg', '<svg/>', 'image/svg+xml');
+  put('/rui-cafe/assets/font.woff2', 'font bytes', 'font/woff2');
+  put('/rui-cafe/visit/', page(site.slug, 'visit/', '<meta name="robots" content="noindex,nofollow">') + '<img src="/rui-cafe/assets/visit-only.webp">');
+  put('/rui-cafe/assets/visit-only.webp', 'visit image bytes', 'image/webp');
+  const requests = [];
+  const fetchImpl = async input => {
+    const url = new URL(input);
+    requests.push(url.pathname);
+    const file = files.get(url.pathname);
+    return new Response(file?.body || 'Not found', { status: file ? 200 : 404, headers: { 'content-type': file?.type || 'text/plain' } });
+  };
+  return { files, put, requests, verify: () => verifyPublication({ sites: [site], origin, fetchImpl }) };
+}
+
+test('listed Rui Café proposal verifies all seven routes and nested assets while keeping noindex and no sitemap', async () => {
+  const data = ruiCafeFixture();
+  const result = await data.verify();
+  assert.equal(result.sites, 1);
+  assert.equal(result.pages, 7);
+  assert.equal(result.assets, 6);
+  for (const route of ['', 'about/', 'menu/', 'cakes/', 'space/', 'news/', 'visit/']) {
+    assert(data.requests.includes(`/rui-cafe/${route}`), `Missing Rui Café publication request: ${route}`);
+  }
+  assert(data.requests.includes('/rui-cafe/sitemap.xml'));
+  assert(data.requests.includes('/rui-cafe/assets/font.woff2'));
+  assert(data.requests.includes('/rui-cafe/assets/visit-only.webp'));
+});
+
+test('Rui Café publication rejects a missing deep route or deep-only asset despite a healthy homepage', async () => {
+  for (const route of ruiCafeRoutes.slice(1)) {
+    const data = ruiCafeFixture();
+    data.files.delete(`/rui-cafe/${route}`);
+    await assert.rejects(data.verify(), /HTTP 404.*rui-cafe/);
+  }
+  const data = ruiCafeFixture();
+  data.files.delete('/rui-cafe/assets/visit-only.webp');
+  await assert.rejects(data.verify(), /HTTP 404.*visit-only/);
+});
+
+test('Rui Café deep pages enforce their own canonical, noindex and one nonempty H1', async () => {
+  const correct = page('rui-cafe', 'cakes/', '<meta name="robots" content="noindex,nofollow">');
+  for (const [html, error] of [
+    [correct.replace(`${origin}/rui-cafe/cakes/`, `${origin}/rui-cafe/`), /Incorrect canonical.*cakes/],
+    [correct.replace('noindex,nofollow', 'index,follow'), /Missing noindex,nofollow.*cakes/],
+    [correct + '<h1>Duplicate</h1>', /Rui Café page must have one nonempty H1.*cakes/],
+    [correct.replace('<h1>Example</h1>', ''), /Rui Café page must have one nonempty H1.*cakes/],
+    [correct.replace('<h1>Example</h1>', '<h1><span> </span></h1>'), /Rui Café page must have one nonempty H1.*cakes/],
+  ]) {
+    const data = ruiCafeFixture();
+    data.put('/rui-cafe/cakes/', html);
+    await assert.rejects(data.verify(), error);
+  }
+});
+
+test('Rui Café remains listed as a proposal but cannot expose a sitemap or lose its robots block', async () => {
+  const hidden = ruiCafeFixture();
+  hidden.put('/', '<h1>No café card</h1>');
+  await assert.rejects(hidden.verify(), /Incorrect showcase card visibility: rui-cafe/);
+  const sitemap = ruiCafeFixture();
+  sitemap.put('/rui-cafe/sitemap.xml', '<urlset/>', 'application/xml');
+  await assert.rejects(sitemap.verify(), /Non-indexable proposal exposes sitemap/);
+  const robots = ruiCafeFixture();
+  robots.put('/robots.txt', 'User-agent: *\nAllow: /\n', 'text/plain');
+  await assert.rejects(robots.verify(), /Incorrect proposal robots policy/);
 });
