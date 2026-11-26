@@ -376,5 +376,27 @@
     "listed": true,
     "brand": "衣序 SELECT",
     "purpose": "展示服飾商城商品瀏覽與購物流程設計；不收款、不接正式服務。"
+  },
+  {
+    "slug": "rui-cafe",
+    "name": "蕋咖啡 Rui Café｜品牌網站提案",
+    "category": "品牌形象概念提案",
+    "repository": "xk2022/xk-brand-rui-cafe",
+    "ref": "e32cc6d7bf330c1a487e9dbf2983443cffebdb70",
+    "framework": "next",
+    "status": "proposal",
+    "indexable": false,
+    "listed": true,
+    "brand": "蕋咖啡 Rui Café",
+    "purpose": "以南崁老宅與咖啡日常呈現品牌概念，提供歷史菜單參考、蛋糕社群詢問與到店入口。",
+    "env": {
+      "NEXT_PUBLIC_BASE_PATH": "/rui-cafe",
+      "NEXT_PUBLIC_SITE_URL": "https://showcase.xplorekaleidoscope.com"
+    },
+    "staticArtifact": {
+      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/rui-cafe-e32cc6d-v1/rui-cafe-static.zip",
+      "sha256": "638ae61cea47df4c5b920e0f3fd17d9c462a6b0d48767375ff8faecffcb3fe39",
+      "sourceSha": "e32cc6d7bf330c1a487e9dbf2983443cffebdb70"
+    }
   }
 ]

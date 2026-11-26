@@ -28,6 +28,10 @@ ZIP 以排序檔名、固定 1980 時戳及 0644 權限封裝，根目錄直接�
 
 `publish-static-artifact` 與正常 Pages resolve/build/deploy 分離；僅在覆核推送分支的 workflow 與 helper 後執行。公開 Release 會保留產物校驗碼、來源 SHA 與上傳工作流程身分；不宣稱上傳工作重新查核私有 CI。
 
+隔離上傳 [run 45728926680](https://github.com/xk2022/xk-website-showcase/actions/runs/45728926680) 已成功，執行經覆核的 Hub 分支提交 `41efb19708458ef75a1d3f12bf08c3f820805053`；僅 `publish-static-artifact` 執行，resolve/build/deploy 均略過。傳輸 blob 為 `d2d602b245ace82b87e75bf123ac815f553faed7`，沒有加入 tree／commit；它不是公開產物的長期來源。
+
+已從公開 Release URL 重新下載 ZIP，SHA-256 與上述值相同；`release-manifest.json` 的來源 SHA、校驗碼、Hub 提交與 run 身分均一致。這只證明靜態快照已儲存，完整 Pages 發布仍另行執行。
+
 ## 登記與驗證政策
 
 登記使用 `slug:rui-cafe`、`framework:next`、`status:proposal`、`listed:true`、`indexable:false`，首頁卡片標示非官方提案並使用「查看概念提案」入口。根 robots 加入 `Disallow: /rui-cafe/`，不加入 sitemap。

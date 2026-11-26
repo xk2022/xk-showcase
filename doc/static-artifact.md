@@ -129,6 +129,10 @@ Do not label a candidate live based solely on a local build, a ZIP upload or a s
 
 ## Updates and recovery
 
+### Rui Café publisher selection
+
+The reviewed `rui-cafe` selector maps only to `xk2022/xk-brand-rui-cafe`, `/rui-cafe/`, and `rui-cafe-static.zip`. It uses the existing Hub-local isolated publisher, bounded extraction, digest pinning and draft-asset publication. It adds no arbitrary destination, secret or private-source API access. The proposal is listed with an unofficial label and remains non-indexable without a sitemap. Validation requires seven physical pages with individual canonical URLs and one nonempty H1, followed by independent public checks for the same seven routes. See [Rui Café publication evidence](rui-cafe-publication.md).
+
 For a new private-source website snapshot:
 
 1. Check the intended source commit and its required source quality checks using the authorized source access available to the preparation task.
