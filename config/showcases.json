@@ -22,16 +22,16 @@
     "name": "三月手工湯包",
     "category": "品牌導購型",
     "repository": "xk2022/xk-lp-march-tangbao",
-    "ref": "293f0386ce8f346b1e7e5a13f94acea038bb6967",
+    "ref": "3415bbef1e4f10f33b5a6658367df0b53b17b742",
     "env": {
       "PAGES_EXPORT": "1"
     },
     "brand": "三月手工湯包",
     "purpose": "可切換墨綠與印章紅配色，查看菜單、導航到店或透過 LINE 預留滷味。",
     "staticArtifact": {
-      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/preserved-showcase-45564113822-v1/march-tangbao-static.zip",
-      "sha256": "dc1de8a47c40444e74359df6329850df6cbea4d546fd55fc13b27029f74f5b24",
-      "sourceSha": "293f0386ce8f346b1e7e5a13f94acea038bb6967"
+      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/march-tangbao-3415bbe-v1/march-tangbao-static.zip",
+      "sha256": "09b85744be0a511af2b0d05ea1a8fdfea4c7e40b49877c2075b618725d1fe09c",
+      "sourceSha": "3415bbef1e4f10f33b5a6658367df0b53b17b742"
     }
   },
   {
