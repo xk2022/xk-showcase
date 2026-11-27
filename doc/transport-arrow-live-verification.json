@@ -1,0 +1,108 @@
+{
+  "status": "PASS",
+  "recordedAt": "2026-11-27T18:37:22.830151+00:00",
+  "sourceSha": "1460860660a1005646f3be7643ccbc3c54d0206f",
+  "archiveSha256": "dfda90df6f03c1321508ca1a8f97be242dba9b7f601de1fa81ff64bfcbe9b320",
+  "archiveBytes": 867291,
+  "hubRuntimeSha": "afb0a0cb7a042f9b25a68c3af3f9a9a3e763a276",
+  "promotionPr": 51,
+  "pagesRun": 46049728740,
+  "officialVerification": {
+    "status": "PASS",
+    "publication": 137,
+    "sites": 22,
+    "pages": 74,
+    "assets": 287
+  },
+  "independentHttps": {
+    "status": "PASS",
+    "startedAt": "2026-11-27T18:32:36.535266+00:00",
+    "finishedAt": "2026-11-27T18:32:39.360662+00:00",
+    "tlsVerification": "CERT_REQUIRED and hostname validation",
+    "noCache": true,
+    "manifestIdentitiesMatched": 22,
+    "publicRuntimeFilesByteHashMimeMatched": 51,
+    "archiveFiles": 52,
+    "svgArrowsInFivePages": 33,
+    "perPageArrowCounts": [
+      13,
+      7,
+      4,
+      5,
+      4
+    ],
+    "transparentCss": "PASS",
+    "fullRawReportSha256": "89bd43e1349246c99b9386d5c46540b903a8fbd04e231983caeac8a595176afe",
+    "deploymentOnlyMarker": {
+      "file": ".nojekyll",
+      "zipBytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "publicStatus": 404,
+      "public404Expected": true,
+      "classifiedAsBrowserRuntime": false,
+      "assembledOutputEvidence": {
+        "kind": "actual assembled output attested by exact CI transport comparison",
+        "reportPath": "/tmp/xk-transport-arrows-20261127/main-transport-static-artifact.json",
+        "reportSha256": "12ae817e2438ca9539375a6d06926c67ee76afb690963f834af145facbb8d129",
+        "sourceRepository": "xk2022/xk-corp-truck-transport",
+        "sourceSha": "1460860660a1005646f3be7643ccbc3c54d0206f",
+        "staticArtifact": {
+          "url": "https://github.com/xk2022/xk-website-showcase/releases/download/truck-transport-1460860-v1/truck-transport-static.zip",
+          "sha256": "dfda90df6f03c1321508ca1a8f97be242dba9b7f601de1fa81ff64bfcbe9b320",
+          "sourceSha": "1460860660a1005646f3be7643ccbc3c54d0206f"
+        },
+        "comparison": {
+          "comparedFiles": 52,
+          "excludedGeneratedFile": "_showcase-preview.jpg",
+          "result": "identical"
+        },
+        "compiledOutputSmoke": "PASS",
+        "provenance": "Caller supplies the actual successful main-run transport report downloaded from GitHub Actions after independent GitHub artifact-digest verification. This checker pins its content and records its own JSON digest; it does not authenticate GitHub API provenance again.",
+        "markerProof": "The reviewed exact ZIP contains a zero-byte .nojekyll. The CI report records all 52 assembled file bytes identical to that ZIP, with only the Hub-generated gallery image excluded. No local Hub dist is read or claimed."
+      },
+      "basis": "Sole zero-byte deployment control input in the reviewed ZIP; assembled-output proof is explicitly identified below. GitHub Pages may return 404 because this marker is not a public browser resource. All other 51 files remain mandatory independent public byte/hash/MIME matches."
+    }
+  },
+  "cloudBrowser": {
+    "status": "PASS",
+    "browser": "Managed Chrome",
+    "viewport": {
+      "width": 1180,
+      "height": 757
+    },
+    "perPageArrowCounts": {
+      "home": 13,
+      "services": 7,
+      "shippingGuide": 4,
+      "about": 5,
+      "inquiry": 4
+    },
+    "invalidComputedArrowStyles": 0,
+    "transparentBackground": true,
+    "fill": "none",
+    "strokeInheritsColor": true,
+    "greenCtaBackground": "rgb(23, 61, 53)",
+    "horizontalOverflow": false,
+    "checks": [
+      "home inquiry entry",
+      "keyboard Tab and Return preview two pallets",
+      "return retains two pallets",
+      "reload clears draft",
+      "navigation to all five pages"
+    ],
+    "observationNote": "An initial chained return action did not switch the view; after a fresh DOM observation, clicking the visible return button succeeded. No product change or assertion relaxation was made."
+  },
+  "localBrowser": {
+    "browser": "Chromium 156.0.8078.79",
+    "viewports": [
+      "375x844",
+      "1440x1000",
+      "320x844 home"
+    ],
+    "targetTestsPassed": 22,
+    "svgStyleInstancesChecked": 66,
+    "skipped": 0,
+    "retries": 0
+  },
+  "scope": "Public managed-browser UI was desktop only. Mobile and axe checks are the local export suite and exact-source CI. No TLS bypass or physical-iPhone claim."
+}

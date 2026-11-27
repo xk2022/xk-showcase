@@ -1,6 +1,6 @@
 # 萬花筒運輸｜無背景箭頭更新
 
-日期：2026-11-27（UTC）。本次僅將裝飾文字箭頭換成透明、單色 SVG，保留按鈕背景、品牌、文案、網址及模擬詢價行為。公開站尚待此候選的正常 Hub PR／main 發布；不以來源合併或 Release 上傳代替上線驗證。
+日期：2026-11-27（UTC）。本次僅將裝飾文字箭頭換成透明、單色 SVG，保留按鈕背景、品牌、文案、網址及模擬詢價行為。已由正常 Hub PR／main 流程部署，官方、獨立 HTTPS 及公開 Cloud Browser 箭頭檢查均通過。
 
 | 準備證據 | 實際識別／結果 |
 | --- | --- |
@@ -21,7 +21,13 @@
 
 ## 發布結果
 
-Hub PR CI、main freshness guard、Pages 與獨立公開核對待實際執行後補記。公開比對需使用該次部署的 resolved plan，確認完整 tuple、51 個 runtime bytes 與單色 SVG；`.nojekyll` 只列為本機／ZIP 的控制標記，不要求公開 HTTP 200。
+[Hub PR #51](https://github.com/xk2022/xk-website-showcase/pull/51) 經 [PR CI 46049348777](https://github.com/xk2022/xk-website-showcase/actions/runs/46049348777) 全綠後合併為 `afb0a0cb7a042f9b25a68c3af3f9a9a3e763a276`。正式 [main run 46049728740](https://github.com/xk2022/xk-website-showcase/actions/runs/46049728740) 全綠：260 項、22 站完整 build、52 檔成品逐 byte 比較、375／1440px 五頁與兩輪詢價 smoke、Chengce 四寬度、Publication 137 freshness guard、Pages 及官方公開驗證（22 站／74 頁／287 素材）均通過。
+
+獨立正常 TLS／no-cache 於 **18:32:36–39 UTC** 通過：22 個完整 manifest identities 與同次 deployed plan 相符，51 個公開 runtime bytes／hash／MIME 相同，五頁 metadata 與 33 個實際 DOM SVG（13／7／4／5／4）及透明 CSS 均正確。唯一 0-byte `.nojekyll` 是不公開的部署 marker，HTTP 404 正常；由該次 main 的已驗證 transport artifact（52 檔相同）加審查 ZIP 證明 marker，沒有把舊本機 Hub dist 當本次輸出。
+
+Cloud Browser Chrome **1180×757** 實際走訪五頁：33 個 SVG computed background 透明、無底圖、fill none、stroke 繼承文字色；綠 CTA rgb(23,61,53) 與導覽不變，無 overflow。首頁 CTA、鍵盤 Tab／Return 預覽「兩板貨」、返回保留及刷新清空通過。首次串接的返回動作未切換畫面，重新觀察 DOM 後點擊可見按鈕即正常；未改產品或放寬斷言。公網桌面操作與本機手機／axe 範圍分開記錄，沒有繞過 TLS 或宣稱真機驗收。
+
+[精簡收據](transport-arrow-live-verification.json) 保留識別與範圍；完整本機證據在 `/tmp/xk-transport-arrows-20261127/`。後續文件提交只補記結果，不改已發布 runtime 或 ZIP。
 
 ## 可回復快照
 

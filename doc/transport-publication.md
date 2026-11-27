@@ -1,5 +1,7 @@
 # 萬花筒運輸｜新品牌靜態快照準備與發布紀錄
 
+本頁保留首次品牌更名的發布證據；目前無背景箭頭快照見 [transport-arrow-publication.md](transport-arrow-publication.md)。
+
 日期：2026-11-27（UTC）。**「萬花筒運輸」已發布，官方公開驗證、獨立 HTTPS 與公開 Cloud Browser 操作均通過。** 本次依追加部署授權，將既有 `/truck-transport/` 的舊「序程運輸」快照替換為「萬花筒運輸」（Kaleidoscope Transport）。來源 `xk2022/xk-corp-truck-transport` 維持 Private，公開交付僅限已審查的靜態執行成品；不改 slug、網域、其他專案來源或私有權限。
 
 本案仍是 `portfolio`、虛構品牌與 XK 自主規劃展示作品。保留「探索萬象科技（Xplore Kaleidoscope，簡稱 XK）」及 **Self-Initiated Demonstration Project｜自主規劃展示作品**、示意圖片標籤與 `noindex,nofollow`。公司 `f117310` 新增的正式客戶網站 footer 規則不改變本案分類，不把它補成受委託實績或正式運輸服務。
