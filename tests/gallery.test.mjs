@@ -193,3 +193,16 @@ test('Logistics requires its exact frontend release gate and cannot use an inter
     await t.test(name, () => assert.throws(() => validateSites([{ ...logisticsDemo, ...change }])));
   }
 });
+
+
+test('LP service headline and subtitle appear before its cards only in type view', () => {
+  const lp = { ...app, slug: 'lp-demo', repository: 'xk2022/xk-lp-demo', brand: 'Shared' };
+  const html = renderGallery([lp, { ...app, brand: 'Shared' }]);
+  const headline = '專為單一目標打造的快速轉換頁';
+  const subtitle = '適用活動入口、精選預購（10品項內）、與工程詢價留單——資訊不發散、轉換更直接！';
+  assert.ok(html.indexOf('LP｜一頁式網站') < html.indexOf(headline));
+  assert.ok(html.indexOf(headline) < html.indexOf(subtitle));
+  assert.ok(html.indexOf(subtitle) < html.indexOf('href="./lp-demo/"'));
+  assert.equal(html.split(headline).length, 2);
+  assert.equal(html.split(subtitle).length, 2);
+});
