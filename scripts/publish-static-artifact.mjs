@@ -12,6 +12,11 @@ const manifestName = 'release-manifest.json';
 // Publication inputs select only reviewed projects, never arbitrary repository,
 // slug, asset or release names. Omitted INPUT_PROJECT preserves the original job.
 const projects = {
+  'esan-interior': {
+    sourceRepository: 'xk2022/xk-lp-esan-interior',
+    archiveName: 'esan-interior-static.zip', name: '一森室內設計',
+    policy: { framework: 'next' },
+  },
   'consulting-chengce': {
     sourceRepository: 'xk2022/xk-lp-consulting-chengce',
     archiveName: 'consulting-chengce-static.zip', name: '澄策企業顧問工作室',

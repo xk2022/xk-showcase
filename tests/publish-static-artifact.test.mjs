@@ -21,6 +21,9 @@ const rotaractZipUrl = `https://github.com/${repository}/releases/download/${rot
 const chengceTag = 'consulting-chengce-aaaaaaa-v1';
 const chengceZipUrl = `https://github.com/${repository}/releases/download/${chengceTag}/consulting-chengce-static.zip`;
 const chengceSourceRepository = 'xk2022/xk-lp-consulting-chengce';
+const esanTag = 'esan-interior-aaaaaaa-v1';
+const esanZipUrl = `https://github.com/${repository}/releases/download/${esanTag}/esan-interior-static.zip`;
+const esanSourceRepository = 'xk2022/xk-lp-esan-interior';
 const pythonZip = String.raw`
 import io, json, sys, zipfile
 buffer = io.BytesIO()
@@ -68,6 +71,15 @@ function chengceArchive(overrides = {}) {
   };
   return execFileSync('python3', ['-c', pythonZip], { input: JSON.stringify(entries), maxBuffer: 5 * 1024 * 1024 });
 }
+function esanArchive(overrides = {}) {
+  const entries = {
+    'index.html': `<html><head><meta name="robots" content="noindex,nofollow"><link rel="canonical" href="${origin}/esan-interior/"></head><body><h1>一森室內設計</h1><script src="/esan-interior/_next/static/app.js"></script></body></html>`,
+    '_next/static/app.js': '/* reviewed public browser output */',
+    'sitemap.xml': `<urlset><url><loc>${origin}/esan-interior/</loc></url></urlset>`,
+    ...overrides,
+  };
+  return execFileSync('python3', ['-c', pythonZip], { input: JSON.stringify(entries), maxBuffer: 5 * 1024 * 1024 });
+}
 function environment(bytes) {
   return {
     INPUT_BLOB_SHA: createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex'),
@@ -79,8 +91,8 @@ const response = (data, status = 200) => new Response(JSON.stringify(data), { st
 function mock(bytes, { existing, uploadStatus = 201, blobOverride = {}, publicBytes = bytes, project, releasePages, releaseDetail = existing } = {}) {
   const env = environment(bytes);
   if (project !== undefined) env.INPUT_PROJECT = project;
-  const expectedTag = project === 'consulting-chengce' ? chengceTag : project === 'rotaract' ? rotaractTag : project === 'rui-cafe' ? ruiTag : project === 'carpentry' ? carpentryTag : tag;
-  const expectedZipUrl = project === 'consulting-chengce' ? chengceZipUrl : project === 'rotaract' ? rotaractZipUrl : project === 'rui-cafe' ? ruiZipUrl : project === 'carpentry' ? carpentryZipUrl : zipUrl;
+  const expectedTag = project === 'esan-interior' ? esanTag : project === 'consulting-chengce' ? chengceTag : project === 'rotaract' ? rotaractTag : project === 'rui-cafe' ? ruiTag : project === 'carpentry' ? carpentryTag : tag;
+  const expectedZipUrl = project === 'esan-interior' ? esanZipUrl : project === 'consulting-chengce' ? chengceZipUrl : project === 'rotaract' ? rotaractZipUrl : project === 'rui-cafe' ? ruiZipUrl : project === 'carpentry' ? carpentryZipUrl : zipUrl;
   const calls = [];
   let draft;
   return {
@@ -124,6 +136,7 @@ function mock(bytes, { existing, uploadStatus = 201, blobOverride = {}, publicBy
 }
 function release(env, project = 'shengfengyang') {
   const carpentry = project === 'carpentry';
+  if (project === 'esan-interior') return { tag_name: esanTag, draft: false, body: JSON.stringify({ sourceRepository: esanSourceRepository, sourceSha, sha256: env.INPUT_SHA256 }), assets: [{ name: 'esan-interior-static.zip' }, { name: 'release-manifest.json' }] };
   if (project === 'consulting-chengce') return { tag_name: chengceTag, draft: false, body: JSON.stringify({ sourceRepository: chengceSourceRepository, sourceSha, sha256: env.INPUT_SHA256 }), assets: [{ name: 'consulting-chengce-static.zip' }, { name: 'release-manifest.json' }] };
   return { tag_name: carpentry ? carpentryTag : tag, draft: false, body: JSON.stringify({ sourceRepository: carpentry ? templateSourceRepository : 'xk2022/xk-brand-shengfengyang', sourceSha, sha256: env.INPUT_SHA256 }), assets: [{ name: carpentry ? 'carpentry-static.zip' : 'shengfengyang-static.zip' }, { name: 'release-manifest.json' }] };
 }
@@ -143,7 +156,7 @@ test('validates inputs before reading a blob or making any publication request',
   for (const bad of [
     { GITHUB_REPOSITORY: 'outsider/repo' }, { INPUT_BLOB_SHA: '../blob' }, { INPUT_SHA256: 'invalid' },
     { INPUT_SOURCE_SHA: 'f'.repeat(39) }, { GITHUB_SHA: 'not-a-commit' }, { GITHUB_RUN_ID: '123/other' }, { GH_TOKEN: '' },
-    ...['unknown', '__proto__', 'xk2022/xk-lp-carpentry', 'xk2022/xk-template-lp', 'template-lp', 'CARPENTRY', '../carpentry', 'chengce', 'CONSULTING-CHENGCE', '../consulting-chengce', chengceSourceRepository, ''].map(INPUT_PROJECT => ({ INPUT_PROJECT })),
+    ...['unknown', '__proto__', 'xk2022/xk-lp-carpentry', 'xk2022/xk-template-lp', 'template-lp', 'CARPENTRY', '../carpentry', 'chengce', 'CONSULTING-CHENGCE', '../consulting-chengce', chengceSourceRepository, 'esan', 'ESAN-INTERIOR', '../esan-interior', esanSourceRepository, ''].map(INPUT_PROJECT => ({ INPUT_PROJECT })),
   ]) {
     let called = false;
     await assert.rejects(publishStaticArtifact({ env: { ...env, ...bad }, fetchImpl: async () => { called = true; throw new Error('Must not fetch'); } }));
@@ -545,5 +558,71 @@ test('the workflow exposes the fixed Chengce selector while retaining the origin
   const workflow = await readFile(new URL('../.github/workflows/deploy.yml', import.meta.url), 'utf8');
   const projectInput = workflow.split('      static_artifact_project:')[1].split('      static_artifact_blob:')[0];
   assert.match(projectInput, /\n          - consulting-chengce\n/);
+  assert.match(projectInput, /default: shengfengyang/);
+});
+
+test('Esan publishes only its fixed source, subpath and archive with a provenance manifest', async () => {
+  const bytes = esanArchive();
+  const service = mock(bytes, { project: 'esan-interior' });
+  assert.deepEqual(await publishStaticArtifact(service), { tag: esanTag, url: esanZipUrl, sourceSha, sha256: service.env.INPUT_SHA256, reused: false });
+  const mutations = writes(service.calls);
+  assert.deepEqual(mutations.map(call => `${call.url.hostname}:${call.options.method}`), ['api.github.com:POST', 'uploads.github.com:POST', 'uploads.github.com:POST', 'api.github.com:PATCH']);
+  const created = JSON.parse(mutations[0].options.body);
+  assert.equal(created.tag_name, esanTag);
+  assert.equal(created.name, '一森室內設計 aaaaaaa');
+  const manifest = JSON.parse(mutations[2].options.body);
+  assert.deepEqual(manifest, JSON.parse(created.body));
+  assert.equal(manifest.sourceRepository, esanSourceRepository);
+  assert.equal(manifest.sourceSha, sourceSha);
+  assert.equal(manifest.sha256, service.env.INPUT_SHA256);
+  assert.equal(manifest.staticOnly, true);
+  assert.match(manifest.verification, /does not query private source CI/);
+  assert.deepEqual(mutations.filter(call => call.url.hostname === 'uploads.github.com').map(call => call.url.searchParams.get('name')), ['esan-interior-static.zip', 'release-manifest.json']);
+  assert.deepEqual(mutations[1].options.body, bytes);
+  assert.equal(service.calls.some(({ url }) => url.pathname.startsWith(`/repos/${esanSourceRepository}/`)), false);
+  assert.ok(service.calls.filter(({ options }) => options.headers?.Authorization).every(({ url }) => ['api.github.com', 'uploads.github.com'].includes(url.hostname) && url.pathname.startsWith(`/repos/${repository}/`)));
+});
+
+test('Esan rejects other-case exports, missing sitemap and escaping assets before release access', async () => {
+  for (const bytes of [
+    chengceArchive(),
+    esanArchive({ 'sitemap.xml': undefined }),
+    esanArchive({ 'index.html': `<html><head><link rel="canonical" href="${origin}/esan-interior/"></head><body><h1>一森</h1><script src="/esan-interior/_next/static/app.js"></script><img src="/carpentry/image.jpg"></body></html>` }),
+  ]) {
+    const service = mock(bytes, { project: 'esan-interior' });
+    await assert.rejects(publishStaticArtifact(service));
+    assert.equal(writes(service.calls).length, 0);
+    assert.equal(service.calls.some(call => call.url.pathname.includes('/releases')), false);
+  }
+});
+
+test('a matching Esan public release is revalidated and reused without writes', async () => {
+  const bytes = esanArchive();
+  const service = mock(bytes, { project: 'esan-interior', existing: release(environment(bytes), 'esan-interior') });
+  const result = await publishStaticArtifact(service);
+  assert.equal(result.reused, true);
+  assert.equal(result.url, esanZipUrl);
+  assert.equal(writes(service.calls).length, 0);
+  assert.equal(service.calls.filter(call => call.url.hostname === 'github.com').length, 1);
+});
+
+test('Esan refuses changed source provenance and drafts without borrowing Rotaract recovery', async () => {
+  const bytes = esanArchive();
+  const env = environment(bytes);
+  const mismatched = release(env, 'esan-interior');
+  mismatched.body = JSON.stringify({ ...JSON.parse(mismatched.body), sourceRepository: chengceSourceRepository });
+  for (const existing of [mismatched, { ...release(env, 'esan-interior'), draft: true }]) {
+    const service = mock(bytes, { project: 'esan-interior', existing });
+    await assert.rejects(publishStaticArtifact(service));
+    assert.equal(writes(service.calls).length, 0);
+    assert.equal(service.calls.some(call => call.url.searchParams.has('page')), false);
+    assert.equal(service.calls.some(call => call.url.hostname === 'github.com'), false);
+  }
+});
+
+test('the workflow exposes the fixed Esan selector while retaining the original default', async () => {
+  const workflow = await readFile(new URL('../.github/workflows/deploy.yml', import.meta.url), 'utf8');
+  const projectInput = workflow.split('      static_artifact_project:')[1].split('      static_artifact_blob:')[0];
+  assert.match(projectInput, /\n          - esan-interior\n/);
   assert.match(projectInput, /default: shengfengyang/);
 });

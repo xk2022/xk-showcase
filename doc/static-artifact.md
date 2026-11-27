@@ -166,6 +166,10 @@ For a new private-source website snapshot:
 
 Retain the approved asset bytes and digest for reproducibility. If a Release asset is missing or its bytes differ, the build fails; do not bypass integrity verification. For rollback, restore a reviewed URL/digest/source-SHA tuple and run a new complete release. Artifact-mode transport synchronization is already a read-only no-op; disable synchronization first only for an intentional Git-built transport rollback. Do not reuse an archive with different source provenance or fabricate private CI evidence to make a release pass.
 
+## Esan publisher selection
+
+The fixed `esan-interior` selector is also available for `xk2022/xk-lp-esan-interior`, `/esan-interior/` and `esan-interior-static.zip`. It retains the current Next.js canonical, local-resource and sitemap contract, with the source's preview noindex markup. It does not alter registration indexing/listing flags or add private-source access. See [Esan preparation](esan-interior-publication.md) for the exact source CI, export digest and replacement/rollback identities.
+
 ## Carpentry publisher selection
 
 The isolated upload workflow also supports the reviewed `carpentry` project via `static_artifact_project=carpentry` (`INPUT_PROJECT=carpentry`). The default remains `shengfengyang` for existing dispatches. The selector maps to fixed repository/slug/asset identities; it does not accept arbitrary source or destination values. Carpentry retains its indexable `/carpentry/` export and sitemap, while Shengfengyang retains its non-indexable, unlisted 20-route policy. Both use the same bounded extraction, integrity, draft publication, no-overwrite and isolated-permission checks. See [Carpentry preparation](carpentry-publication.md) for the exact approved bytes, source CI evidence and dispatch inputs.
