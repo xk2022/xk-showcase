@@ -94,6 +94,74 @@ test('published manifest must have exactly the resolved source SHAs without dupl
   }
 });
 
+const transportArtifact = {
+  url: 'https://github.com/xk2022/xk-website-showcase/releases/download/truck-transport-ddddddd-v1/truck-transport-static.zip',
+  sha256: '1'.repeat(64),
+  sourceSha: 'd'.repeat(40),
+};
+const transportArtifactRow = { ...manifest.find(entry => entry.slug === 'truck-transport'), staticArtifact: transportArtifact };
+
+test('published static snapshot identity ignores field order and volatile release timestamps', () => {
+  const legacy = { ...manifest[0], release: { verified_at: '2026-11-24T00:00:00Z' } };
+  const actual = {
+    staticArtifact: { sourceSha: transportArtifact.sourceSha, sha256: transportArtifact.sha256, url: transportArtifact.url },
+    sha: transportArtifactRow.sha,
+    repository: transportArtifactRow.repository,
+    slug: transportArtifactRow.slug,
+    verified_at: '2026-11-27T00:00:00Z',
+  };
+  assert.doesNotThrow(() => assertManifest([actual, { ...legacy, release: { verified_at: '2026-11-27T00:00:00Z' } }], [legacy, transportArtifactRow]));
+  assert.doesNotThrow(() => assertManifest([...manifest].reverse(), manifest));
+});
+
+test('same source SHA cannot conceal a changed artifact URL, digest or source identity', () => {
+  for (const [key, value] of [
+    ['url', transportArtifact.url.replace('-v1/', '-v2/')],
+    ['sha256', '2'.repeat(64)],
+    ['sourceSha', 'e'.repeat(40)],
+  ]) {
+    const changed = { ...transportArtifactRow, staticArtifact: { ...transportArtifact, [key]: value } };
+    assert.equal(changed.sha, transportArtifactRow.sha);
+    assert.throws(() => assertManifest([changed], [transportArtifactRow]), /manifest/i, key);
+  }
+});
+
+test('published manifests reject missing, unexpected and malformed static artifacts', () => {
+  const legacy = manifest.find(entry => entry.slug === 'truck-transport');
+  assert.throws(() => assertManifest([legacy], [transportArtifactRow]), /manifest/i);
+  assert.throws(() => assertManifest([transportArtifactRow], [legacy]), /manifest/i);
+  for (const artifact of [
+    null,
+    { ...transportArtifact, url: transportArtifact.url.replace('https:', 'http:') },
+    { ...transportArtifact, sha256: 'not-a-digest' },
+    { ...transportArtifact, sourceSha: 'not-a-source-sha' },
+    { ...transportArtifact, sourceSha: 'e'.repeat(40) },
+    { ...transportArtifact, extra: 'not-part-of-the-reviewed-tuple' },
+  ]) {
+    const invalid = { ...transportArtifactRow, staticArtifact: artifact };
+    // Even matching malformed actual/expected tuples must fail validation.
+    assert.throws(() => assertManifest([invalid], [invalid]), /manifest static artifact/i);
+  }
+});
+
+test('default publication manifest retains a registered artifact and rejects same-source substitutions', async () => {
+  const artifactSites = sites.map(site => site.slug === 'truck-transport' ? { ...site, ref: site.sha, staticArtifact: transportArtifact } : site);
+  const artifactManifest = manifest.map(entry => entry.slug === 'truck-transport' ? transportArtifactRow : entry);
+  const data = fixture();
+  data.put('/manifest.json', JSON.stringify(artifactManifest), 'application/json');
+  const verifyDefault = () => verifyPublication({ sites: artifactSites, origin, fetchImpl: data.fetchImpl });
+  const result = await verifyDefault();
+  assert.equal(result.pages, 11);
+  for (const [key, value] of [
+    ['url', transportArtifact.url.replace('-v1/', '-v2/')],
+    ['sha256', '2'.repeat(64)],
+    ['sourceSha', 'e'.repeat(40)],
+  ]) {
+    data.put('/manifest.json', JSON.stringify(artifactManifest.map(entry => entry.slug === 'truck-transport' ? { ...entry, staticArtifact: { ...transportArtifact, [key]: value } } : entry)), 'application/json');
+    await assert.rejects(verifyDefault(), /manifest/i, key);
+  }
+});
+
 test('public verification checks all Brand routes, existing sites, proposal controls and nested CSS resources', async () => {
   const data = fixture();
   const result = await verify(data);

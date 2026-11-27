@@ -4,7 +4,7 @@ import { createHash, randomBytes } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 import { publishStaticArtifact } from '../scripts/publish-static-artifact.mjs';
-import { origin, shengfengyangRoutes, ruiCafeRoutes } from '../scripts/static-export.mjs';
+import { origin, shengfengyangRoutes, ruiCafeRoutes, transportRoutes } from '../scripts/static-export.mjs';
 
 const repository = 'xk2022/xk-website-showcase';
 const sourceSha = 'a'.repeat(40);
@@ -34,6 +34,9 @@ const taiyangZipUrl = `https://github.com/${repository}/releases/download/${taiy
 const taiyangSourceRepository = 'xk2022/xk-lp-taiyang-logistics';
 const hongjiaTag = 'hongjia-birdnest-aaaaaaa-v1';
 const hongjiaZipUrl = `https://github.com/${repository}/releases/download/${hongjiaTag}/hongjia-birdnest-static.zip`;
+const transportTag = 'truck-transport-aaaaaaa-v1';
+const transportZipUrl = `https://github.com/${repository}/releases/download/${transportTag}/truck-transport-static.zip`;
+const transportSourceRepository = 'xk2022/xk-corp-truck-transport';
 const pythonZip = String.raw`
 import io, json, sys, zipfile
 buffer = io.BytesIO()
@@ -132,6 +135,25 @@ function longtongArchive(overrides = {}) {
   return execFileSync('python3', ['-c', pythonZip], { input: JSON.stringify(entries), maxBuffer: 5 * 1024 * 1024 });
 }
 
+function transportPage(route = '') {
+  const url = `${origin}/truck-transport/${route}`;
+  const title = `萬花筒運輸｜${route || '首頁'}`;
+  return `<html><head><title>${title}</title><meta name="robots" content="noindex,nofollow"><link rel="canonical" href="${url}"><link rel="icon" href="/truck-transport/favicon.svg"><meta property="og:site_name" content="萬花筒運輸"><meta property="og:title" content="${title}"><meta property="og:url" content="${url}"><meta property="og:image" content="${origin}/truck-transport/images/social-card.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="萬花筒運輸展示作品"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${title}"><meta name="twitter:image" content="${origin}/truck-transport/images/social-card.jpg"><meta name="twitter:image:alt" content="萬花筒運輸展示作品"></head><body><header>萬花筒運輸<small>KALEIDOSCOPE TRANSPORT</small></header><p>萬花筒運輸<!-- -->為虛構品牌</p><h1>Transport ${route || 'home'}</h1><footer><p>探索萬象科技（Xplore Kaleidoscope，簡稱 XK）</p><p>Self-Initiated Demonstration Project｜自主規劃展示作品</p></footer><script src="/truck-transport/_next/static/app.js"></script></body></html>`;
+}
+
+function transportArchive(overrides = {}, omitted = []) {
+  const entries = {
+    ...Object.fromEntries(transportRoutes.map(route => [`${route}index.html`, transportPage(route)])),
+    '_next/static/app.js': 'throw new Error("Publisher must never execute compiled browser scripts");',
+    'images/social-card.jpg': 'reviewed static social image fixture',
+    'favicon.svg': '<svg xmlns="http://www.w3.org/2000/svg"></svg>',
+    'sitemap.xml': `<urlset>${transportRoutes.map(route => `<url><loc>${origin}/truck-transport/${route}</loc></url>`).join('')}</urlset>`,
+    ...overrides,
+  };
+  for (const path of omitted) delete entries[path];
+  return execFileSync('python3', ['-c', pythonZip], { input: JSON.stringify(entries), maxBuffer: 5 * 1024 * 1024 });
+}
+
 function environment(bytes) {
   return {
     INPUT_BLOB_SHA: createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex'),
@@ -187,6 +209,7 @@ function mock(bytes, { existing, uploadStatus = 201, blobOverride = {}, publicBy
   };
 }
 function release(env, project = 'shengfengyang') {
+  if (project === 'truck-transport') return { tag_name: transportTag, draft: false, body: JSON.stringify({ sourceRepository: transportSourceRepository, sourceSha, sha256: env.INPUT_SHA256 }), assets: [{ name: 'truck-transport-static.zip' }, { name: 'release-manifest.json' }] };
   if (project === 'longtong-logistics') return { tag_name: longtongTag, draft: false, body: JSON.stringify({ sourceRepository: longtongSourceRepository, sourceSha, sha256: env.INPUT_SHA256 }), assets: [{ name: 'longtong-logistics-static.zip' }, { name: 'release-manifest.json' }] };
   if (project === 'taiyang-logistics') return { tag_name: taiyangTag, draft: false, body: JSON.stringify({ sourceRepository: taiyangSourceRepository, sourceSha, sha256: env.INPUT_SHA256 }), assets: [{ name: 'taiyang-logistics-static.zip' }, { name: 'release-manifest.json' }] };
   const carpentry = project === 'carpentry';
@@ -906,4 +929,128 @@ test('the workflow exposes the fixed Taiyang selector and preserves the original
   const projectInput = workflow.split('      static_artifact_project:')[1].split('      static_artifact_blob:')[0];
   assert.match(projectInput, /\n          - taiyang-logistics\n/);
   assert.match(projectInput, /default: shengfengyang/);
+});
+
+test('Truck transport publishes its fixed private source and five-page renamed export without executing scripts or reading source APIs', async () => {
+  const bytes = transportArchive();
+  const service = mock(bytes, { project: 'truck-transport' });
+  assert.deepEqual(await publishStaticArtifact(service), { tag: transportTag, url: transportZipUrl, sourceSha, sha256: service.env.INPUT_SHA256, reused: false });
+  const mutations = writes(service.calls);
+  assert.deepEqual(mutations.map(call => `${call.url.hostname}:${call.options.method}`), ['api.github.com:POST', 'uploads.github.com:POST', 'uploads.github.com:POST', 'api.github.com:PATCH']);
+  const created = JSON.parse(mutations[0].options.body);
+  assert.equal(created.tag_name, transportTag);
+  assert.equal(created.name, '萬花筒運輸｜企業形象展示 aaaaaaa');
+  assert.equal(created.target_commitish, service.env.GITHUB_SHA);
+  assert.equal(created.draft, true);
+  const manifest = JSON.parse(mutations[2].options.body);
+  assert.deepEqual(manifest, JSON.parse(created.body));
+  assert.equal(manifest.schemaVersion, 1);
+  assert.equal(manifest.sourceRepository, transportSourceRepository);
+  assert.equal(manifest.sourceSha, sourceSha);
+  assert.equal(manifest.sha256, service.env.INPUT_SHA256);
+  assert.equal(manifest.staticOnly, true);
+  assert.deepEqual(manifest.publication, {
+    repository, commitSha: service.env.GITHUB_SHA,
+    workflow: '.github/workflows/deploy.yml', runId: service.env.GITHUB_RUN_ID,
+    runUrl: `https://github.com/${repository}/actions/runs/${service.env.GITHUB_RUN_ID}`,
+  });
+  assert.match(manifest.verification, /does not query private source CI/);
+  assert.deepEqual(mutations.filter(call => call.url.hostname === 'uploads.github.com').map(call => call.url.searchParams.get('name')), ['truck-transport-static.zip', 'release-manifest.json']);
+  assert.deepEqual(mutations[1].options.body, bytes);
+  assert.equal(service.calls.some(({ url }) => url.pathname.startsWith(`/repos/${transportSourceRepository}/`)), false);
+  assert.ok(service.calls.filter(({ options }) => options.headers?.Authorization).every(({ url }) => ['api.github.com', 'uploads.github.com'].includes(url.hostname) && url.pathname.startsWith(`/repos/${repository}/`)));
+});
+
+test('Truck transport rejects another case, missing routes or sitemap, escaping resources and changed metadata before Release access', async () => {
+  const page = transportPage('services/');
+  for (const bytes of [
+    carpentryArchive(),
+    ...transportRoutes.map(route => transportArchive({}, [`${route}index.html`])),
+    transportArchive({}, ['sitemap.xml']),
+    transportArchive({ 'sitemap.xml': `<urlset><url><loc>${origin}/truck-transport/</loc></url></urlset>` }),
+    transportArchive({ 'services/index.html': page.replace(`${origin}/truck-transport/services/`, `${origin}/carpentry/services/`) }),
+    transportArchive({ 'services/index.html': page.replace('noindex,nofollow', 'index,follow') }),
+    transportArchive({ 'services/index.html': page.replace('og:image:width" content="1200', 'og:image:width" content="1199') }),
+    transportArchive({ 'services/index.html': page.replace('</body>', '<img src="/carpentry/image.jpg"></body>') }),
+    transportArchive({}, ['images/social-card.jpg']),
+    transportArchive({}, ['favicon.svg']),
+  ]) {
+    const service = mock(bytes, { project: 'truck-transport' });
+    await assert.rejects(publishStaticArtifact(service));
+    assert.equal(writes(service.calls).length, 0);
+    assert.equal(service.calls.some(call => call.url.pathname.includes('/releases')), false);
+  }
+});
+
+test('Truck transport rejects old, missing or script-only brand and demonstration declarations on every route', async () => {
+  for (const route of transportRoutes) {
+    const page = transportPage(route);
+    const variants = [
+      page.replaceAll('萬花筒運輸', '序程運輸').replaceAll('KALEIDOSCOPE TRANSPORT', 'XUCHENG TRANSPORT'),
+      page.replace('<small>KALEIDOSCOPE TRANSPORT</small>', '<small>XUCHENG TRANSPORT</small>'),
+      page.replace('為虛構品牌', '品牌網站'),
+      page.replace('探索萬象科技（Xplore Kaleidoscope，簡稱 XK）', '不明製作方'),
+      page.replace('Self-Initiated Demonstration Project｜自主規劃展示作品', ''),
+      page.replace('<p>Self-Initiated Demonstration Project｜自主規劃展示作品</p>', '<script>const statement="Self-Initiated Demonstration Project｜自主規劃展示作品";</script>'),
+      page.replace('<header>萬花筒運輸<small>KALEIDOSCOPE TRANSPORT</small></header>', '<script>const brand="萬花筒運輸KALEIDOSCOPE TRANSPORT";</script>'),
+      page.replace('<title>', '<title>另一個網站｜'),
+      page.replace('og:site_name" content="萬花筒運輸', 'og:site_name" content="另一個網站'),
+      page.replace('og:title" content="萬花筒運輸', 'og:title" content="另一個網站'),
+      page.replace('twitter:title" content="萬花筒運輸', 'twitter:title" content="另一個網站'),
+      page.replace('og:image:alt" content="萬花筒運輸展示作品', 'og:image:alt" content="其他展示作品'),
+      page.replace('twitter:image:alt" content="萬花筒運輸展示作品', 'twitter:image:alt" content="其他展示作品'),
+    ];
+    // A different title that still contains the brand is allowed only when its
+    // OG and Twitter titles agree, which this mutation deliberately violates.
+    for (const html of variants) {
+      const service = mock(transportArchive({ [`${route}index.html`]: html }), { project: 'truck-transport' });
+      await assert.rejects(publishStaticArtifact(service), /Transport|transport/);
+      assert.equal(writes(service.calls).length, 0);
+      assert.equal(service.calls.some(call => call.url.pathname.includes('/releases')), false);
+    }
+  }
+});
+
+test('Truck transport revalidates a matching public release and never overwrites previous or incomplete releases', async () => {
+  const bytes = transportArchive();
+  const env = environment(bytes);
+  const service = mock(bytes, { project: 'truck-transport', existing: release(env, 'truck-transport') });
+  assert.deepEqual(await publishStaticArtifact(service), { tag: transportTag, url: transportZipUrl, sourceSha, sha256: service.env.INPUT_SHA256, reused: true });
+  assert.equal(writes(service.calls).length, 0);
+  assert.equal(service.calls.filter(call => call.url.hostname === 'github.com').length, 1);
+  const mismatched = release(env, 'truck-transport');
+  mismatched.body = JSON.stringify({ ...JSON.parse(mismatched.body), sourceRepository: 'xk2022/another-private-repository' });
+  for (const existing of [
+    mismatched,
+    { ...release(env, 'truck-transport'), draft: true },
+    { ...release(env, 'truck-transport'), assets: [] },
+    { ...release(env, 'truck-transport'), assets: [{ name: 'truck-transport-static.zip' }, { name: 'truck-transport-static.zip' }, { name: 'release-manifest.json' }] },
+  ]) {
+    const unchanged = JSON.stringify(existing);
+    const denied = mock(bytes, { project: 'truck-transport', existing });
+    await assert.rejects(publishStaticArtifact(denied));
+    assert.equal(writes(denied.calls).length, 0);
+    assert.equal(denied.calls.some(call => call.url.hostname === 'github.com'), false);
+    assert.equal(JSON.stringify(existing), unchanged);
+  }
+});
+
+test('Truck transport refuses unsafe ZIP bytes and corrupted public assets without writes', async () => {
+  const unsafe = mock(transportArchive({ '../escape.txt': 'no' }), { project: 'truck-transport' });
+  await assert.rejects(publishStaticArtifact(unsafe));
+  assert.equal(writes(unsafe.calls).length, 0);
+  const bytes = transportArchive();
+  const corrupted = mock(bytes, { project: 'truck-transport', existing: release(environment(bytes), 'truck-transport'), publicBytes: Buffer.from('modified asset') });
+  await assert.rejects(publishStaticArtifact(corrupted), /SHA256|ZIP/);
+  assert.equal(writes(corrupted.calls).length, 0);
+});
+
+test('the workflow exposes the fixed Truck transport selector and preserves existing defaults and permission isolation', async () => {
+  const workflow = await readFile(new URL('../.github/workflows/deploy.yml', import.meta.url), 'utf8');
+  const projectInput = workflow.split('      static_artifact_project:')[1].split('      static_artifact_blob:')[0];
+  assert.match(projectInput, /\n          - truck-transport\n/);
+  assert.match(projectInput, /default: shengfengyang/);
+  const publish = workflow.split('\n  publish-static-artifact:')[1].split('\n  resolve:')[0];
+  assert.match(publish, /contents: write/);
+  assert.doesNotMatch(publish, /npm |build-showcases\.mjs|test-transport\.mjs|resolve-sources\.mjs|secrets\.|actions: write|pages: write|id-token: write/);
 });

@@ -1,5 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
+import { validateReleaseConfiguration } from './release-gate.mjs';
 import { origin as defaultOrigin, validateSites, transportRoutes, shengfengyangRoutes, ruiCafeRoutes, assertTransportPage, assertTransportSitemap } from './static-export.mjs';
 
 const shaPattern = /^[a-f0-9]{40}$/;
@@ -14,12 +15,23 @@ function manifestRows(manifest) {
   return manifest.map(entry => {
     if (!entry || typeof entry.slug !== 'string' || typeof entry.repository !== 'string' || !shaPattern.test(entry.sha) || slugs.has(entry.slug)) throw new Error('Invalid or duplicate publication manifest entry');
     slugs.add(entry.slug);
-    return { slug: entry.slug, repository: entry.repository, sha: entry.sha };
+    const row = { slug: entry.slug, repository: entry.repository, sha: entry.sha };
+    if (entry.staticArtifact !== undefined) {
+      try {
+        validateReleaseConfiguration({ slug: entry.slug, ref: entry.sha, staticArtifact: entry.staticArtifact });
+      } catch (error) {
+        throw new Error(`Invalid publication manifest static artifact: ${entry.slug}`, { cause: error });
+      }
+      const { url, sha256, sourceSha } = entry.staticArtifact;
+      // Normalize key order, but retain the entire reviewed snapshot identity.
+      row.staticArtifact = { url, sha256, sourceSha };
+    }
+    return row;
   }).sort((a, b) => a.slug.localeCompare(b.slug));
 }
 
 export function assertManifest(actual, expected) {
-  if (JSON.stringify(manifestRows(actual)) !== JSON.stringify(manifestRows(expected))) throw new Error('Published manifest does not match the resolved release SHAs');
+  if (JSON.stringify(manifestRows(actual)) !== JSON.stringify(manifestRows(expected))) throw new Error('Published manifest does not match the resolved source SHAs and static artifacts');
 }
 
 function assertCanonical(html, expected) {
@@ -77,7 +89,7 @@ function cssResources(css) {
   return [...css.matchAll(/url\(\s*(["']?)(.*?)\1\s*\)/gi)].map(match => match[2]).concat([...css.matchAll(/@import\s+(["'])(.*?)\1/gi)].map(match => match[2]));
 }
 
-export async function verifyPublication({ sites, manifest = sites.map(({ slug, repository, sha }) => ({ slug, repository, sha })), origin = defaultOrigin, fetchImpl = fetch, requestTimeoutMs = 5000, verificationId = `${Date.now()}` }) {
+export async function verifyPublication({ sites, manifest = sites.map(({ slug, repository, sha, staticArtifact }) => ({ slug, repository, sha, ...(staticArtifact !== undefined ? { staticArtifact } : {}) })), origin = defaultOrigin, fetchImpl = fetch, requestTimeoutMs = 5000, verificationId = `${Date.now()}` }) {
   validateSites(sites);
   const base = new URL(origin).origin;
   manifestRows(manifest);
