@@ -12,6 +12,11 @@ const manifestName = 'release-manifest.json';
 // Publication inputs select only reviewed projects, never arbitrary repository,
 // slug, asset or release names. Omitted INPUT_PROJECT preserves the original job.
 const projects = {
+  honest: {
+    sourceRepository: 'xk2022/xk-lp-honest-diecut',
+    archiveName: 'honest-static.zip', name: '宏能興業｜製造業詢價展示',
+    policy: { framework: 'next' },
+  },
   rotaract: {
     sourceRepository: 'xk2022/xk-app-rotaract',
     archiveName: 'rotaract-static.zip', name: '扶青萬花筒｜合成資料互動展示',
