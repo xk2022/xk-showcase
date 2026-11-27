@@ -1,0 +1,1105 @@
+{
+  "schemaVersion": 1,
+  "status": "PASS",
+  "publishedUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/",
+  "runtimeHubSha": "d3471e563a7e20f2327c855b76de0ac87683bfeb",
+  "promotionPr": "https://github.com/xk2022/xk-website-showcase/pull/50",
+  "pagesRun": "https://github.com/xk2022/xk-website-showcase/actions/runs/46042541890",
+  "resolvedPlanArtifactId": 15221376378,
+  "officialPublication": {
+    "status": "PASS",
+    "sourceAndStaticArtifactIdentityMatches": true,
+    "freshnessPublication": 134,
+    "sites": 22,
+    "pages": 74,
+    "assets": 287
+  },
+  "independentHttps": {
+    "status": "PASS",
+    "startedAt": "2026-11-27T17:45:06.389998+00:00",
+    "origin": "https://showcase.xplorekaleidoscope.com",
+    "casePath": "/truck-transport/",
+    "tlsVerification": "CERT_REQUIRED and hostname validation",
+    "requestsUseNoCache": true,
+    "verificationId": "8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+    "runtimeFiles": [
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/404.html",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/404.html?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/html",
+        "etag": "\"6b09bf05-3f63\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "404.html",
+        "bytes": 16227,
+        "expectedSha256": "883b21a1cd3ad14563d3c67eceb8a9164bba34c5fbf3089ece81b230d712e34a",
+        "actualSha256": "883b21a1cd3ad14563d3c67eceb8a9164bba34c5fbf3089ece81b230d712e34a",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/404/index.html",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/404/index.html?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/html",
+        "etag": "\"6b09bf05-3f63\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "404/index.html",
+        "bytes": 16227,
+        "expectedSha256": "883b21a1cd3ad14563d3c67eceb8a9164bba34c5fbf3089ece81b230d712e34a",
+        "actualSha256": "883b21a1cd3ad14563d3c67eceb8a9164bba34c5fbf3089ece81b230d712e34a",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/__next.__PAGE__.txt",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/__next.__PAGE__.txt?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/plain",
+        "etag": "\"6b09bf05-3571\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "__next.__PAGE__.txt",
+        "bytes": 13681,
+        "expectedSha256": "e05ede3af977997ae61b5dd27ec498ab0a199f376f1639a194faabed60967ac2",
+        "actualSha256": "e05ede3af977997ae61b5dd27ec498ab0a199f376f1639a194faabed60967ac2",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/__next._full.txt",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/__next._full.txt?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/plain",
+        "etag": "\"6b09bf05-377c\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "__next._full.txt",
+        "bytes": 14204,
+        "expectedSha256": "c788ebb1dbdd6d9c3c75faf7fc1e09bbba0137fbacca0404922b9b08a62b25a6",
+        "actualSha256": "c788ebb1dbdd6d9c3c75faf7fc1e09bbba0137fbacca0404922b9b08a62b25a6",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/__next._tree.txt",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/__next._tree.txt?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/plain",
+        "etag": "\"6b09bf05-b4\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "__next._tree.txt",
+        "bytes": 180,
+        "expectedSha256": "8a353ce01cc48049f42138a4924b34b8c6ac09c21de46f49ecc64716ddc767de",
+        "actualSha256": "8a353ce01cc48049f42138a4924b34b8c6ac09c21de46f49ecc64716ddc767de",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/_next/static/chunks/092r-mewpaf3q.js",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/_next/static/chunks/092r-mewpaf3q.js?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "application/javascript",
+        "etag": "\"6b09bf05-37ebc\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "_next/static/chunks/092r-mewpaf3q.js",
+        "bytes": 229052,
+        "expectedSha256": "30b1a7afdc2b4c18dbed0c12b4cbb9ca6e3b1b048440715e434664cb534d6f11",
+        "actualSha256": "30b1a7afdc2b4c18dbed0c12b4cbb9ca6e3b1b048440715e434664cb534d6f11",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/_next/static/chunks/0cz1d0mv5g_q7.js",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/_next/static/chunks/0cz1d0mv5g_q7.js?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "application/javascript",
+        "etag": "\"6b09bf05-1b7d2\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "_next/static/chunks/0cz1d0mv5g_q7.js",
+        "bytes": 112594,
+        "expectedSha256": "0973c1d64c88adc8e3c950410cb58b288f72118d5965b78049438deb8f2f9683",
+        "actualSha256": "0973c1d64c88adc8e3c950410cb58b288f72118d5965b78049438deb8f2f9683",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/_next/static/chunks/1fc2j02ookscm.js",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/_next/static/chunks/1fc2j02ookscm.js?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "application/javascript",
+        "etag": "\"6b09bf05-153b\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "_next/static/chunks/1fc2j02ookscm.js",
+        "bytes": 5435,
+        "expectedSha256": "637e12f4e742fc8c01a1518e3eef9b13e0dc94706c3d6d3616f2164cd4f013fc",
+        "actualSha256": "637e12f4e742fc8c01a1518e3eef9b13e0dc94706c3d6d3616f2164cd4f013fc",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/_next/static/chunks/1pcw6gskne7pf.js",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/_next/static/chunks/1pcw6gskne7pf.js?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "application/javascript",
+        "etag": "\"6b09bf05-15e0\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "_next/static/chunks/1pcw6gskne7pf.js",
+        "bytes": 5600,
+        "expectedSha256": "6dbc40a359da7b95b1b5d62b81884098dc2a8bc342bb4493b87712049f4fac08",
+        "actualSha256": "6dbc40a359da7b95b1b5d62b81884098dc2a8bc342bb4493b87712049f4fac08",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/_next/static/chunks/1sbkkws3xmvu5.js",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/_next/static/chunks/1sbkkws3xmvu5.js?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "application/javascript",
+        "etag": "\"6b09bf05-3a80\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "_next/static/chunks/1sbkkws3xmvu5.js",
+        "bytes": 14976,
+        "expectedSha256": "fc0e2fe19c589a044d97256ab94a6f8f29410ffee1a9aeb8d93f564b5878e4da",
+        "actualSha256": "fc0e2fe19c589a044d97256ab94a6f8f29410ffee1a9aeb8d93f564b5878e4da",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/_next/static/chunks/1wnov70f88xjy.js",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/_next/static/chunks/1wnov70f88xjy.js?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "application/javascript",
+        "etag": "\"6b09bf05-71c7\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "_next/static/chunks/1wnov70f88xjy.js",
+        "bytes": 29127,
+        "expectedSha256": "279a2bc6537b1cdd6b489788ca91ab8582f1a7d1a4c34b94a0cf0b75ee0784b1",
+        "actualSha256": "279a2bc6537b1cdd6b489788ca91ab8582f1a7d1a4c34b94a0cf0b75ee0784b1",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/_next/static/chunks/2-jdsz0gbgzmf.js",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/_next/static/chunks/2-jdsz0gbgzmf.js?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "application/javascript",
+        "etag": "\"6b09bf05-5b30\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "_next/static/chunks/2-jdsz0gbgzmf.js",
+        "bytes": 23344,
+        "expectedSha256": "4e41e51e357dc37419763e8fb3d2b13c195041c8b4cb09ea16f18cb1dd70b185",
+        "actualSha256": "4e41e51e357dc37419763e8fb3d2b13c195041c8b4cb09ea16f18cb1dd70b185",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/_next/static/chunks/201cbpu55fids.css",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/_next/static/chunks/201cbpu55fids.css?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/css",
+        "etag": "\"6b09bf05-5e78\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "_next/static/chunks/201cbpu55fids.css",
+        "bytes": 24184,
+        "expectedSha256": "ce91c6157c841078a37eb2aaf03f856b7b68097b0e599175a3821d1ddb39177d",
+        "actualSha256": "ce91c6157c841078a37eb2aaf03f856b7b68097b0e599175a3821d1ddb39177d",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/_next/static/chunks/2iuzzlidrdk77.js",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/_next/static/chunks/2iuzzlidrdk77.js?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "application/javascript",
+        "etag": "\"6b09bf05-2986f\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "_next/static/chunks/2iuzzlidrdk77.js",
+        "bytes": 170095,
+        "expectedSha256": "849b817c1b0b5f3ad96f9e260cda4b84256590349b21a672e3aec9b2edb7fff4",
+        "actualSha256": "849b817c1b0b5f3ad96f9e260cda4b84256590349b21a672e3aec9b2edb7fff4",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/_next/static/chunks/3qfy96eoyh-ek.js",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/_next/static/chunks/3qfy96eoyh-ek.js?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "application/javascript",
+        "etag": "\"6b09bf05-36aa\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "_next/static/chunks/3qfy96eoyh-ek.js",
+        "bytes": 13994,
+        "expectedSha256": "0f13eecc75702fa059f047636cf8814acbb7acaf3702e75d5835ef85a49528b1",
+        "actualSha256": "0f13eecc75702fa059f047636cf8814acbb7acaf3702e75d5835ef85a49528b1",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/_next/static/chunks/turbopack-1yfnjk68nan2y.js",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/_next/static/chunks/turbopack-1yfnjk68nan2y.js?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "application/javascript",
+        "etag": "\"6b09bf05-2706\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "_next/static/chunks/turbopack-1yfnjk68nan2y.js",
+        "bytes": 9990,
+        "expectedSha256": "770396e56e1340821fcadfc80e456a57e1e29bd1155cdadebf1afdc7574156e9",
+        "actualSha256": "770396e56e1340821fcadfc80e456a57e1e29bd1155cdadebf1afdc7574156e9",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/_next/static/iTH1jivkDu5gvQWjbRr8N/_buildManifest.js",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/_next/static/iTH1jivkDu5gvQWjbRr8N/_buildManifest.js?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "application/javascript",
+        "etag": "\"6b09bf05-db\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "_next/static/iTH1jivkDu5gvQWjbRr8N/_buildManifest.js",
+        "bytes": 219,
+        "expectedSha256": "9476e0afd3f9da68a64e6ec58631191fd3eaca62c9f5a377e7517fe9a89e59ea",
+        "actualSha256": "9476e0afd3f9da68a64e6ec58631191fd3eaca62c9f5a377e7517fe9a89e59ea",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/_next/static/iTH1jivkDu5gvQWjbRr8N/_clientMiddlewareManifest.js",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/_next/static/iTH1jivkDu5gvQWjbRr8N/_clientMiddlewareManifest.js?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "application/javascript",
+        "etag": "\"6b09bf05-60\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "_next/static/iTH1jivkDu5gvQWjbRr8N/_clientMiddlewareManifest.js",
+        "bytes": 96,
+        "expectedSha256": "5483e3295dc35dfe29ea932efc85341c916f10ff78ff5b0e965e003710893a4a",
+        "actualSha256": "5483e3295dc35dfe29ea932efc85341c916f10ff78ff5b0e965e003710893a4a",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/_next/static/iTH1jivkDu5gvQWjbRr8N/_ssgManifest.js",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/_next/static/iTH1jivkDu5gvQWjbRr8N/_ssgManifest.js?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "application/javascript",
+        "etag": "\"6b09bf05-50\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "_next/static/iTH1jivkDu5gvQWjbRr8N/_ssgManifest.js",
+        "bytes": 80,
+        "expectedSha256": "678f6ce2cb80b1fe72fc67e7412be6e2ab6ada083111b64f7c40d35e3cba5e00",
+        "actualSha256": "678f6ce2cb80b1fe72fc67e7412be6e2ab6ada083111b64f7c40d35e3cba5e00",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/_not-found/__next._full.txt",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/_not-found/__next._full.txt?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/plain",
+        "etag": "\"6b09bf05-2271\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "_not-found/__next._full.txt",
+        "bytes": 8817,
+        "expectedSha256": "9a5321267a076b4876696e26d436bf8509f2d61907dc217d0b96e4c7df142233",
+        "actualSha256": "9a5321267a076b4876696e26d436bf8509f2d61907dc217d0b96e4c7df142233",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/_not-found/__next._not-found.__PAGE__.txt",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/_not-found/__next._not-found.__PAGE__.txt?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/plain",
+        "etag": "\"6b09bf05-1fcf\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "_not-found/__next._not-found.__PAGE__.txt",
+        "bytes": 8143,
+        "expectedSha256": "910e035baad1a9bbe68b5a371b49c0cb88328467a9fc85e41b2ecd66bbc7123f",
+        "actualSha256": "910e035baad1a9bbe68b5a371b49c0cb88328467a9fc85e41b2ecd66bbc7123f",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/_not-found/__next._tree.txt",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/_not-found/__next._tree.txt?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/plain",
+        "etag": "\"6b09bf05-ea\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "_not-found/__next._tree.txt",
+        "bytes": 234,
+        "expectedSha256": "9f7444d0370e470239d472b74dfb361ce338a7ef63014d1334569ca039e585cb",
+        "actualSha256": "9f7444d0370e470239d472b74dfb361ce338a7ef63014d1334569ca039e585cb",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/_not-found/index.html",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/_not-found/index.html?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/html",
+        "etag": "\"6b09bf05-3f63\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "_not-found/index.html",
+        "bytes": 16227,
+        "expectedSha256": "883b21a1cd3ad14563d3c67eceb8a9164bba34c5fbf3089ece81b230d712e34a",
+        "actualSha256": "883b21a1cd3ad14563d3c67eceb8a9164bba34c5fbf3089ece81b230d712e34a",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/_not-found/index.txt",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/_not-found/index.txt?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/plain",
+        "etag": "\"6b09bf05-2271\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "_not-found/index.txt",
+        "bytes": 8817,
+        "expectedSha256": "9a5321267a076b4876696e26d436bf8509f2d61907dc217d0b96e4c7df142233",
+        "actualSha256": "9a5321267a076b4876696e26d436bf8509f2d61907dc217d0b96e4c7df142233",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/about/__next._full.txt",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/about/__next._full.txt?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/plain",
+        "etag": "\"6b09bf05-32bd\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "about/__next._full.txt",
+        "bytes": 12989,
+        "expectedSha256": "729c2b7be2bed7cacbb2762c70dde8c7c969b8fa1d33a359636557a123d42c24",
+        "actualSha256": "729c2b7be2bed7cacbb2762c70dde8c7c969b8fa1d33a359636557a123d42c24",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/about/__next._tree.txt",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/about/__next._tree.txt?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/plain",
+        "etag": "\"6b09bf05-e4\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "about/__next._tree.txt",
+        "bytes": 228,
+        "expectedSha256": "bfe110ea32c562f093c3a49527754a295e038ba12c025fd96aa9774d848195be",
+        "actualSha256": "bfe110ea32c562f093c3a49527754a295e038ba12c025fd96aa9774d848195be",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/about/__next.about.__PAGE__.txt",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/about/__next.about.__PAGE__.txt?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/plain",
+        "etag": "\"6b09bf05-3020\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "about/__next.about.__PAGE__.txt",
+        "bytes": 12320,
+        "expectedSha256": "b5e0bcb369a625ad9d73be8ba8a13bc8c5f2c7617ab52350351d08abb4a2a7b4",
+        "actualSha256": "b5e0bcb369a625ad9d73be8ba8a13bc8c5f2c7617ab52350351d08abb4a2a7b4",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/about/index.html",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/about/index.html?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/html",
+        "etag": "\"6b09bf05-5ca6\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "about/index.html",
+        "bytes": 23718,
+        "expectedSha256": "5ad001a65995f8ece4536bc09f40f58492513fe70f8bd620488b4a38cdf92e7f",
+        "actualSha256": "5ad001a65995f8ece4536bc09f40f58492513fe70f8bd620488b4a38cdf92e7f",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/about/index.txt",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/about/index.txt?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/plain",
+        "etag": "\"6b09bf05-32bd\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "about/index.txt",
+        "bytes": 12989,
+        "expectedSha256": "729c2b7be2bed7cacbb2762c70dde8c7c969b8fa1d33a359636557a123d42c24",
+        "actualSha256": "729c2b7be2bed7cacbb2762c70dde8c7c969b8fa1d33a359636557a123d42c24",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/favicon.svg",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/favicon.svg?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "image/svg+xml",
+        "etag": "\"6b09bf05-122\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "favicon.svg",
+        "bytes": 290,
+        "expectedSha256": "73a994855be144526503387f16643cf55565cc2bd3071bbaf5b7556cf418100c",
+        "actualSha256": "73a994855be144526503387f16643cf55565cc2bd3071bbaf5b7556cf418100c",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/images/factory-arrival.webp",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/images/factory-arrival.webp?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "image/webp",
+        "etag": "\"6b09bf05-3ccfa\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "images/factory-arrival.webp",
+        "bytes": 249082,
+        "expectedSha256": "bd76622b4142bd1ce40e1443f215e8775024c0979b9c0a6aa77ce61f6ed16e2e",
+        "actualSha256": "bd76622b4142bd1ce40e1443f215e8775024c0979b9c0a6aa77ce61f6ed16e2e",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/images/pallet-unloading.webp",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/images/pallet-unloading.webp?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "image/webp",
+        "etag": "\"6b09bf05-2d704\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "images/pallet-unloading.webp",
+        "bytes": 186116,
+        "expectedSha256": "ad485005430672b8cf5e49410d1acfeb1d99b9bb14618c26cd3d9689bfcea44f",
+        "actualSha256": "ad485005430672b8cf5e49410d1acfeb1d99b9bb14618c26cd3d9689bfcea44f",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/images/social-card.jpg",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/images/social-card.jpg?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "image/jpeg",
+        "etag": "\"6b09bf05-1c99d\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "images/social-card.jpg",
+        "bytes": 117149,
+        "expectedSha256": "66ac77839e0493abd1bbafbbd5053ba9bd3e5d162f83a5a447205b9636e96f01",
+        "actualSha256": "66ac77839e0493abd1bbafbbd5053ba9bd3e5d162f83a5a447205b9636e96f01",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/index.html",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/index.html?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/html",
+        "etag": "\"6b09bf05-6648\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "index.html",
+        "bytes": 26184,
+        "expectedSha256": "493cd90a884da6c2c0bca581177422374cd72ab9a908c1e7150e1892feacb4c8",
+        "actualSha256": "493cd90a884da6c2c0bca581177422374cd72ab9a908c1e7150e1892feacb4c8",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/index.txt",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/index.txt?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/plain",
+        "etag": "\"6b09bf05-377c\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "index.txt",
+        "bytes": 14204,
+        "expectedSha256": "c788ebb1dbdd6d9c3c75faf7fc1e09bbba0137fbacca0404922b9b08a62b25a6",
+        "actualSha256": "c788ebb1dbdd6d9c3c75faf7fc1e09bbba0137fbacca0404922b9b08a62b25a6",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/inquiry/__next._full.txt",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/inquiry/__next._full.txt?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/plain",
+        "etag": "\"6b09bf05-23fe\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "inquiry/__next._full.txt",
+        "bytes": 9214,
+        "expectedSha256": "129b7714c694bfd865f191fb40cd60f45786bf9f46ea197e93b6ad1e0e6fe55f",
+        "actualSha256": "129b7714c694bfd865f191fb40cd60f45786bf9f46ea197e93b6ad1e0e6fe55f",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/inquiry/__next._tree.txt",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/inquiry/__next._tree.txt?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/plain",
+        "etag": "\"6b09bf05-e6\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "inquiry/__next._tree.txt",
+        "bytes": 230,
+        "expectedSha256": "7c75fd222fdb1c0de60d8e5b1039300adfdf8f3d4ad9a4e04bb386c17fb34aa4",
+        "actualSha256": "7c75fd222fdb1c0de60d8e5b1039300adfdf8f3d4ad9a4e04bb386c17fb34aa4",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/inquiry/__next.inquiry.__PAGE__.txt",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/inquiry/__next.inquiry.__PAGE__.txt?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/plain",
+        "etag": "\"6b09bf05-2141\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "inquiry/__next.inquiry.__PAGE__.txt",
+        "bytes": 8513,
+        "expectedSha256": "d03685c937f5ce4f8bffdf1a0915432317c4317f28eed26050f723b6ab1c6507",
+        "actualSha256": "d03685c937f5ce4f8bffdf1a0915432317c4317f28eed26050f723b6ab1c6507",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/inquiry/index.html",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/inquiry/index.html?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/html",
+        "etag": "\"6b09bf05-47fe\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "inquiry/index.html",
+        "bytes": 18430,
+        "expectedSha256": "fb71f7d56a2551203161133c24aadbcb97c34541c8d90ed215788973f766b966",
+        "actualSha256": "fb71f7d56a2551203161133c24aadbcb97c34541c8d90ed215788973f766b966",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/inquiry/index.txt",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/inquiry/index.txt?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/plain",
+        "etag": "\"6b09bf05-23fe\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "inquiry/index.txt",
+        "bytes": 9214,
+        "expectedSha256": "129b7714c694bfd865f191fb40cd60f45786bf9f46ea197e93b6ad1e0e6fe55f",
+        "actualSha256": "129b7714c694bfd865f191fb40cd60f45786bf9f46ea197e93b6ad1e0e6fe55f",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/services/__next._full.txt",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/services/__next._full.txt?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/plain",
+        "etag": "\"6b09bf05-330c\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "services/__next._full.txt",
+        "bytes": 13068,
+        "expectedSha256": "79aaa1195310fbbe9bab5c6371df75cdd1e79c5fbaeb639f86bd950f56e6435b",
+        "actualSha256": "79aaa1195310fbbe9bab5c6371df75cdd1e79c5fbaeb639f86bd950f56e6435b",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/services/__next._tree.txt",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/services/__next._tree.txt?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/plain",
+        "etag": "\"6b09bf05-e7\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "services/__next._tree.txt",
+        "bytes": 231,
+        "expectedSha256": "0d4cfd496f0aea4030052713cba8e88dc5016619bda5ed6606c6342d1371e3fc",
+        "actualSha256": "0d4cfd496f0aea4030052713cba8e88dc5016619bda5ed6606c6342d1371e3fc",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/services/__next.services.__PAGE__.txt",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/services/__next.services.__PAGE__.txt?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/plain",
+        "etag": "\"6b09bf05-3043\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "services/__next.services.__PAGE__.txt",
+        "bytes": 12355,
+        "expectedSha256": "9eb28708e93de033a1b9b2bb6edb8a27c139242ae21a1f8071853b0a069f86de",
+        "actualSha256": "9eb28708e93de033a1b9b2bb6edb8a27c139242ae21a1f8071853b0a069f86de",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/services/index.html",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/services/index.html?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/html",
+        "etag": "\"6b09bf05-5cf9\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "services/index.html",
+        "bytes": 23801,
+        "expectedSha256": "ce3c63934bb8c13f21f6ad5f1fbaa8bb20d3bd9ed783e2182be9beeacc60070d",
+        "actualSha256": "ce3c63934bb8c13f21f6ad5f1fbaa8bb20d3bd9ed783e2182be9beeacc60070d",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/services/index.txt",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/services/index.txt?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/plain",
+        "etag": "\"6b09bf05-330c\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "services/index.txt",
+        "bytes": 13068,
+        "expectedSha256": "79aaa1195310fbbe9bab5c6371df75cdd1e79c5fbaeb639f86bd950f56e6435b",
+        "actualSha256": "79aaa1195310fbbe9bab5c6371df75cdd1e79c5fbaeb639f86bd950f56e6435b",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/shipping-guide/__next._full.txt",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/shipping-guide/__next._full.txt?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/plain",
+        "etag": "\"6b09bf05-356a\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "shipping-guide/__next._full.txt",
+        "bytes": 13674,
+        "expectedSha256": "d96977f975c51e091b84974756cbe096942c5c5ea7fe158dfa7de70b4d56c4a7",
+        "actualSha256": "d96977f975c51e091b84974756cbe096942c5c5ea7fe158dfa7de70b4d56c4a7",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/shipping-guide/__next._tree.txt",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/shipping-guide/__next._tree.txt?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/plain",
+        "etag": "\"6b09bf05-ed\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "shipping-guide/__next._tree.txt",
+        "bytes": 237,
+        "expectedSha256": "61ab9e4f568803336f06462de72a93725e0be055b70277a8a363a8b77b8b9105",
+        "actualSha256": "61ab9e4f568803336f06462de72a93725e0be055b70277a8a363a8b77b8b9105",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/shipping-guide/__next.shipping-guide.__PAGE__.txt",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/shipping-guide/__next.shipping-guide.__PAGE__.txt?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/plain",
+        "etag": "\"6b09bf05-32ba\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "shipping-guide/__next.shipping-guide.__PAGE__.txt",
+        "bytes": 12986,
+        "expectedSha256": "3839394330024c45f55e2f22f91b1a4d0d5ef1d736bf5f4e4ffe1cde23584b33",
+        "actualSha256": "3839394330024c45f55e2f22f91b1a4d0d5ef1d736bf5f4e4ffe1cde23584b33",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/shipping-guide/index.html",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/shipping-guide/index.html?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/html",
+        "etag": "\"6b09bf05-61ae\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "shipping-guide/index.html",
+        "bytes": 25006,
+        "expectedSha256": "5702488555c8d8289742ba6b3ebc9460cd45bd5715ed42f0e98c02003ea44a00",
+        "actualSha256": "5702488555c8d8289742ba6b3ebc9460cd45bd5715ed42f0e98c02003ea44a00",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/shipping-guide/index.txt",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/shipping-guide/index.txt?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "text/plain",
+        "etag": "\"6b09bf05-356a\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "shipping-guide/index.txt",
+        "bytes": 13674,
+        "expectedSha256": "d96977f975c51e091b84974756cbe096942c5c5ea7fe158dfa7de70b4d56c4a7",
+        "actualSha256": "d96977f975c51e091b84974756cbe096942c5c5ea7fe158dfa7de70b4d56c4a7",
+        "byteIdentical": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/sitemap.xml",
+        "finalUrl": "https://showcase.xplorekaleidoscope.com/truck-transport/sitemap.xml?__xk_transport_verify=8afb464c-af5f-4487-9a3f-2a93ae7f65e4",
+        "status": 200,
+        "mime": "application/xml",
+        "etag": "\"6b09bf05-229\"",
+        "lastModified": "Fri, 27 Nov 2026 17:33:57 GMT",
+        "age": "0",
+        "file": "sitemap.xml",
+        "bytes": 553,
+        "expectedSha256": "6f6c1354d8c6186403212d7692254c49926d4efad93a339ea8a8e91dbbed3118",
+        "actualSha256": "6f6c1354d8c6186403212d7692254c49926d4efad93a339ea8a8e91dbbed3118",
+        "byteIdentical": true
+      }
+    ],
+    "failures": [],
+    "transportIdentity": {
+      "slug": "truck-transport",
+      "repository": "xk2022/xk-corp-truck-transport",
+      "sha": "90a33add7d4ab6e71a28c47eb8183fe8c12cf907",
+      "staticArtifact": {
+        "url": "https://github.com/xk2022/xk-website-showcase/releases/download/truck-transport-90a33ad-v1/truck-transport-static.zip",
+        "sha256": "94971f455523bf85c10d5d0768f09471c69392688a73eb271ea0f2316f3eca1d",
+        "sourceSha": "90a33add7d4ab6e71a28c47eb8183fe8c12cf907"
+      }
+    },
+    "manifest": {
+      "sites": 22,
+      "otherIdentitiesChecked": 21,
+      "fullTupleMatches": true,
+      "identities": {
+        "carpentry": {
+          "slug": "carpentry",
+          "repository": "xk2022/xk-template-lp",
+          "sha": "bed3c363106b41f3d62c60e5b6bfc55f7bff0a5d",
+          "staticArtifact": {
+            "url": "https://github.com/xk2022/xk-website-showcase/releases/download/carpentry-bed3c36-v1/carpentry-static.zip",
+            "sha256": "8cd35a8de5a474759ce73a94883722a2a02ec8fc164763fec46924c713c36cfb",
+            "sourceSha": "bed3c363106b41f3d62c60e5b6bfc55f7bff0a5d"
+          }
+        },
+        "honest": {
+          "slug": "honest",
+          "repository": "xk2022/xk-lp-honest-diecut",
+          "sha": "4fbca72f5c169a6c08fbeece0db6a8d02e8d4d11",
+          "staticArtifact": {
+            "url": "https://github.com/xk2022/xk-website-showcase/releases/download/honest-4fbca72-v1/honest-static.zip",
+            "sha256": "3f15cedcebcb1c621595ed956b5dcf920b8b0fb38c42f572754cba40dbe17519",
+            "sourceSha": "4fbca72f5c169a6c08fbeece0db6a8d02e8d4d11"
+          }
+        },
+        "march-tangbao": {
+          "slug": "march-tangbao",
+          "repository": "xk2022/xk-lp-march-tangbao",
+          "sha": "a41f672831f865c22f0bf04bf323b4bd249a61d1",
+          "staticArtifact": {
+            "url": "https://github.com/xk2022/xk-website-showcase/releases/download/march-tangbao-a41f672-v1/march-tangbao-static.zip",
+            "sha256": "d1a6191a857a19dffb3b4bae08667ed07cb92655d19181cbddc2e41b1aac7a71",
+            "sourceSha": "a41f672831f865c22f0bf04bf323b4bd249a61d1"
+          }
+        },
+        "hongjia-birdnest": {
+          "slug": "hongjia-birdnest",
+          "repository": "xk2022/xk-lp-hongjia-birdnest",
+          "sha": "3f3e98e8372e47ee4f93d13154b8c93e131d5d62",
+          "staticArtifact": {
+            "url": "https://github.com/xk2022/xk-website-showcase/releases/download/hongjia-birdnest-3f3e98e-v1/hongjia-birdnest-static.zip",
+            "sha256": "298d5c13c87555ee6096e94b6e98130cab7d2b0151812134786cedb9afb8356a",
+            "sourceSha": "3f3e98e8372e47ee4f93d13154b8c93e131d5d62"
+          }
+        },
+        "yupinyuan-bento": {
+          "slug": "yupinyuan-bento",
+          "repository": "xk2022/xk-lp-yupinyuan-bento",
+          "sha": "0439480ab9e3844a1b50691639757e672aedb9da",
+          "staticArtifact": {
+            "url": "https://github.com/xk2022/xk-website-showcase/releases/download/preserved-showcase-45564113822-v1/yupinyuan-bento-static.zip",
+            "sha256": "baf226237ba8e9d11339c0ca72060166b2f2d593901d2feb88602415b90e0242",
+            "sourceSha": "0439480ab9e3844a1b50691639757e672aedb9da"
+          }
+        },
+        "hongjia-brand": {
+          "slug": "hongjia-brand",
+          "repository": "xk2022/xk-brand-hongjia-birdnest",
+          "sha": "edc4022ea5a6296c38e9c40e4fa8d3bcea1a7482",
+          "staticArtifact": {
+            "url": "https://github.com/xk2022/xk-website-showcase/releases/download/hongjia-brand-edc4022-v1/hongjia-brand-static.zip",
+            "sha256": "b9487e5ca85ee8ce24435fd21c0633805b8811f5fbf39316ff9d61992ae1d039",
+            "sourceSha": "edc4022ea5a6296c38e9c40e4fa8d3bcea1a7482"
+          }
+        },
+        "yuan-guang-pcb": {
+          "slug": "yuan-guang-pcb",
+          "repository": "xk2022/xk-brand-yuan-guang-pcb",
+          "sha": "2028ee7058142fdfd546d24023c1b9f296a5b0da",
+          "staticArtifact": {
+            "url": "https://github.com/xk2022/xk-website-showcase/releases/download/preserved-showcase-45564113822-v1/yuan-guang-pcb-static.zip",
+            "sha256": "abd4c705644b8a1e6130b66ab4e4cbfdb035db0bb3c06c6712e560e7cd18d7ce",
+            "sourceSha": "2028ee7058142fdfd546d24023c1b9f296a5b0da"
+          }
+        },
+        "consulting-chengce": {
+          "slug": "consulting-chengce",
+          "repository": "xk2022/xk-lp-consulting-chengce",
+          "sha": "dfe50a754e4f5c8317278e59d0c6cf89375e647d",
+          "staticArtifact": {
+            "url": "https://github.com/xk2022/xk-website-showcase/releases/download/consulting-chengce-dfe50a7-v1/consulting-chengce-static.zip",
+            "sha256": "a1d318f6b5e4c85bf597209b46cffee899766762a0cf84c0eef8d5993359d571",
+            "sourceSha": "dfe50a754e4f5c8317278e59d0c6cf89375e647d"
+          }
+        },
+        "qiangang-windows": {
+          "slug": "qiangang-windows",
+          "repository": "xk2022/xk-lp-qiangang-windows",
+          "sha": "b30236ffead1e50c6c1a5f8a1697d3eabf6b7d15",
+          "staticArtifact": {
+            "url": "https://github.com/xk2022/xk-website-showcase/releases/download/qiangang-windows-b30236f-v2/qiangang-windows-static.zip",
+            "sha256": "7a570e4684366013df30aea0fe471d831f0c23a95c0e20bae1a4fd3fc3c216b2",
+            "sourceSha": "b30236ffead1e50c6c1a5f8a1697d3eabf6b7d15"
+          }
+        },
+        "truck-transport": {
+          "slug": "truck-transport",
+          "repository": "xk2022/xk-corp-truck-transport",
+          "sha": "90a33add7d4ab6e71a28c47eb8183fe8c12cf907",
+          "staticArtifact": {
+            "url": "https://github.com/xk2022/xk-website-showcase/releases/download/truck-transport-90a33ad-v1/truck-transport-static.zip",
+            "sha256": "94971f455523bf85c10d5d0768f09471c69392688a73eb271ea0f2316f3eca1d",
+            "sourceSha": "90a33add7d4ab6e71a28c47eb8183fe8c12cf907"
+          }
+        },
+        "longtong-logistics": {
+          "slug": "longtong-logistics",
+          "repository": "xk2022/xk-lp-longtong-logistics",
+          "sha": "af43789eba69494f93be17e108880c8acbf524e5",
+          "staticArtifact": {
+            "url": "https://github.com/xk2022/xk-website-showcase/releases/download/longtong-logistics-af43789-v1/longtong-logistics-static.zip",
+            "sha256": "50e15ce69cf8750409ef3d3c42435be7f4ea383525bbb7368c971cec60d671d0",
+            "sourceSha": "af43789eba69494f93be17e108880c8acbf524e5"
+          }
+        },
+        "guanghai-software": {
+          "slug": "guanghai-software",
+          "repository": "xk2022/xk-lp-guanghai-software",
+          "sha": "7d6a7bd337da7c21f047bc5604e48b4044878337",
+          "staticArtifact": {
+            "url": "https://github.com/xk2022/xk-website-showcase/releases/download/guanghai-software-7d6a7bd-v1/guanghai-software-static.zip",
+            "sha256": "674e7d1ae350a7251d542d3f957e60edebde90769ab7d059abc3cbfcb5e2a894",
+            "sourceSha": "7d6a7bd337da7c21f047bc5604e48b4044878337"
+          }
+        },
+        "taiyang-logistics": {
+          "slug": "taiyang-logistics",
+          "repository": "xk2022/xk-lp-taiyang-logistics",
+          "sha": "43f3ec138d2c4ad1123bfc7ca7944a8fd28810a6",
+          "staticArtifact": {
+            "url": "https://github.com/xk2022/xk-website-showcase/releases/download/taiyang-logistics-43f3ec1-v1/taiyang-logistics-static.zip",
+            "sha256": "fe520e0ebe6255ee58c91a524d5e8cfe7c55131b7dfeb40a9bb752e8966a2a97",
+            "sourceSha": "43f3ec138d2c4ad1123bfc7ca7944a8fd28810a6"
+          }
+        },
+        "qingyun-packaging": {
+          "slug": "qingyun-packaging",
+          "repository": "xk2022/xk-lp-qingyun-packaging",
+          "sha": "f2ee20ba5fafcc03aa788c189dd65fe452a531a5",
+          "staticArtifact": {
+            "url": "https://github.com/xk2022/xk-website-showcase/releases/download/preserved-showcase-45564113822-v1/qingyun-packaging-static.zip",
+            "sha256": "9c2de23fc267ccb91251709049782ab97a408421049313a79913c43f752a1a45",
+            "sourceSha": "f2ee20ba5fafcc03aa788c189dd65fe452a531a5"
+          }
+        },
+        "esan-interior": {
+          "slug": "esan-interior",
+          "repository": "xk2022/xk-lp-esan-interior",
+          "sha": "1793516c765aebdf0430f9944e0d739b262866a6",
+          "staticArtifact": {
+            "url": "https://github.com/xk2022/xk-website-showcase/releases/download/esan-interior-1793516-v1/esan-interior-static.zip",
+            "sha256": "f9e02c95ba80e49524c8a9d9f560f2a8258c3e9bebeb77e365643174c2565804",
+            "sourceSha": "1793516c765aebdf0430f9944e0d739b262866a6"
+          }
+        },
+        "rotaract": {
+          "slug": "rotaract",
+          "repository": "xk2022/xk-app-rotaract",
+          "sha": "4a7712436a7217f6065560e3ff695c39510896ee",
+          "staticArtifact": {
+            "url": "https://github.com/xk2022/xk-website-showcase/releases/download/rotaract-4a77124-v1/rotaract-static.zip",
+            "sha256": "23a443d96e657593ebd2278092689079a49e3181f7a0b1eae4492a713be5c08e",
+            "sourceSha": "4a7712436a7217f6065560e3ff695c39510896ee"
+          }
+        },
+        "little-me-inventory": {
+          "slug": "little-me-inventory",
+          "repository": "xk2022/xk-app-little-me-inventory",
+          "sha": "a815f496b6c2daa2b0c190a3f12a0ae2b9987e29",
+          "staticArtifact": {
+            "url": "https://github.com/xk2022/xk-website-showcase/releases/download/preserved-showcase-45564113822-v1/little-me-inventory-static.zip",
+            "sha256": "4a365d73837a8a2e3e28663cb1667005ffb8b7a6e0520e21aa680fce84d04bc6",
+            "sourceSha": "a815f496b6c2daa2b0c190a3f12a0ae2b9987e29"
+          }
+        },
+        "little-me-owner-demo": {
+          "slug": "little-me-owner-demo",
+          "repository": "xk2022/xk-app-little-me-inventory",
+          "sha": "53385dc0bff1753b29a664a246e4f8a486daec73",
+          "staticArtifact": {
+            "url": "https://github.com/xk2022/xk-website-showcase/releases/download/little-me-owner-demo-53385dc-v1/little-me-owner-demo-static.zip",
+            "sha256": "800ae01edb59706f9538ac07de86b4770494d821c1ddfe1759de474f9db0271d",
+            "sourceSha": "53385dc0bff1753b29a664a246e4f8a486daec73"
+          }
+        },
+        "shengfengyang": {
+          "slug": "shengfengyang",
+          "repository": "xk2022/xk-brand-shengfengyang",
+          "sha": "baacd349c86c195f77d3b5c17ec29e7f6041b3d5",
+          "staticArtifact": {
+            "url": "https://github.com/xk2022/xk-website-showcase/releases/download/shengfengyang-baacd34-v1/shengfengyang-static.zip",
+            "sha256": "985e9b84c9bb6ba53c20830108cc4d317a868ddeff4368c3893361d84c7931dd",
+            "sourceSha": "baacd349c86c195f77d3b5c17ec29e7f6041b3d5"
+          }
+        },
+        "logistics": {
+          "slug": "logistics",
+          "repository": "xk2022/xk-app-logistics",
+          "sha": "01fb1bae59c6b6ec4010ef65524fc32bc9e6a2bf"
+        },
+        "apparel-store": {
+          "slug": "apparel-store",
+          "repository": "xk2022/codex-xk-apparel-store",
+          "sha": "2560ffe2bc00aeabefbfa9992f5fadd1fa10d141"
+        },
+        "rui-cafe": {
+          "slug": "rui-cafe",
+          "repository": "xk2022/xk-brand-rui-cafe",
+          "sha": "00880db13b70649f75710b0e0d754c9db1d82e8b",
+          "staticArtifact": {
+            "url": "https://github.com/xk2022/xk-website-showcase/releases/download/rui-cafe-00880db-v1/rui-cafe-static.zip",
+            "sha256": "2a7bbddd35a3cbb65caed54e1c2b681de59e9060adb7a966201d2bf496ccdac7",
+            "sourceSha": "00880db13b70649f75710b0e0d754c9db1d82e8b"
+          }
+        }
+      }
+    },
+    "deploymentOnlyMarker": {
+      "file": ".nojekyll",
+      "zipBytes": 0,
+      "assembledHubBytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "publicStatus": 404,
+      "public404Expected": true,
+      "classifiedAsBrowserRuntime": false,
+      "basis": "Zero-byte deployment control input, verified in both reviewed ZIP and actual assembled Hub directory; GitHub Pages does not expose it as a browser resource."
+    },
+    "pages": [
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/",
+        "title": "萬花筒運輸｜從每一次出貨開始",
+        "description": "從工廠固定出貨到企業單次配送，先用自己的話說明需求。萬花筒運輸為探索萬象科技自主規劃的企業形象展示作品。",
+        "h1": "工廠每週固定出貨，想找長期配合的車隊？",
+        "canonical": "https://showcase.xplorekaleidoscope.com/truck-transport/",
+        "newBrand": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/services/",
+        "title": "運輸服務｜萬花筒運輸",
+        "description": "固定配送優先，從路線、頻率、貨量到收貨窗口逐一確認。單次兩板貨也從同一個詢價入口開始。",
+        "h1": "從固定出貨，到每一趟安排。",
+        "canonical": "https://showcase.xplorekaleidoscope.com/truck-transport/services/",
+        "newBrand": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/shipping-guide/",
+        "title": "出貨前要確認什麼｜萬花筒運輸",
+        "description": "起訖地、貨物包裝、裝收貨時段與卸貨設備，四個面向整理出貨需求。已知資訊先說，不確定的可以後補。",
+        "h1": "出貨前要確認什麼",
+        "canonical": "https://showcase.xplorekaleidoscope.com/truck-transport/shipping-guide/",
+        "newBrand": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/about/",
+        "title": "關於公司與車隊｜萬花筒運輸",
+        "description": "以倉庫臨時更改收貨時段示範合作流程：貨主通知窗口、調度核對行程與時段、窗口回覆確認結果。萬花筒運輸為虛構品牌。",
+        "h1": "好的配合，從清楚的溝通開始。",
+        "canonical": "https://showcase.xplorekaleidoscope.com/truck-transport/about/",
+        "newBrand": true
+      },
+      {
+        "url": "https://showcase.xplorekaleidoscope.com/truck-transport/inquiry/",
+        "title": "詢價與合作｜萬花筒運輸",
+        "description": "用自己的話說明出貨需求，可帶入固定配送或單次出貨示例。只有頁面記憶體中的模擬摘要，不傳送、不儲存、不報價。",
+        "h1": "先說說，你的出貨需求。",
+        "canonical": "https://showcase.xplorekaleidoscope.com/truck-transport/inquiry/",
+        "newBrand": true
+      }
+    ],
+    "socialCard": {
+      "width": 1200,
+      "height": 630,
+      "sha256": "66ac77839e0493abd1bbafbbd5053ba9bd3e5d162f83a5a447205b9636e96f01",
+      "matchesReviewedZip": true
+    },
+    "favicon": {
+      "viewBox": [
+        0.0,
+        0.0,
+        64.0,
+        64.0
+      ],
+      "sha256": "73a994855be144526503387f16643cf55565cc2bd3071bbaf5b7556cf418100c",
+      "matchesReviewedZip": true
+    },
+    "runtimeFileCount": 51,
+    "reviewedZipFileCount": 52,
+    "deploymentOnlyMarkerCount": 1,
+    "excludedHubGeneratedGalleryFile": "_showcase-preview.jpg",
+    "finishedAt": "2026-11-27T17:45:09.021100+00:00"
+  },
+  "publicBrowser": {
+    "status": "PASS",
+    "method": "Managed Cloud Browser Chrome, public HTTPS, observed through accessibility and read-only DOM state",
+    "viewport": {
+      "width": 1180,
+      "height": 757
+    },
+    "routes": [
+      "/truck-transport/",
+      "/truck-transport/services/",
+      "/truck-transport/shipping-guide/",
+      "/truck-transport/about/",
+      "/truck-transport/inquiry/"
+    ],
+    "checks": [
+      "new brand and visible page headings",
+      "main navigation between all five pages",
+      "home primary inquiry entry",
+      "home secondary shipping guide entry",
+      "no horizontal overflow or broken loaded images",
+      "fixed-delivery sample preview and return retains original",
+      "single-shipment sample preview",
+      "two pallets only preview",
+      "leading/trailing whitespace and newline retained verbatim",
+      "blank input error and field focus",
+      "Tab focuses preview button, Return opens summary",
+      "refresh clears draft and summary"
+    ],
+    "privacyScope": "Public UI checks do not claim network/storage instrumentation. The exact runtime bytes match the reviewed ZIP; source/combined-output tests and fresh Hub smoke separately verified network and storage boundaries.",
+    "limitations": "Public managed-browser checks used desktop 1180x757 only; mobile and WebKit evidence is the 104-test actual combined-output suite. No physical Safari, iPhone or VoiceOver claim."
+  },
+  "publicHeadlessAttempt": {
+    "status": "ENVIRONMENT_BLOCKED",
+    "browser": "Chromium 156.0.8078.79",
+    "error": "ERR_CERT_AUTHORITY_INVALID",
+    "completedInteractionChecks": 0,
+    "desktop1440": "NOT_RUN",
+    "tlsValidationDisabled": false,
+    "recovery": "Managed Cloud Browser completed the public desktop checks without bypassing a security warning or changing trust settings."
+  },
+  "combinedOutputBrowserEvidence": {
+    "status": "PASS",
+    "tests": 104,
+    "chromium": {
+      "version": "156.0.8078.79",
+      "tests": 52,
+      "viewports": [
+        "1440x1000",
+        "390x844"
+      ]
+    },
+    "webkit": {
+      "version": "27.2",
+      "tests": 52,
+      "viewports": [
+        "1440x1000",
+        "390x664"
+      ]
+    },
+    "skipped": 0,
+    "retries": 0
+  }
+}

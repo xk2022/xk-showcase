@@ -1,6 +1,6 @@
 # 萬花筒運輸｜新品牌靜態快照準備與發布紀錄
 
-日期：2026-11-27（UTC）。**靜態 ZIP 已完成隔離上傳及獨立下載驗證；Pages 與新版網站尚未發布。** 本次依追加部署授權，將既有 `/truck-transport/` 的舊「序程運輸」快照替換為「萬花筒運輸」（Kaleidoscope Transport）候選。來源 `xk2022/xk-corp-truck-transport` 維持 Private，公開交付僅限已審查的靜態執行成品；不改 slug、網域、其他專案來源或私有權限。
+日期：2026-11-27（UTC）。**「萬花筒運輸」已發布，官方公開驗證、獨立 HTTPS 與公開 Cloud Browser 操作均通過。** 本次依追加部署授權，將既有 `/truck-transport/` 的舊「序程運輸」快照替換為「萬花筒運輸」（Kaleidoscope Transport）。來源 `xk2022/xk-corp-truck-transport` 維持 Private，公開交付僅限已審查的靜態執行成品；不改 slug、網域、其他專案來源或私有權限。
 
 本案仍是 `portfolio`、虛構品牌與 XK 自主規劃展示作品。保留「探索萬象科技（Xplore Kaleidoscope，簡稱 XK）」及 **Self-Initiated Demonstration Project｜自主規劃展示作品**、示意圖片標籤與 `noindex,nofollow`。公司 `f117310` 新增的正式客戶網站 footer 規則不改變本案分類，不把它補成受委託實績或正式運輸服務。
 
@@ -97,7 +97,7 @@ Hub-owned 報告位於 `/tmp/xk-transport-publication-20261127/hub-transport-rep
 
 ## 完整發布與線上證據
 
-候選 ZIP 上傳、來源 CI 或本機 smoke 成功均不等於已發布。須完成以下實際結果後再將本文件與 README 改為新版已上線：
+本次在成品上傳與準備驗收之外，已完成 PR CI、正常 main Pages 發布及官方公開驗證。各階段證據如下：
 
 | 階段 | 實際結果 |
 | --- | --- |
@@ -108,14 +108,24 @@ Hub-owned 報告位於 `/tmp/xk-transport-publication-20261127/hub-transport-rep
 | 實際 combined-output transport smoke | 通過；52 檔 runtime byte 比對、10 組 route／width 與兩寬度詢價 journeys |
 | 來源完整套件對 actual combined 輸出 | Chromium 52／52（42.8 秒）、WebKit 52／52（55.1 秒），共 104／104，零失敗、skip、retry；Chromium 156.0.8078.79：1440×1000／390×844；WebKit 27.2：1440×1000／iPhone viewport 390×664 |
 | 完整 Hub Node suite | `env -u GH_TOKEN -u GITHUB_TOKEN node --test --test-isolation=none tests/*.test.mjs`：260／260 通過，18.34 秒，零 fail／skip／cancel／todo |
-| Hub PR CI | 待補記 |
-| Hub main freshness guard、Pages deployment 與公開驗證 | 待補記 |
-| 公開 manifest 的完整 transport source／tuple | 待補記 |
-| 公開五頁、favicon、社群圖、其他資源 HTTP 與實際互動 | 待補記 |
+| Hub PR CI | [46042132393](https://github.com/xk2022/xk-website-showcase/actions/runs/46042132393) 全部成功，head `be8b43004b1c85c87562b23681c5b4f0424cab70`；與合併版本 Git tree 相同 |
+| Hub main freshness guard、Pages deployment 與公開驗證 | [46042541890](https://github.com/xk2022/xk-website-showcase/actions/runs/46042541890) 全部成功，runtime `d3471e563a7e20f2327c855b76de0ac87683bfeb`；Publication 134 current，Pages success，官方公開驗證 22 sites／74 pages／287 assets |
+| 公開 manifest 的完整 transport source／tuple | 官方 verifier 與獨立 HTTPS 均核對 22 站 source／完整 staticArtifact tuple，全數符合該次實際部署 plan |
+| 公開五頁、favicon、社群圖、其他資源 HTTP 與實際互動 | 獨立 HTTPS：51 個公開 runtime 全部逐 byte／hash 與 ZIP 一致，五頁 metadata／品牌與素材 MIME 通過；Cloud Browser Chrome 1180×757 五頁／入口／詢價／鍵盤／刷新操作通過 |
 
 Hub 未配置獨立 lint 或 TypeScript 指令；Node 單元套件涵蓋此次 MJS 修改。來源 CI 的 lint、型別檢查與正式建置已通過，與候選來源的 frontend／tests 同樹。完整瀏覽器命令與結果留在 `/tmp/xk-transport-publication-20261127/qa-result.json`，報告在同目錄 `qa-chromium/`、`qa-webkit/`；source suite 未變動。
 
-發布網址仍為 <https://showcase.xplorekaleidoscope.com/truck-transport/>；在上述結果成功之前，不聲稱此網址已顯示萬花筒運輸，也不改變其他 21 個登錄的來源、相對 gallery 順序或網域歸屬。
+發布網址為 <https://showcase.xplorekaleidoscope.com/truck-transport/>。原始碼仍為 Private；其他 21 個登錄的來源、相對 gallery 順序與網域歸屬不變。
+
+## 獨立公開驗證
+
+[機器可讀收據](transport-live-verification.json) 分開保留官方發布、獨立 HTTPS、公開 Cloud Browser 與本機 combined-output 的驗收範圍。獨立正常 TLS／no-cache GET 於 2026-11-27 17:45:06–09 UTC 完成：22 站識別符合該次正式 run 的 resolved plan，51 個公開 runtime 檔案與已審查 ZIP 逐 byte／SHA-256 相同；五頁各自的 title、description、H1、canonical、robots、新品牌與社群 metadata 正確。JPEG 為 1200×630，favicon／圖片／CSS／JavaScript／RSC 等 MIME 及內容均吻合。
+
+ZIP 與 Hub 成品含 52 個檔案，其中 `.nojekyll` 是 0-byte 部署控制標記，GitHub Pages 不將它公開為網頁資源（HTTP 404）。公開比對明確列為 **51 個 runtime ＋1 個部署標記**；本機完整成品的 52 檔 byte 比較仍包含它。首次把控制檔當公開資源的失敗報告留存於 `/tmp/xk-transport-publication-20261127/public-static-check.json`，修正分類的完整獨立證據在收據中；沒有忽略任何缺失的 browser runtime 檔。
+
+公網 headless Chromium 的第一個 375px navigation 被環境憑證信任阻擋（`ERR_CERT_AUTHORITY_INVALID`，零互動完成；1440px 未執行），未關閉 TLS 或變更信任設定。改以既有 Cloud Browser 完成 **1180×757 的公開桌面實測**：首頁兩入口、五頁導覽／新品牌／H1／無 overflow 或 broken images、固定與單次示例、只填「兩板貨」、空白與換行逐字保留、返回修改、純空白錯誤及焦點、Tab 到預覽按鈕並以 Return 開啟摘要、刷新清空草稿與摘要，均通過。公開桌面 UI 操作與先前 actual combined-output 的手機／WebKit 104 項套件分別記錄；不宣稱公網 375／1440px headless、真機 Safari／iPhone 或 VoiceOver 通過。公開 UI 本身不宣稱另做網路／storage instrumentation；資料邊界由相同 runtime 的來源與 Hub smoke 另驗。
+
+後續文件提交只補記已驗證結果，不改登錄、ZIP、來源 runtime 或已發布 Pages 成品。
 
 ## 保留的舊快照與回復
 
