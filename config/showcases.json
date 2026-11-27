@@ -93,7 +93,7 @@
     "name": "宏家燕窩 Brand",
     "category": "品牌形象網站",
     "repository": "xk2022/xk-brand-hongjia-birdnest",
-    "ref": "5ad9300098b11c3e1b5ca22b7d8f39afaa578a2a",
+    "ref": "edc4022ea5a6296c38e9c40e4fa8d3bcea1a7482",
     "env": {
       "NEXT_PUBLIC_SITE_URL": "https://showcase.xplorekaleidoscope.com",
       "NEXT_PUBLIC_SHOWCASE_BASE_PATH": "/hongjia-brand"
@@ -101,9 +101,9 @@
     "brand": "宏家燕窩",
     "purpose": "透過品牌故事、產品與送禮內容建立品牌認知。",
     "staticArtifact": {
-      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/preserved-showcase-45564113822-v1/hongjia-brand-static.zip",
-      "sha256": "2274bd50537dd278e116789690b52bc639572b06c032cd071e46c915a8cd2092",
-      "sourceSha": "5ad9300098b11c3e1b5ca22b7d8f39afaa578a2a"
+      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/hongjia-brand-edc4022-v1/hongjia-brand-static.zip",
+      "sha256": "b9487e5ca85ee8ce24435fd21c0633805b8811f5fbf39316ff9d61992ae1d039",
+      "sourceSha": "edc4022ea5a6296c38e9c40e4fa8d3bcea1a7482"
     }
   },
   {

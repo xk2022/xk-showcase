@@ -17,6 +17,7 @@ on:
         type: choice
         options:
           - shengfengyang
+          - hongjia-brand
           - carpentry
           - guanghai-software
           - hongjia-birdnest

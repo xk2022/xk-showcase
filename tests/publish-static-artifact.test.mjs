@@ -10,6 +10,8 @@ const repository = 'xk2022/xk-website-showcase';
 const sourceSha = 'a'.repeat(40);
 const tag = 'shengfengyang-aaaaaaa-v1';
 const zipUrl = `https://github.com/${repository}/releases/download/${tag}/shengfengyang-static.zip`;
+const hongjiaBrandTag = 'hongjia-brand-aaaaaaa-v1';
+const hongjiaBrandZipUrl = `https://github.com/${repository}/releases/download/${hongjiaBrandTag}/hongjia-brand-static.zip`;
 const carpentryTag = 'carpentry-aaaaaaa-v1';
 const carpentryZipUrl = `https://github.com/${repository}/releases/download/${carpentryTag}/carpentry-static.zip`;
 // selector 與公開子路徑仍是 carpentry，新 Release 的來源身份則是更名後的模板庫。
@@ -44,6 +46,15 @@ function carpentryArchive(overrides = {}) {
     'sitemap.xml': `<urlset><url><loc>${origin}/carpentry/</loc></url></urlset>`,
     ...overrides,
   };
+  return execFileSync('python3', ['-c', pythonZip], { input: JSON.stringify(entries), maxBuffer: 5 * 1024 * 1024 });
+}
+function hongjiaBrandArchive(overrides = {}, omitted = []) {
+  const routes = ['', 'brand/', 'gifting/', 'journal/'];
+  const entries = Object.fromEntries(routes.map(route => [`${route}index.html`, `<html><head><meta name="robots" content="index,follow"><link rel="canonical" href="${origin}/hongjia-brand/${route}"></head><body><h1>宏家燕窩 Brand</h1><script src="/hongjia-brand/_next/static/app.js"></script></body></html>`]));
+  entries['_next/static/app.js'] = '/* compiled browser output, never executed by the publisher */';
+  entries['sitemap.xml'] = `<urlset>${routes.map(route => `<url><loc>${origin}/hongjia-brand/${route}</loc></url>`).join('')}</urlset>`;
+  Object.assign(entries, overrides);
+  for (const path of omitted) delete entries[path];
   return execFileSync('python3', ['-c', pythonZip], { input: JSON.stringify(entries), maxBuffer: 5 * 1024 * 1024 });
 }
 function ruiArchive(overrides = {}) {
@@ -187,6 +198,44 @@ test('the explicit original selector preserves the Shengfengyang release identit
   const created = JSON.parse(writes(service.calls)[0].options.body);
   assert.match(created.name, /^昇豐陽食品｜靜態提案 /);
   assert.equal(JSON.parse(created.body).sourceRepository, 'xk2022/xk-brand-shengfengyang');
+});
+
+test('Hongjia Brand publishes only its fixed four-route indexable export and exact source manifest', async () => {
+  const service = mock(hongjiaBrandArchive(), { project: 'hongjia-brand' });
+  assert.deepEqual(await publishStaticArtifact(service), { tag: hongjiaBrandTag, url: hongjiaBrandZipUrl, sourceSha, sha256: service.env.INPUT_SHA256, reused: false });
+  const mutations = writes(service.calls);
+  assert.deepEqual(mutations.map(call => `${call.url.hostname}:${call.options.method}`), ['api.github.com:POST', 'uploads.github.com:POST', 'uploads.github.com:POST', 'api.github.com:PATCH']);
+  const created = JSON.parse(mutations[0].options.body);
+  assert.equal(created.tag_name, hongjiaBrandTag);
+  assert.match(created.name, /^宏家燕窩 Brand/);
+  const manifest = JSON.parse(created.body);
+  assert.equal(manifest.sourceRepository, 'xk2022/xk-brand-hongjia-birdnest');
+  assert.equal(manifest.sourceSha, sourceSha);
+  assert.equal(manifest.sha256, service.env.INPUT_SHA256);
+  assert.equal(manifest.staticOnly, true);
+  assert.equal(manifest.publication.repository, repository);
+  assert.equal(manifest.publication.commitSha, service.env.GITHUB_SHA);
+  assert.match(manifest.verification, /does not query private source CI/);
+  assert.deepEqual(mutations.filter(call => call.url.hostname === 'uploads.github.com').map(call => call.url.searchParams.get('name')), ['hongjia-brand-static.zip', 'release-manifest.json']);
+  assert.equal(service.calls.some(call => call.url.pathname.startsWith('/repos/xk2022/xk-brand-hongjia-birdnest')), false);
+});
+
+test('Hongjia Brand rejects wrong-site, missing-route and changed indexing output before Release access or writes', async () => {
+  const canonical = route => `<html><head><meta name="robots" content="index,follow"><link rel="canonical" href="${origin}/hongjia-brand/${route}"></head><body><h1>Brand</h1><script src="/hongjia-brand/_next/static/app.js"></script></body></html>`;
+  const candidates = [
+    hongjiaBrandArchive({ 'index.html': canonical('').replace('/hongjia-brand/', '/another-brand/') }),
+    hongjiaBrandArchive({ 'brand/index.html': canonical('') }),
+    hongjiaBrandArchive({}, ['gifting/index.html']),
+    hongjiaBrandArchive({ 'sitemap.xml': `<urlset><url><loc>${origin}/hongjia-brand/</loc></url></urlset>` }),
+    hongjiaBrandArchive({ 'journal/index.html': canonical('journal/').replace('index,follow', 'noindex,nofollow') }),
+    hongjiaBrandArchive({ 'gifting/index.html': canonical('gifting/').replace('<h1>Brand</h1>', '') }),
+  ];
+  for (const bytes of candidates) {
+    const service = mock(bytes, { project: 'hongjia-brand' });
+    await assert.rejects(publishStaticArtifact(service));
+    assert.equal(writes(service.calls).length, 0);
+    assert.equal(service.calls.some(call => call.url.pathname.includes('/releases')), false);
+  }
 });
 
 test('Rotaract publishes only its fixed synthetic export with isolated provenance and no Latest change', async () => {
