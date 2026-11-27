@@ -86,6 +86,7 @@ try {
   const template = await readFile(new URL('../src/index.html', import.meta.url), 'utf8');
   const cards = renderGallery(sites);
   await writeFile(join(staging, 'index.html'), template.replace('<!-- SHOWCASES -->', cards));
+  await cp(new URL('../src/brand/v2', import.meta.url), join(staging, '_brand', 'v2'), { recursive: true });
   await writeFile(join(staging, 'robots.txt'), buildRobots(sites));
   await writeFile(join(staging, '404.html'), renderNotFound(sites));
   await writeFile(join(staging, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n');

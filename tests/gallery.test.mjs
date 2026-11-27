@@ -1,11 +1,29 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, writeFile, rm } from 'node:fs/promises';
+import { mkdtemp, writeFile, rm, readFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { renderCards, renderGallery, validateSites, validateExport, buildRobots, origin } from '../scripts/static-export.mjs';
 
 const app = { slug: 'app-preview', name: 'APP preview', category: 'APP', repository: 'xk2022/xk-app-preview', ref: 'main', framework: 'screen', indexable: false };
+
+test('Hub branding uses the exact approved V2 assets and local gallery references', async () => {
+  const html = await readFile(new URL('../src/index.html', import.meta.url), 'utf8');
+  const assets = {
+    'xk-logo-primary.svg': 'de812ceb8c4cd82834023e7c6b7c9681755542ba',
+    'favicon.ico': 'b9da95d601e24907d6731aa18b20682808a204fd',
+    'icon.svg': '759c0370142e6ae4f145a5120a42c93047bffa4d',
+    'apple-icon.png': '8211b5332225dbb604559a50059fc9c796bb657b',
+  };
+  for (const [filename, expected] of Object.entries(assets)) {
+    const bytes = await readFile(new URL(`../src/brand/v2/${filename}`, import.meta.url));
+    const blob = createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex');
+    assert.equal(blob, expected, filename);
+    assert.ok(html.includes(`"./_brand/v2/${filename}"`), filename);
+  }
+  assert.match(html, /<img class="brand-mark"[^>]+alt="Xplore Kaleidoscope">/);
+});
 
 test('listed concept proposals have a distinct notice and action while remaining excluded from indexing', () => {
   const proposal = { slug: 'yuan-guang-pcb', name: '元廣科技｜概念提案', category: '企業形象概念提案', repository: 'xk2022/xk-brand-yuan-guang-pcb', ref: 'a'.repeat(40), framework: 'vite', status: 'proposal', listed: true, indexable: false };
