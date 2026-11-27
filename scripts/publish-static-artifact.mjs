@@ -24,6 +24,11 @@ const projects = {
     archiveName: 'honest-static.zip', name: '宏能興業｜製造業詢價展示',
     policy: { framework: 'next' },
   },
+  'hongjia-birdnest': {
+    sourceRepository: 'xk2022/xk-lp-hongjia-birdnest',
+    archiveName: 'hongjia-birdnest-static.zip', name: '宏家燕窩｜送禮洽詢展示',
+    policy: { framework: 'next' },
+  },
   rotaract: {
     sourceRepository: 'xk2022/xk-app-rotaract',
     archiveName: 'rotaract-static.zip', name: '扶青萬花筒｜合成資料互動展示',
