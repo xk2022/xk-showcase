@@ -173,3 +173,13 @@ The fixed `esan-interior` selector is also available for `xk2022/xk-lp-esan-inte
 ## Carpentry publisher selection
 
 The isolated upload workflow also supports the reviewed `carpentry` project via `static_artifact_project=carpentry` (`INPUT_PROJECT=carpentry`). The default remains `shengfengyang` for existing dispatches. The selector maps to fixed repository/slug/asset identities; it does not accept arbitrary source or destination values. Carpentry retains its indexable `/carpentry/` export and sitemap, while Shengfengyang retains its non-indexable, unlisted 20-route policy. Both use the same bounded extraction, integrity, draft publication, no-overwrite and isolated-permission checks. See [Carpentry preparation](carpentry-publication.md) for the exact approved bytes, source CI evidence and dispatch inputs.
+
+### Hongjia Brand publisher selection
+
+The fixed `hongjia-brand` selector maps only to `xk2022/xk-brand-hongjia-birdnest`, `/hongjia-brand/`, `hongjia-brand-<sourceSha first seven characters>-v1` and `hongjia-brand-static.zip` on this Hub. It retains the existing listed, indexable four-page Brand showcase policy; it does not label the site as formally commissioned or officially operated by the brand.
+
+Prepare the reviewed source from `frontend/` with `NEXT_PUBLIC_SITE_URL=https://showcase.xplorekaleidoscope.com` and `NEXT_PUBLIC_SHOWCASE_BASE_PATH=/hongjia-brand`. The ZIP contains the **contents** of `frontend/out/` at its root, without enclosing `frontend/` or `out/` directories. Record the successful exact-source CI and source-to-export preparation separately; the publisher only validates compiled output.
+
+In the existing isolated dispatch, select `static_artifact_project=hongjia-brand` and supply the reviewed transfer blob SHA, ZIP SHA-256 and full source SHA through `static_artifact_blob`, `static_artifact_sha256` and `static_artifact_source`. The helper applies the existing bounded extraction and export checks, then requires the homepage, `brand/`, `gifting/` and `journal/` with exact canonical URLs, one nonempty H1 each and a sitemap containing exactly those four routes. Wrong-site, missing-route or noindex output is rejected before any Release access or write.
+
+This selector adds no arbitrary repository or asset input, private-source access, source execution, new secret or permission. All other selectors retain their existing behavior, including their draft handling. The upload run publishes only the ZIP and `release-manifest.json`; it does not deploy Pages. Independently verify the public asset digest and manifest, then promote the reviewed Brand registration tuple and run the full normal Hub release and public-verification workflow.

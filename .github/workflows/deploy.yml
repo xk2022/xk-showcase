@@ -17,6 +17,7 @@ on:
         type: choice
         options:
           - shengfengyang
+          - hongjia-brand
           - carpentry
           - guanghai-software
           - hongjia-birdnest
@@ -26,6 +27,7 @@ on:
           - rotaract
           - consulting-chengce
           - honest
+          - taiyang-logistics
           - esan-interior
         default: shengfengyang
       static_artifact_blob:
