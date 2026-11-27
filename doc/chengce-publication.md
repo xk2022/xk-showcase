@@ -32,3 +32,14 @@ The registry promotion changes only Chengce's `ref`, archive URL, SHA-256 and `s
 - SHA-256 `362ff5300e75015ad0980eae6a45740216c2a779b4b71a77214edcf963776599`.
 
 A Release upload is preparation, not a live deployment. The full Hub build, source-specific browser checks, transport validation, guarded main deployment and live manifest/resource verification must pass before this candidate is called published. Results are recorded after execution.
+
+## Executed pre-merge checks
+
+- Complete Hub unit suite: 227 passing tests.
+- All 22 current registrations resolved and the complete combined Hub built successfully. The concurrent Honest and window-site publications are preserved unchanged.
+- Chengce Chromium checks on the actual combined `dist/`: 29 checks passed at 375/768/1024/1440px. The report independently reads and checks Chengce source `dfe50a754e4f5c8317278e59d0c6cf89375e647d` from the combined manifest.
+- No missing resources, horizontal overflow, runtime errors or form submissions were observed. Navigation, native FAQ, required/invalid/valid input, summary/edit/reset/refresh and copy feedback/fallback were exercised.
+- Clipboard success/failure use explicitly documented browser stubs; this does not claim operating-system clipboard integration.
+- Preserved transport runtime-byte equality and fresh Hub-owned browser smoke passed; its historical source suite is retained as `REUSED_NOT_RERUN`.
+
+The normal workflow now runs the Chengce suite before Pages artifact upload and retains its JSON report/screenshots separately. These compiled-output checks run without source API credentials or external form delivery.
