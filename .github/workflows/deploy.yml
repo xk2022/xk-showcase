@@ -30,6 +30,7 @@ on:
           - consulting-chengce
           - honest
           - taiyang-logistics
+          - truck-transport
         default: shengfengyang
       static_artifact_blob:
         description: 'Optional reviewed static ZIP Git blob SHA; skips website publication'

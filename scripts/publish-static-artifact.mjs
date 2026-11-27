@@ -4,7 +4,7 @@ import { join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 import { pathToFileURL } from 'node:url';
 import { materializeStaticArtifact } from './static-artifact.mjs';
-import { origin, validateExport } from './static-export.mjs';
+import { origin, transportRoutes, validateExport } from './static-export.mjs';
 
 const repository = 'xk2022/xk-website-showcase';
 const maxZip = 30 * 1024 * 1024;
@@ -12,6 +12,13 @@ const manifestName = 'release-manifest.json';
 // Publication inputs select only reviewed projects, never arbitrary repository,
 // slug, asset or release names. Omitted INPUT_PROJECT preserves the original job.
 const projects = {
+  'truck-transport': {
+    sourceRepository: 'xk2022/xk-corp-truck-transport',
+    archiveName: 'truck-transport-static.zip', name: '萬花筒運輸｜企業形象展示',
+    // The fictional Next export retains its five-route sitemap and noindex.
+    // Its publication contract is checked below, without reading private source.
+    policy: { framework: 'next' },
+  },
   'taiyang-logistics': {
     sourceRepository: 'xk2022/xk-lp-taiyang-logistics',
     archiveName: 'taiyang-logistics-static.zip', name: '太陽國際物流｜貨櫃陸運需求整理',
@@ -87,6 +94,39 @@ const projects = {
     policy: { framework: 'next', indexable: true, listed: true },
   },
 };
+
+// A new transport release must represent the renamed demonstration. The generic
+// export validator separately enforces all five routes, URLs, robots and assets.
+// Inspect compiled HTML only; never execute its scripts or query its private repo.
+async function validateTruckTransport(directory) {
+  const brand = '萬花筒運輸';
+  const attributes = tag => Object.fromEntries([...tag.matchAll(/([\w-]+)\s*=\s*(["'])(.*?)\2/gs)].map(([, key, , value]) => [key.toLowerCase(), value]));
+  const text = value => value.replace(/<[^>]*>/g, '').replace(/\s+/g, '');
+  const requiredStatements = [
+    brand, 'KALEIDOSCOPE TRANSPORT', `${brand}為虛構品牌`,
+    '探索萬象科技（Xplore Kaleidoscope，簡稱 XK）',
+    'Self-Initiated Demonstration Project｜自主規劃展示作品',
+  ];
+  for (const route of transportRoutes) {
+    const html = await readFile(join(directory, route, 'index.html'), 'utf8');
+    const markup = html.replace(/<!--[^]*?-->|<script\b[^>]*>[^]*?<\/script\s*>|<style\b[^>]*>[^]*?<\/style\s*>/gi, '');
+    if (/序程運輸|XUCHENG\s+TRANSPORT/i.test(markup)) throw new Error(`Transport export contains the previous brand: ${route || '/'}`);
+    const titles = [...markup.matchAll(/<title\b[^>]*>([^]*?)<\/title>/gi)];
+    if (titles.length !== 1 || !text(titles[0][1]).includes(brand)) throw new Error(`Transport title must name ${brand}: ${route || '/'}`);
+    const title = text(titles[0][1]);
+    const metadata = [...markup.matchAll(/<meta\b[^>]*>/gi)].map(match => attributes(match[0]));
+    for (const [key, expected] of Object.entries({ 'og:site_name': brand, 'og:title': title, 'twitter:title': title })) {
+      const matches = metadata.filter(tag => (tag.property || tag.name)?.toLowerCase() === key);
+      if (matches.length !== 1 || text(matches[0].content || '') !== text(expected)) throw new Error(`Incorrect transport brand metadata ${key}: ${route || '/'}`);
+    }
+    for (const key of ['og:image:alt', 'twitter:image:alt']) {
+      const matches = metadata.filter(tag => (tag.property || tag.name)?.toLowerCase() === key);
+      if (matches.length !== 1 || !text(matches[0].content || '').includes(brand)) throw new Error(`Missing transport brand metadata ${key}: ${route || '/'}`);
+    }
+    const body = markup.match(/<body\b[^>]*>([^]*?)<\/body>/i)?.[1];
+    if (!body || requiredStatements.some(statement => !text(body).includes(text(statement)))) throw new Error(`Missing transport brand or demonstration statement: ${route || '/'}`);
+  }
+}
 
 // This selector promotes the existing four-page indexable Brand site only.
 // Preparation source CI stays separately recorded; these checks inspect ZIP bytes.
@@ -187,6 +227,7 @@ export async function publishStaticArtifact({ env = process.env, fetchImpl = fet
     // verified bytes. No source code, package lifecycle or private API is run.
     await materializeStaticArtifact(site, local, { fetchImpl: async () => new Response(bytes) });
     await validateExport(local, site);
+    if (input.project === 'truck-transport') await validateTruckTransport(local);
     if (input.project === 'hongjia-brand') await validateHongjiaBrand(local);
 
     const generatedManifest = {
@@ -249,6 +290,7 @@ export async function publishStaticArtifact({ env = process.env, fetchImpl = fet
         const published = join(temporary, 'existing-public-export');
         await materializeStaticArtifact(site, published, { fetchImpl });
         await validateExport(published, site);
+        if (input.project === 'truck-transport') await validateTruckTransport(published);
         if (input.project === 'hongjia-brand') await validateHongjiaBrand(published);
         return { tag, url: downloadUrl, sha256: input.sha256, sourceSha: input.sourceSha, reused: true };
       }
