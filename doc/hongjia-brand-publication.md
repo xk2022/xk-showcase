@@ -1,6 +1,6 @@
 # Hongjia Brand publication
 
-Preparation date: 2026-11-27. **Prepared; the replacement is not yet live.** This record separates source validation, reviewed static bytes, isolated Release upload, registry promotion and public Pages verification. Existing `/hongjia-brand/`, its four routes and its `portfolio` status are retained. The LP entry `/hongjia-birdnest/`, other registrations, DNS and brand production domains are outside this update.
+Preparation date: 2026-11-27. **Published and independently verified.** This record separates source validation, reviewed static bytes, isolated Release upload, registry promotion and public Pages verification. Existing `/hongjia-brand/`, its four routes and its `portfolio` status are retained. The LP entry `/hongjia-birdnest/`, other registrations, DNS and brand production domains are outside this update.
 
 ## Source and preparation
 
@@ -21,7 +21,9 @@ Preparation date: 2026-11-27. **Prepared; the replacement is not yet live.** Thi
 | Isolated upload | [45976852488](https://github.com/xk2022/xk-website-showcase/actions/runs/45976852488), success; helper commit `8dc506e55941fea0533b241b6decf036868bb924`; normal resolve/build/Pages skipped |
 | Independent delivery check | Public ZIP downloaded again: exact 1,395,826 bytes and SHA-256 match; public manifest confirms source, helper commit and run |
 | Local complete integration | 22 sites built from candidate base `876dce4`; transport compared 51 runtime files and passed 10 fresh route/width checks; Hongjia passed 18 Chromium checks against actual combined output |
-| Registry / Pages / live verification | Candidate prepared; requires complete PR CI, merge and guarded Pages publication |
+| Registry promotion | [PR #44](https://github.com/xk2022/xk-website-showcase/pull/44), merged as `8f97be8ea8bfbc8407856ffcf3af3b6aea1ffaa0` |
+| Successful Pages / runtime | [45979478318](https://github.com/xk2022/xk-website-showcase/actions/runs/45979478318), runtime `e15adb7f03899819526b9d9d943bc190e167fbe4`; includes PR #44 and other accepted updates |
+| Independent public check | 2026-11-27 10:11 UTC: 22 manifest identities matched that published registry, four routes HTTP 200, all 54 runtime file hashes matched, 56 HTTPS requests and 23 typed local references passed |
 
 The source change aligns the Brand repository with the common website layout: frontend package, lockfile, configuration and assets in `frontend/`; shared browser tests and documentation remain at the repository root. It preserves the existing application and brand imagery. This publication prepares a new static export from that exact merged source rather than assuming a source merge changes the preserved public snapshot.
 
@@ -45,10 +47,20 @@ The retained rollback tuple uses source/ref `5ad9300098b11c3e1b5ca22b7d8f39afaa5
 
 After the complete Hub PR checks and guarded main publication succeed, record the actual Hub runtime SHA, Pages workflow and resolved manifest. Public verification must match the promoted source/artifact tuple and check all four routes, page metadata, images, fonts, scripts and styles. Browser evidence should separately identify desktop/mobile scope and the three journeys: home to personal gifting, home to corporate inquiry and copying, journal to its matching IG original. Visitors still send IG messages themselves; copying is not an order or a delivered inquiry.
 
-Until that evidence is added, this document records preparation only. A failed post-deploy check reports failure; it does not silently restore the prior Pages deployment. Restore a previously reviewed tuple and use the normal guarded publication process for rollback.
+The verified publication evidence below completes this promotion. A future failed post-deploy check reports failure; it does not silently restore a prior Pages deployment. Restore a previously reviewed tuple and use the normal guarded publication process for rollback.
 
 The first upload request, [45975855109](https://github.com/xk2022/xk-website-showcase/actions/runs/45975855109), was cancelled while pending by the shared publication queue, before any job or Release write. The successful retry above is the delivery evidence. Local integration used the reviewed ZIP through the existing digest mirror before public upload; the temporary untracked mirror was removed. The later independent public download verifies delivery separately. Other accepted Hub updates are preserved when this branch is synchronized before promotion.
 
 Before PR, the branch also incorporated accepted March and Chengce updates from main `1782237`; the merged 229-test suite passed. The local complete build above remains labeled with its earlier accepted input baseline, while final PR CI builds the current combined registry again.
 
 Before merge, accepted main `26f7fc2` independently updated the LP. Its registration and tests are retained. Brand fixtures use explicit `hongjiaBrand*` names to avoid colliding with LP fixtures; the shared generic project mock remains intact. All 231 merged unit tests passed. The Brand selector is placed away from common append points to reduce concurrent selector conflicts, with its fixed identity and workflow permissions unchanged.
+
+## Completed public publication
+
+Final [PR CI 45978813539](https://github.com/xk2022/xk-website-showcase/actions/runs/45978813539) passed the current 231-unit suite, complete 22-site build and existing integration checks. The first post-merge main run [45979285281](https://github.com/xk2022/xk-website-showcase/actions/runs/45979285281) built successfully but its freshness guard stopped deployment after newer accepted main changes; it did not publish. The later successful Pages run above carried this exact Brand tuple and verified the public manifest, pages and referenced assets.
+
+Independent anonymous HTTPS checks used system TLS validation and no-cache requests: all 54 browser-facing files matched the reviewed ZIP byte-for-byte, four page titles/descriptions/canonicals/H1s and social metadata were valid, the share PNG was 1200×630, and image srcsets, CSS fonts, JavaScript/RSC, MIME and robots/sitemap references passed. Other identity comparisons use that actual published registry, not the earlier stale public baseline. Later Hub releases can retain this same Brand tuple; this record identifies the verified Brand promotion rather than claiming the Hub never changes.
+
+Public Chrome operations passed: home → personal gifting and editing its inquiry; home → corporate gifting and copying the actual inquiry, with clipboard readback equal to the displayed text; journal → the first original IG post, visibly showing hongjianest.tw's matching dry-versus-ready-to-eat article. The two-layer footer and XK production credit were present. Desktop public Chrome is distinct from the 375px and WebKit source/combined-output coverage; no physical-iPhone claim or IG message submission is made.
+
+This receipt changes documentation only. It does not alter registrations, source pins, ZIP bytes or Pages settings, and it does not require rebuilding the verified runtime.
