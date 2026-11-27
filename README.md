@@ -32,6 +32,8 @@ The `carpentry` entry now registers the six-industry export from private source 
 
 ## Build
 
+Longtong's reviewed source-layout refresh uses source `af43789eba69494f93be17e108880c8acbf524e5` and ZIP digest `50e15ce69cf8750409ef3d3c42435be7f4ea383525bbb7368c971cec60d671d0`. Its original main-CI ZIP passed the source suite and is delivered through the fixed `longtong-logistics` publisher; the source stays private. See [Longtong publication](doc/longtong-publication.md) for source CI, independent public-archive verification, rollback and the separate full-Hub publication evidence.
+
 Install Node.js 24, Git and Python 3 (for safe static-archive extraction), then resolve the release inputs before building:
 
 ```sh
