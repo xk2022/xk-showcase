@@ -207,10 +207,11 @@ export function renderCards(sites) {
 
 const projectType = site => site.repository === 'xk2022/codex-xk-apparel-store' ? 'APP' : (site.repository?.split('/')[1]?.split('-')[1] || 'XK').toUpperCase();
 const typeInfo = {
-  LP: ['一頁式網站', '適用活動入口、精選預購（10品項內）、與工程詢價留單——資訊不發散、轉換更直接！', '專為單一目標打造的快速轉換頁'],
-  BRAND: ['品牌形象網站', '建立品牌認知、產品故事與信任。'],
-  CORP: ['企業網站與平台', '整理企業服務、商務資訊及服務流程。'],
-  APP: ['應用系統', '展示資料管理、日常營運與數位流程。'],
+  LP: ['快速轉換頁', '適用活動入口、精選預購（10品項內）與工程詢價留單——資訊不發散、轉換更直接！', '專為單一目標打造的快速轉換頁'],
+  BRAND: ['品牌形象網站', '聚焦品牌故事、核心理念、特色風格與精選作品——傳遞獨特價值，讓客戶一眼認同！', '專為品牌美學打造的形象官方網站'],
+  CORP: ['企業商務官網', '完整架構公司簡介、多項業務、產品目錄與最新動態——展現組織實力，強化合作信任！', '專為企業規模打造的商務官方網站'],
+  APP: ['專屬行動應用', '整合會員系統、即時推播、預約下單與專屬功能——進駐客戶手機桌面，提高回購與黏著度！', '專為深度互動打造的客製化專屬 APP'],
+  AI: ['智慧應用解決方案', '串接智能客服、知識庫問答、自動化流程與數據輔助——減少重複人力，讓營運24小時高效運轉！', '專為效率升級打造的客製化 AI 應用'],
 };
 
 export function renderGallery(sites) {
@@ -226,7 +227,8 @@ export function renderGallery(sites) {
     brands.get(brand).push(site);
   }
   const order = key => Object.keys(typeInfo).includes(key) ? Object.keys(typeInfo).indexOf(key) : 99;
-  const section = (title, subtitle, rows, headline) => `<section class="group"><header class="group-heading"><div><h2>${escape(title)} <small class="count">${rows.length} 件</small></h2>${headline ? `<p class="group-lead">${escape(headline)}</p>` : ''}${subtitle ? `<p>${escape(subtitle)}</p>` : ''}</div></header><div class="grid">${renderCards(rows)}</div></section>`;
+  const section = (title, subtitle, rows, headline) => `<section class="group"><header class="group-heading"><div><h2>${escape(title)} <small class="count">${rows.length} 件</small></h2>${headline ? `<p class="group-lead">${escape(headline)}</p>` : ''}${subtitle ? `<p>${escape(subtitle)}</p>` : ''}</div></header>${rows.length ? `<div class="grid">${renderCards(rows)}</div>` : `<p>展示案例籌備中。</p>`}</section>`;
+  if (!types.has('AI')) types.set('AI', []);
   const sortedTypes = [...types].sort(([a], [b]) => order(a) - order(b));
   const sortedBrands = [...brands].filter(([, rows]) => rows.length >= 2).sort(([, a], [, b]) => b.length - a.length);
   const brandSections = sortedBrands.map(([name, rows]) => section(name, [...new Set(rows.map(projectType))].join(' · '), [...rows].sort((a,b) => order(projectType(a)) - order(projectType(b))))).join('');
