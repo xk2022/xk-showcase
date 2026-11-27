@@ -273,3 +273,98 @@ test('Rui Café requires all seven proposal pages with individual canonicals and
     await assert.rejects(validateExport(directory, site), /Non-indexable proposal must not export sitemap/);
   } finally { await rm(directory, { recursive: true, force: true }); }
 });
+
+const logistics = {
+  slug: 'logistics', repository: 'xk2022/xk-app-logistics', ref: 'a'.repeat(40),
+  framework: 'interactive', indexable: false, env: { VITE_SHOWCASE_DEMO: 'true' },
+  releaseGate: { workflow: '.github/workflows/ci.yml', job: 'Frontend quality' },
+};
+const logisticsScript = 'const app = document.querySelector("#app"); app.textContent = "合成互動展示";';
+const logisticsStyle = 'body { margin: 0; } #app { color: #123456; }';
+const logisticsPage = `<html><head><link rel="canonical" href="${origin}/logistics/"><meta name="robots" content="noindex,nofollow"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'none'; form-action 'none'; object-src 'none'; base-uri 'none'"><link rel="stylesheet" href="/logistics/assets/app.css"></head><body><main id="app">離線合成互動展示</main><img src="/logistics/assets/mark.svg" alt="合成標記"><script type="module" src="/logistics/assets/app.js"></script></body></html>`;
+
+async function logisticsFixture(callback) {
+  const directory = await mkdtemp(join(tmpdir(), 'logistics-static-'));
+  try {
+    await mkdir(join(directory, 'assets'));
+    await Promise.all([
+      writeFile(join(directory, 'index.html'), logisticsPage),
+      writeFile(join(directory, 'assets/app.js'), logisticsScript),
+      writeFile(join(directory, 'assets/app.css'), logisticsStyle),
+      writeFile(join(directory, 'assets/mark.svg'), '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><path d="M0 0h1v1H0z"/></svg>'),
+    ]);
+    await callback(directory);
+  } finally { await rm(directory, { recursive: true, force: true }); }
+}
+
+test('Logistics Git-built interactive export validates its actual module, CSS and local resources without Vite fallback pages', async () => {
+  await logisticsFixture(async directory => {
+    validateSites([logistics]);
+    await validateExport(directory, logistics);
+    await validateLocalReferences('<script type="module" src="/logistics/assets/app.js?v=1"></script><a href="#app">Demo</a>', directory, logistics.slug);
+  });
+});
+
+test('Logistics export requires a module and stylesheet that both exist in its own asset directory', async t => {
+  for (const [name, changed] of [
+    ['classic script instead of a module', logisticsPage.replace('type="module"', 'type="text/javascript"')],
+    ['no stylesheet', logisticsPage.replace('rel="stylesheet"', 'rel="preload"')],
+    ['module from another prefix', logisticsPage.replace('/logistics/assets/app.js', '/rotaract/assets/app.js')],
+    ['stylesheet from another prefix', logisticsPage.replace('/logistics/assets/app.css', '/rotaract/assets/app.css')],
+  ]) {
+    await t.test(name, async () => logisticsFixture(async directory => {
+      await writeFile(join(directory, 'index.html'), changed);
+      await assert.rejects(validateExport(directory, logistics));
+    }));
+  }
+  for (const asset of ['app.js', 'app.css', 'mark.svg']) {
+    await t.test(`missing local ${asset}`, async () => logisticsFixture(async directory => {
+      await rm(join(directory, 'assets', asset));
+      await assert.rejects(validateExport(directory, logistics), /ENOENT/);
+    }));
+  }
+});
+
+test('Logistics canonical and robots metadata must remain exact and non-indexable', async t => {
+  for (const [name, changed] of [
+    ['missing canonical', logisticsPage.replace(/<link rel="canonical"[^>]*>/, '')],
+    ['foreign canonical origin', logisticsPage.replace(`${origin}/logistics/`, 'https://elsewhere.example/logistics/')],
+    ['another canonical prefix', logisticsPage.replace(`${origin}/logistics/`, `${origin}/rotaract/`)],
+    ['canonical without trailing slash', logisticsPage.replace(`${origin}/logistics/`, `${origin}/logistics`)],
+    ['duplicate canonical', logisticsPage.replace('</head>', `<link rel="canonical" href="${origin}/logistics/"></head>`)],
+    ['missing robots', logisticsPage.replace('<meta name="robots" content="noindex,nofollow">', '')],
+    ['indexable robots', logisticsPage.replace('noindex,nofollow', 'index,follow')],
+    ['contradictory second robots', logisticsPage.replace('</head>', '<meta name="robots" content="index,follow"></head>')],
+  ]) {
+    await t.test(name, async () => logisticsFixture(async directory => {
+      await writeFile(join(directory, 'index.html'), changed);
+      await assert.rejects(validateExport(directory, logistics));
+    }));
+  }
+});
+
+test('Logistics network denial does not permit cross-prefix or remote HTML resources', async t => {
+  for (const [name, changed] of [
+    ['no network policy', logisticsPage.replace(/<meta http-equiv="Content-Security-Policy"[^>]*>/, '')],
+    ['same-origin connections', logisticsPage.replace("connect-src 'none'", "connect-src 'self'")],
+    ['remote script', logisticsPage.replace('</body>', '<script src="https://external.example/app.js"></script></body>')],
+    ['remote stylesheet', logisticsPage.replace('</head>', '<link rel="stylesheet" href="https://external.example/app.css"></head>')],
+    ['remote image', logisticsPage.replace('/logistics/assets/mark.svg', 'https://external.example/mark.svg')],
+    ['cross-prefix image', logisticsPage.replace('/logistics/assets/mark.svg', '/rotaract/assets/mark.svg')],
+    ['protocol-relative image', logisticsPage.replace('/logistics/assets/mark.svg', '//external.example/mark.svg')],
+    ['remote font preload', logisticsPage.replace('</head>', '<link rel="preload" as="font" href="https://external.example/font.woff2"></head>')],
+  ]) {
+    await t.test(name, async () => logisticsFixture(async directory => {
+      await writeFile(join(directory, 'index.html'), changed);
+      await assert.rejects(validateExport(directory, logistics));
+    }));
+  }
+});
+
+test('Logistics noindex export rejects a sitemap even when every interactive asset is present', async () => {
+  await logisticsFixture(async directory => {
+    await validateExport(directory, logistics);
+    await writeFile(join(directory, 'sitemap.xml'), `<urlset><url><loc>${origin}/logistics/</loc></url></urlset>`);
+    await assert.rejects(validateExport(directory, logistics), /must not export sitemap/);
+  });
+});

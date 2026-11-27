@@ -16,7 +16,13 @@ export function validateSites(sites) {
     // Hub release registration; never accept an arbitrary interactive archive.
     const reviewedRotaract = site.slug === 'rotaract' && /^[a-f0-9]{40}$/.test(site.ref) && site.staticArtifact?.sourceSha === site.ref && site.staticArtifact.url === `https://github.com/xk2022/xk-website-showcase/releases/download/rotaract-${site.ref.slice(0,7)}-v1/rotaract-static.zip`;
     const ownerDemo = site.slug === 'little-me-owner-demo' && site.repository === 'xk2022/xk-app-little-me-inventory' && site.indexable === false && /^[a-f0-9]{40}$/.test(site.ref) && site.staticArtifact?.sourceSha === site.ref && site.staticArtifact.url === `https://github.com/xk2022/xk-website-showcase/releases/download/little-me-owner-demo-${site.ref.slice(0,7)}-v1/little-me-owner-demo-static.zip`;
-    if (site.framework === 'interactive' && !ownerDemo && (site.slug !== 'rotaract' || site.repository !== 'xk2022/xk-app-rotaract' || site.indexable !== false || site.env?.VITE_SHOWCASE_DEMO !== 'true' || (!site.releaseGate && !preservedInteractive && !reviewedRotaract) || !/^[a-f\d]{40}$/i.test(site.ref))) throw new Error('Interactive preview requires an approved pinned demo');
+    const logisticsDemo = site.slug === 'logistics' && site.repository === 'xk2022/xk-app-logistics'
+      && site.indexable === false && /^[a-f0-9]{40}$/.test(site.ref)
+      && site.env?.VITE_SHOWCASE_DEMO === 'true' && site.staticArtifact === undefined
+      && site.releaseGate?.workflow === '.github/workflows/ci.yml'
+      && site.releaseGate?.job === 'Frontend quality'
+      && Object.keys(site.releaseGate).sort().join(',') === 'job,workflow';
+    if (site.framework === 'interactive' && !ownerDemo && !logisticsDemo && (site.slug !== 'rotaract' || site.repository !== 'xk2022/xk-app-rotaract' || site.indexable !== false || site.env?.VITE_SHOWCASE_DEMO !== 'true' || (!site.releaseGate && !preservedInteractive && !reviewedRotaract) || !/^[a-f\d]{40}$/i.test(site.ref))) throw new Error('Interactive preview requires an approved pinned demo');
     for (const option of ['indexable', 'listed']) {
       if (site[option] !== undefined && typeof site[option] !== 'boolean') throw new Error(`Invalid ${option}: ${site.slug}`);
     }
@@ -131,6 +137,24 @@ export async function validateExport(directory, site) {
   for (const file of files) {
     const content = await readFile(file, 'utf8');
     await validateLocalReferences(content, directory, site.slug, relative(directory, file).split(sep).join('/'), { legacy: !strict });
+    if (site.slug === 'logistics' && site.framework === 'interactive') {
+      // Anchors may return to the Hub. Runtime resources may only load from
+      // this reviewed export, including images that the generic legacy check
+      // deliberately leaves outside its publication contract.
+      for (const [tag] of content.matchAll(/<(?:script|link|img|source|video|audio|iframe|object|embed|input)\b[^>]*>/gi)) {
+        const values = attributes(tag);
+        if (/<link\b/i.test(tag) && ['canonical', 'alternate'].includes(values.rel?.toLowerCase())) continue;
+        if (['preconnect', 'dns-prefetch'].includes(values.rel?.toLowerCase())) throw new Error('Logistics demo cannot request connection hints');
+        for (const match of tag.matchAll(/\b(src|href|poster|data|srcset)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/gi)) {
+          const value = match[2] ?? match[3] ?? match[4];
+          const resources = match[1].toLowerCase() === 'srcset' ? value.split(',').map(part => part.trim().split(/\s+/)[0]) : [value];
+          for (const resource of resources) {
+            if (!resource || !resource.startsWith('/logistics/')) throw new Error('Logistics demo resources must stay under /logistics/');
+            await validateLocalReferences(`<img src="${escape(resource)}">`, directory, site.slug);
+          }
+        }
+      }
+    }
     if (site.indexable === false) {
       const robots = [...content.matchAll(/<meta\b[^>]*>/gi)].map(match => attributes(match[0])).filter(tag => tag.name?.toLowerCase() === 'robots');
       if (!robots.length || robots.some(tag => {

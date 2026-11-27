@@ -63,11 +63,16 @@ try {
         await validateExport(target, s);
       } else if (s.framework === 'interactive') {
         const frontend = join(dir, 'frontend');
+        const logisticsDemo = s.slug === 'logistics' && s.repository === 'xk2022/xk-app-logistics';
+        const exported = join(frontend, logisticsDemo ? 'dist-showcase' : 'dist');
         run('npm', ['ci'], frontend, sourceEnvironment);
-        run('npm', ['run', 'build'], frontend, sourceEnvironment);
-        await validateExport(join(frontend, 'dist'), s);
-        await cp(join(frontend, 'dist'), target, { recursive: true });
-        await capturePreview(staging, `/${s.slug}/`, join(target, '_showcase-preview.jpg'), { interactive: true });
+        run('npm', ['run', logisticsDemo ? 'build:showcase' : 'build'], frontend, sourceEnvironment);
+        await validateExport(exported, s);
+        await cp(exported, target, { recursive: true });
+        await capturePreview(staging, `/${s.slug}/`, join(target, '_showcase-preview.jpg'), {
+          interactive: !logisticsDemo,
+          logisticsDemo,
+        });
       } else {
         run('npm', ['ci'], dir, sourceEnvironment);
         run('npm', ['run', 'build'], dir, sourceEnvironment);

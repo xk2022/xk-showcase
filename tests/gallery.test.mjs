@@ -128,3 +128,68 @@ test('Little Me owner demo accepts its reviewed static release only', () => {
     assert.throws(()=>validateSites([{...site,...change}]));
   }
 });
+
+const logisticsDemo = {
+  slug: 'logistics', name: 'XK Logistics｜合成互動展示', category: 'APP',
+  repository: 'xk2022/xk-app-logistics', ref: 'a'.repeat(40),
+  framework: 'interactive', indexable: false,
+  env: { VITE_SHOWCASE_DEMO: 'true' },
+  releaseGate: { workflow: '.github/workflows/ci.yml', job: 'Frontend quality' },
+};
+
+test('Logistics Git-built demo is interactive in the APP gallery and remains excluded from indexing', () => {
+  assert.doesNotThrow(() => validateSites([app, logisticsDemo]));
+  assert.doesNotThrow(() => validateSites([{ ...logisticsDemo, ref: '0123456789abcdef0123456789abcdef01234567' }]));
+  const cards = renderCards([logisticsDemo]);
+  assert.match(cards, /href="\.\/logistics\/"/);
+  assert.match(cards, /logistics\/_showcase-preview\.jpg/);
+  assert.match(cards, /操作互動展示/);
+  assert.doesNotMatch(cards, /查看畫面預覽/);
+  assert.match(renderGallery([logisticsDemo]), /APP｜應用系統/);
+  const robots = buildRobots([logisticsDemo]);
+  assert.match(robots, /Disallow: \/logistics\//);
+  assert.doesNotMatch(robots, /Sitemap:/);
+});
+
+test('Logistics interactive approval cannot be transferred to a different identity, mutable ref or indexed export', async t => {
+  const changes = [
+    ['another APP repository', { repository: 'xk2022/xk-app-other' }],
+    ['another repository owner', { repository: 'other/xk-app-logistics' }],
+    ['repository case variation', { repository: 'xk2022/XK-app-logistics' }],
+    ['another slug', { slug: 'logistics-copy' }],
+    ['Rotaract identity substitution', { slug: 'rotaract' }],
+    ['mutable branch', { ref: 'main' }],
+    ['abbreviated commit', { ref: 'a'.repeat(39) }],
+    ['overlong commit', { ref: 'a'.repeat(41) }],
+    ['uppercase commit', { ref: 'A'.repeat(40) }],
+    ['non-hex commit', { ref: 'g'.repeat(40) }],
+    ['indexing enabled', { indexable: true }],
+    ['indexing approval omitted', { indexable: undefined }],
+    ['demo environment omitted', { env: undefined }],
+    ['demo flag omitted', { env: {} }],
+    ['demo flag disabled', { env: { VITE_SHOWCASE_DEMO: 'false' } }],
+    ['boolean flag instead of exact build environment', { env: { VITE_SHOWCASE_DEMO: true } }],
+  ];
+  for (const [name, change] of changes) {
+    await t.test(name, () => assert.throws(() => validateSites([{ ...logisticsDemo, ...change }])));
+  }
+});
+
+test('Logistics requires its exact frontend release gate and cannot use an interactive static archive', async t => {
+  const changes = [
+    ['release gate omitted', { releaseGate: undefined }],
+    ['different workflow', { releaseGate: { workflow: '.github/workflows/release.yml', job: 'Frontend quality' } }],
+    ['different frontend job', { releaseGate: { workflow: '.github/workflows/ci.yml', job: 'frontend' } }],
+    ['job case variation', { releaseGate: { workflow: '.github/workflows/ci.yml', job: 'frontend quality' } }],
+    ['extra gate field', { releaseGate: { ...logisticsDemo.releaseGate, allowFailure: true } }],
+    ['alternate gate keys', { releaseGate: { workflowId: '.github/workflows/ci.yml', job: 'Frontend quality' } }],
+    ['reviewed archive mechanism', { staticArtifact: {
+      sourceSha: logisticsDemo.ref, sha256: 'b'.repeat(64),
+      url: 'https://github.com/xk2022/xk-website-showcase/releases/download/logistics-aaaaaaa-v1/logistics-static.zip',
+    } }],
+    ['explicit null archive', { staticArtifact: null }],
+  ];
+  for (const [name, change] of changes) {
+    await t.test(name, () => assert.throws(() => validateSites([{ ...logisticsDemo, ...change }])));
+  }
+});
