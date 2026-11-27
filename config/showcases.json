@@ -263,18 +263,18 @@
     "name": "扶青萬花筒 v2.0",
     "category": "APP 互動展示",
     "repository": "xk2022/xk-app-rotaract",
-    "ref": "57be84dc1858db3146918afa53eff388782c7133",
+    "ref": "4a7712436a7217f6065560e3ff695c39510896ee",
     "framework": "interactive",
     "indexable": false,
     "env": {
       "VITE_SHOWCASE_DEMO": "true"
     },
     "brand": "扶青萬花筒",
-    "purpose": "以合成身份體驗登入、名冊、入社審核、轉退社與隱私；資料只在分頁記憶體，不連線正式後端。",
+    "purpose": "以合成身份體驗社籍、社／地區幹部任命與年度交接，查閱架構及服務履歷；分頁記憶體可重置，不連線正式後端。",
     "staticArtifact": {
-      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/rotaract-57be84d-v1/rotaract-static.zip",
-      "sha256": "57a8600d3f242ef70ec16612c5e1294982022c7ca29e70f7cf40bdd6f636f441",
-      "sourceSha": "57be84dc1858db3146918afa53eff388782c7133"
+      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/rotaract-4a77124-v1/rotaract-static.zip",
+      "sha256": "23a443d96e657593ebd2278092689079a49e3181f7a0b1eae4492a713be5c08e",
+      "sourceSha": "4a7712436a7217f6065560e3ff695c39510896ee"
     }
   },
   {
