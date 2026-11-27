@@ -20,6 +20,7 @@ on:
           - carpentry
           - little-me-owner-demo
           - rui-cafe
+          - qiangang-windows
           - rotaract
         default: shengfengyang
       static_artifact_blob:
