@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, writeFile, rm } from 'node:fs/promises';
+import { mkdtemp, readFile, writeFile, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { renderCards, renderGallery, validateSites, validateExport, buildRobots, origin } from '../scripts/static-export.mjs';
@@ -45,6 +45,58 @@ test('gallery groups by type or shared brand, lists purposes, and hides unlisted
   assert.equal((html.match(/href="\.\/lp-demo\/"/g) || []).length, 2);
   assert.equal((html.match(/href="\.\/app-preview\/"/g) || []).length, 1);
   assert.doesNotMatch(html, /hidden/);
+});
+
+// 模板來源更名仍屬 LP；同時檢查卡片 badge 與實際分組，避免兩處分類不一致。
+test('the exact LP template repository retains an LP badge and LP gallery group', () => {
+  const template = { slug: 'carpentry', name: '百工職人 LP 模板', category: '產業接案模板', repository: 'xk2022/xk-template-lp' };
+  const cards = renderCards([template]);
+  assert.match(cards, /<small>LP · 產業接案模板<\/small>/);
+  assert.doesNotMatch(cards, /<small>TEMPLATE ·/);
+  const html = renderGallery([template]);
+  assert.match(html, /LP｜快速轉換頁 <small class="count">1 件/);
+  assert.match(html, /href="\.\/carpentry\/"/);
+  assert.doesNotMatch(html, /TEMPLATE｜其他網站/);
+});
+
+// 例外只授予完整 repository 身份；相似名稱、其他 owner 或大小寫變化不能沿用。
+test('the LP template alias does not classify other owners or similarly named repositories as LP', async t => {
+  for (const repository of [
+    'other/xk-template-lp',
+    'xk2022/xk-template-lp-copy',
+    'xk2022/xk-template-lp-extra',
+    'xk2022/xk-template-corp',
+    'xk2022/xk-template',
+    'xk2022/XK-template-lp',
+    'xk2022/xk-template-LP',
+  ]) {
+    await t.test(repository, () => {
+      const candidate = { slug: 'template-lookalike', name: '相似名稱', category: '分類邊界', repository };
+      assert.match(renderCards([candidate]), /<small>TEMPLATE · 分類邊界<\/small>/);
+      const html = renderGallery([candidate]);
+      assert.match(html, /TEMPLATE｜其他網站 <small class="count">1 件/);
+      assert.doesNotMatch(html, /LP｜快速轉換頁/);
+    });
+  }
+});
+
+// 此清單保留調整前其他 LP 的次序，獨立於 renderGallery 的排序實作與新註冊資料。
+test('the registry puts carpentry first in LP while preserving every other LP relative order', async () => {
+  const sites = JSON.parse(await readFile(new URL('../config/showcases.json', import.meta.url), 'utf8'));
+  const previousOtherLpOrder = [
+    'honest', 'march-tangbao', 'hongjia-birdnest', 'yupinyuan-bento',
+    'consulting-chengce', 'qiangang-windows', 'longtong-logistics',
+    'guanghai-software', 'taiyang-logistics', 'qingyun-packaging', 'esan-interior',
+  ];
+  const carpentry = sites.find(site => site.slug === 'carpentry');
+  assert.ok(carpentry, 'registered carpentry required');
+  const listedLpSlugs = sites.filter(site => site.listed !== false && (site.repository.startsWith('xk2022/xk-lp-') || site.repository === 'xk2022/xk-template-lp')).map(site => site.slug);
+  assert.deepEqual(listedLpSlugs, ['carpentry', ...previousOtherLpOrder]);
+  const html = renderGallery(sites);
+  const lpSection = html.match(/<section class="group"><header class="group-heading"><div><h2>LP｜[\s\S]*?<\/section>/)?.[0];
+  assert.ok(lpSection, 'LP section must exist');
+  const renderedSlugs = [...lpSection.matchAll(/<a class="card" href="\.\/([^"/]+)\/"/g)].map(([, slug]) => slug);
+  assert.deepEqual(renderedSlugs, ['carpentry', ...previousOtherLpOrder]);
 });
 
 test('brand view requires at least two listed works and does not count hidden works', () => {

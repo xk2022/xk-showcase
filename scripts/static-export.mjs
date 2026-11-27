@@ -205,7 +205,12 @@ export function renderCards(sites) {
   return sites.filter(site => site.listed !== false).map(site => `<a class="card" href="./${site.slug}/"><img src="./${site.slug}/_showcase-preview.jpg" alt="${escape(site.name)} 首頁截圖" width="960" height="540" loading="lazy"><div class="card-body"><small>${escape(projectType(site))} · ${escape(site.category)}</small><h3>${escape(site.name)}</h3><p>${escape(site.purpose || site.category)}</p>${site.status === 'proposal' ? '<p>概念提案・非官方網站，未代表正式客戶委託。</p>' : ''}<span>${site.status === 'proposal' ? '查看概念提案' : site.framework === 'screen' ? '查看畫面預覽' : site.framework === 'interactive' ? '操作互動展示' : '瀏覽展示案例'} →</span></div></a>`).join('\n');
 }
 
-const projectType = site => site.repository === 'xk2022/codex-xk-apparel-store' ? 'APP' : (site.repository?.split('/')[1]?.split('-')[1] || 'XK').toUpperCase();
+const projectType = site => {
+  // 僅將這個已確認的 LP 模板來源對應到既有 LP 分類，不新增 TEMPLATE 類型或通配規則。
+  if (site.repository === 'xk2022/xk-template-lp') return 'LP';
+  if (site.repository === 'xk2022/codex-xk-apparel-store') return 'APP';
+  return (site.repository?.split('/')[1]?.split('-')[1] || 'XK').toUpperCase();
+};
 const typeInfo = {
   LP: ['快速轉換頁', '適用活動入口、精選預購（10品項內）與工程詢價留單——資訊不發散、轉換更直接！', '專為單一目標打造的快速轉換頁'],
   BRAND: ['品牌形象網站', '聚焦品牌故事、核心理念、特色風格與精選作品——傳遞獨特價值，讓客戶一眼認同！', '專為品牌美學打造的形象官方網站'],
