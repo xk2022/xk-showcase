@@ -356,14 +356,21 @@
   {
     "slug": "logistics",
     "name": "XK Logistics｜貨運物流管理平台",
-    "category": "APP 畫面預覽",
+    "category": "APP 合成互動展示",
     "repository": "xk2022/xk-app-logistics",
-    "ref": "070383e1ff76dcaaf16693e8fcd8d4f5c0bb915c",
-    "framework": "screen",
+    "ref": "9b226ada240f3fb964b2f568bdbff76c690ef8ec",
+    "framework": "interactive",
     "indexable": false,
     "listed": true,
     "brand": "XK Logistics",
-    "purpose": "展示貨運作業平台的登入與角色工作空間入口；不連線後端。"
+    "purpose": "切換管理員、調度員與司機，操作訂單至結案的合成協作流程；分頁記憶體可重置，不連線後端。",
+    "env": {
+      "VITE_SHOWCASE_DEMO": "true"
+    },
+    "releaseGate": {
+      "workflow": ".github/workflows/ci.yml",
+      "job": "Frontend quality"
+    }
   },
   {
     "slug": "apparel-store",

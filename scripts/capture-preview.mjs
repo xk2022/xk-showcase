@@ -35,7 +35,7 @@ export async function exerciseRotaractGovernance(page) {
 }
 
 // The browser can read only the locally built static export, never external APIs.
-export async function capturePreview(directory, path, output, { interactive = false, rotaractWorkspace = false, ownerDemo = false, anonymousLogistics = false } = {}) {
+export async function capturePreview(directory, path, output, { interactive = false, rotaractWorkspace = false, ownerDemo = false, anonymousLogistics = false, logisticsDemo = false } = {}) {
   const { chromium } = await import('playwright');
   const server = await createPreviewServer(directory);
   let browser;
@@ -44,12 +44,20 @@ export async function capturePreview(directory, path, output, { interactive = fa
     const page = await browser.newPage({ viewport: { width: 1440, height: 810 }, deviceScaleFactor: 1, reducedMotion: 'reduce', serviceWorkers: 'block' });
     const denied = [];
     const runtimeErrors = [];
-    if (interactive) page.on('pageerror', error => runtimeErrors.push(error.message));
+    if (interactive || logisticsDemo) page.on('pageerror', error => runtimeErrors.push(error.message));
+    if (logisticsDemo) {
+      page.on('console', message => { if (message.type() === 'error') runtimeErrors.push(message.text()); });
+      page.on('websocket', () => denied.push('websocket'));
+      await page.routeWebSocket('**/*', async socket => {
+        denied.push('websocket');
+        await socket.close({ code: 1008, reason: 'Offline showcase' });
+      });
+    }
     await page.route('**/*', route => {
       const url = new URL(route.request().url());
       if (anonymousLogistics && url.origin === server.url && url.pathname === '/api/v1/auth/me' && route.request().method() === 'GET') return route.fulfill({ status: 401, json: { code: 'UNAUTHENTICATED', message: 'Synthetic anonymous preview', timestamp: '2026-11-25T00:00:00+08:00' } });
-      if ((interactive || ownerDemo) && url.origin === server.url && url.pathname === '/favicon.ico') return route.abort();
-      if ((interactive || ownerDemo) && (url.origin !== server.url || !url.pathname.startsWith(path) || ['fetch', 'xhr', 'websocket'].includes(route.request().resourceType()))) {
+      if ((interactive || ownerDemo || logisticsDemo) && url.origin === server.url && url.pathname === '/favicon.ico') return route.abort();
+      if ((interactive || ownerDemo || logisticsDemo) && (url.origin !== server.url || !url.pathname.startsWith(path) || ['fetch', 'xhr', 'websocket'].includes(route.request().resourceType()))) {
         denied.push(url.pathname);
         return route.abort();
       }
@@ -104,6 +112,59 @@ export async function capturePreview(directory, path, output, { interactive = fa
       }
       if (runtimeErrors.length) throw new Error(`Interactive demo runtime errors: ${runtimeErrors.join(', ')}`);
       if (await page.getByRole('button', { name: '返回正式資料' }).count() || denied.length) throw new Error(`Interactive demo attempted live access: ${denied.join(', ')}`);
+    }
+    if (logisticsDemo) {
+      // This is a distinct offline application, never Rotaract's identity flow
+      // or the anonymous normal-Logistics API response used by screen previews.
+      await page.getByText('合成互動展示，不連線後端／非正式操作', { exact: true }).waitFor();
+      await page.getByRole('heading', { name: '管理員展示工作台', exact: true }).waitFor();
+      const storage = async () => page.evaluate(async () => ({
+        local: localStorage.length,
+        session: sessionStorage.length,
+        cookies: document.cookie,
+        databases: typeof indexedDB.databases === 'function' ? (await indexedDB.databases()).length : 0,
+        caches: typeof caches === 'undefined' ? 0 : (await caches.keys()).length,
+        workers: 'serviceWorker' in navigator ? (await navigator.serviceWorker.getRegistrations()).length : 0,
+      }));
+      const initialStorage = await storage();
+      if (Object.values(initialStorage).some(value => value !== 0 && value !== '') || (await page.context().cookies()).length) throw new Error('Logistics demo persisted browser data');
+      const role = page.getByLabel('展示角色', { exact: true });
+      await role.selectOption('ADMIN');
+      await page.getByRole('button', { name: '訂單工作台', exact: true }).click();
+      await page.getByRole('heading', { name: '訂單工作台', exact: true }).waitFor();
+      const localOrder = page.getByRole('article', { name: '展示訂單 DEMO-LOCAL-1001', exact: true });
+      const acceptLocalOrder = async () => {
+        await localOrder.getByRole('button', { name: '展示受理', exact: true }).click();
+        await page.getByRole('dialog', { name: '確認展示操作', exact: true }).getByRole('button', { name: '確認執行展示操作', exact: true }).click();
+        await localOrder.getByRole('button', { name: '前往展示調度', exact: true }).waitFor();
+      };
+      await acceptLocalOrder();
+      await page.getByRole('button', { name: '調度工作台', exact: true }).click();
+      await page.getByRole('heading', { name: '調度工作台', exact: true }).waitFor();
+      await role.selectOption('DRIVER');
+      await page.getByRole('button', { name: '本人運輸任務', exact: true }).click();
+      await page.getByRole('heading', { name: '本人運輸任務', exact: true }).waitFor();
+      if (await page.getByRole('button', { name: '訂單工作台', exact: true }).count()) throw new Error('Driver demo exposes the manager workspace');
+      await role.selectOption('DISPATCHER');
+      await page.getByRole('button', { name: '調度工作台', exact: true }).click();
+      await page.getByRole('heading', { name: '調度工作台', exact: true }).waitFor();
+      await page.getByRole('button', { name: '重置展示', exact: true }).click();
+      const confirmation = page.getByRole('dialog', { name: '確認重置展示', exact: true });
+      await confirmation.getByRole('button', { name: '確認重置', exact: true }).click();
+      await page.getByRole('heading', { name: '管理員展示工作台', exact: true }).waitFor();
+      if (await role.inputValue() !== 'ADMIN') throw new Error('Logistics reset did not restore the initial role');
+      await page.getByRole('button', { name: '訂單工作台', exact: true }).click();
+      await page.getByRole('heading', { name: '訂單工作台', exact: true }).waitFor();
+      await localOrder.getByRole('button', { name: '展示受理', exact: true }).waitFor();
+      if (await page.getByRole('article', { name: /^展示訂單 / }).count() !== 3) throw new Error('Logistics reset did not restore the three synthetic drafts');
+      await acceptLocalOrder();
+      await page.reload({ waitUntil: 'networkidle' });
+      await page.getByRole('heading', { name: '管理員展示工作台', exact: true }).waitFor();
+      if (await role.inputValue() !== 'ADMIN') throw new Error('Logistics reload did not restore memory-owned state');
+      await page.getByRole('button', { name: '訂單工作台', exact: true }).click();
+      await localOrder.getByRole('button', { name: '展示受理', exact: true }).waitFor();
+      if (JSON.stringify(await storage()) !== JSON.stringify(initialStorage) || (await page.context().cookies()).length) throw new Error('Logistics demo persisted browser data');
+      if (runtimeErrors.length || denied.length) throw new Error(`Logistics demo attempted live access or failed: ${[...runtimeErrors, ...denied].join(', ')}`);
     }
   } finally {
     if (browser) await browser.close();

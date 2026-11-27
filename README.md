@@ -128,3 +128,7 @@ The isolated artifact upload dispatch accepts only the fixed `shengfengyang` (de
 The existing Git-built sources are now private. Their last successfully published runtime output is preserved as checksum-pinned public static snapshots, retaining each exact old source SHA; this does not deploy newer private source code. The fixed previous Pages artifact, original gate evidence, bounded one-time publisher and fresh compiled-output transport checks are documented in [private-source preservation](doc/private-source-preservation.md). Private-source updates now require reviewed snapshot promotion; automatic transport source synchronization is a read-only no-op in artifact mode.
 
 The one-time preservation [run45569035046](https://github.com/xk2022/xk-website-showcase/actions/runs/45569035046) succeeded. Its [public Release](https://github.com/xk2022/xk-website-showcase/releases/tag/preserved-showcase-45564113822-v1) retains all sixteen approved prior outputs and original source-gate evidence. Current eighteen-entry registration uses public hash-pinned static inputs; newer private source commits require a separately reviewed snapshot.
+
+## XK Logistics 離線互動展示準備
+
+既有 `/logistics/` 將以獨立合成 persona、記憶體工作流程、明確離線提醒及 network-denying CSP，更新為可操作的物流 Demo。精確 source pin 只在來源 PR／main 四項 CI 成功後更新；其他21個展示來源保留。使用既有 GitHub Pages，不建立 Render 等新資源或正式物流服務。完整22站建置、雙Repo CI及公開manifest／桌面手機驗收完成後才算新版已發布；目前準備與最終收據見[物流發布說明](doc/logistics-publication.md)。
