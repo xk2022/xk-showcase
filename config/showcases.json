@@ -205,7 +205,7 @@
     "name": "廣海軟體有限公司",
     "category": "企業軟體需求整理",
     "repository": "xk2022/xk-lp-guanghai-software",
-    "ref": "b5627042ab459011fcc224e5c09f2f4cf882f318",
+    "ref": "7d6a7bd337da7c21f047bc5604e48b4044878337",
     "env": {
       "PAGES_EXPORT": "1",
       "NEXT_PUBLIC_SITE_URL": "https://showcase.xplorekaleidoscope.com",
@@ -214,9 +214,9 @@
     "brand": "廣海軟體",
     "purpose": "彙整使用人數、工具及資料交接需求。",
     "staticArtifact": {
-      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/preserved-showcase-45564113822-v1/guanghai-software-static.zip",
-      "sha256": "50318972ef29f0a2de10905ba37ea8d61275b76090506e77000d971e70ddb152",
-      "sourceSha": "b5627042ab459011fcc224e5c09f2f4cf882f318"
+      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/guanghai-software-7d6a7bd-v1/guanghai-software-static.zip",
+      "sha256": "674e7d1ae350a7251d542d3f957e60edebde90769ab7d059abc3cbfcb5e2a894",
+      "sourceSha": "7d6a7bd337da7c21f047bc5604e48b4044878337"
     }
   },
   {

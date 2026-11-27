@@ -42,6 +42,11 @@ const projects = {
     archiveName: 'shengfengyang-static.zip', name: '昇豐陽食品｜靜態提案',
     policy: { indexable: false, listed: false },
   },
+  'guanghai-software': {
+    sourceRepository: 'xk2022/xk-lp-guanghai-software',
+    archiveName: 'guanghai-software-static.zip', name: '廣海軟體有限公司｜企業軟體需求整理',
+    policy: {},
+  },
   'qiangang-windows': {
     sourceRepository: 'xk2022/xk-lp-qiangang-windows',
     archiveName: 'qiangang-windows-static.zip', name: '萬花筒塑鋼門窗｜XK Demo',
