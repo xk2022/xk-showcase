@@ -1,0 +1,528 @@
+{
+  "status": "PASS",
+  "scope": "Published HTTP and managed Chrome desktop checks; mobile responsiveness is covered by exact-source CI, not live mobile browser automation.",
+  "source": {
+    "repository": "xk2022/xk-template-lp",
+    "runtimeSha": "bed3c363106b41f3d62c60e5b6bfc55f7bff0a5d",
+    "pullRequest": 5,
+    "ciRun": 45955220939,
+    "artifactId": 15178676639,
+    "artifactSha256": "8cd35a8de5a474759ce73a94883722a2a02ec8fc164763fec46924c713c36cfb"
+  },
+  "hub": {
+    "repository": "xk2022/xk-website-showcase",
+    "runtimeSha": "3f36960bba264b3b91cd86f16ae34a0f03f84390",
+    "pullRequest": 36,
+    "prCiRun": 45956458593,
+    "pagesRun": 45956818639,
+    "builtInVerification": {
+      "verifiedAt": "2026-11-27T07:14:19.2265303Z",
+      "sites": 22,
+      "pages": 74,
+      "assets": 287,
+      "status": "PASS"
+    }
+  },
+  "independentPublicHTTP": {
+    "status": "PASS",
+    "scope": "Independent programmatic public HTTPS GET verification only; no browser interaction pass is claimed.",
+    "testedAt": "2026-11-27T07:17:03.456Z",
+    "completedAt": "2026-11-27T07:17:07.632Z",
+    "target": "https://showcase.xplorekaleidoscope.com",
+    "expectedSourceSha": "bed3c363106b41f3d62c60e5b6bfc55f7bff0a5d",
+    "expectedArtifactSha256": "8cd35a8de5a474759ce73a94883722a2a02ec8fc164763fec46924c713c36cfb",
+    "registeredCount": 22,
+    "immutableOtherEntriesUnchanged": 21,
+    "allowedObservationOnlyDifferences": [
+      {
+        "slug": "logistics",
+        "before": "2026-11-27T05:36:10.409Z",
+        "after": "2026-11-27T07:12:23.120Z",
+        "unchangedReleaseRun": 45930137774
+      }
+    ],
+    "manifestComparisonPolicy": "Compare all fields of the other 21 publication entries exactly, excluding only release.verified_at. Release SHA/repository/workflow/job/run_id/run_attempt/run_url and full staticArtifact remain exact.",
+    "sourceIdentityChanges": [
+      {
+        "slug": "carpentry",
+        "before": {
+          "slug": "carpentry",
+          "repository": "xk2022/xk-lp-carpentry",
+          "sha": "91ade724579ed659287a27f8d77e5e1e0ed0292e",
+          "staticArtifact": {
+            "url": "https://github.com/xk2022/xk-website-showcase/releases/download/carpentry-91ade72-v1/carpentry-static.zip",
+            "sha256": "9ba114fced8fa350340fc47446d1fbdd40fd1e53f3a75b36ca0b9aa05c6250b1",
+            "sourceSha": "91ade724579ed659287a27f8d77e5e1e0ed0292e"
+          }
+        },
+        "after": {
+          "slug": "carpentry",
+          "repository": "xk2022/xk-template-lp",
+          "sha": "bed3c363106b41f3d62c60e5b6bfc55f7bff0a5d",
+          "staticArtifact": {
+            "url": "https://github.com/xk2022/xk-website-showcase/releases/download/carpentry-bed3c36-v1/carpentry-static.zip",
+            "sha256": "8cd35a8de5a474759ce73a94883722a2a02ec8fc164763fec46924c713c36cfb",
+            "sourceSha": "bed3c363106b41f3d62c60e5b6bfc55f7bff0a5d"
+          }
+        }
+      }
+    ],
+    "gallery": {
+      "firstLP": "./carpentry/",
+      "LPCount": 12,
+      "groups": [
+        {
+          "title": "LP｜快速轉換頁 12 件",
+          "cards": [
+            "./carpentry/",
+            "./honest/",
+            "./march-tangbao/",
+            "./hongjia-birdnest/",
+            "./yupinyuan-bento/",
+            "./consulting-chengce/",
+            "./qiangang-windows/",
+            "./longtong-logistics/",
+            "./guanghai-software/",
+            "./taiyang-logistics/",
+            "./qingyun-packaging/",
+            "./esan-interior/"
+          ]
+        },
+        {
+          "title": "BRAND｜品牌形象網站 4 件",
+          "cards": [
+            "./hongjia-brand/",
+            "./yuan-guang-pcb/",
+            "./shengfengyang/",
+            "./rui-cafe/"
+          ]
+        },
+        {
+          "title": "CORP｜企業商務官網 1 件",
+          "cards": [
+            "./truck-transport/"
+          ]
+        },
+        {
+          "title": "APP｜專屬行動應用 5 件",
+          "cards": [
+            "./rotaract/",
+            "./little-me-inventory/",
+            "./little-me-owner-demo/",
+            "./logistics/",
+            "./apparel-store/"
+          ]
+        },
+        {
+          "title": "AI｜智慧應用解決方案 0 件",
+          "cards": []
+        }
+      ],
+      "otherCardRelativeOrderUnchanged": true,
+      "noTemplateGroup": true
+    },
+    "checks": [
+      {
+        "name": "Published manifest has exact new template identity and unchanged other 21 entries",
+        "status": "PASS",
+        "registered": 22
+      },
+      {
+        "name": "Gallery puts six-industry template first in LP while retaining grouping and remaining card order",
+        "status": "PASS"
+      },
+      {
+        "name": "All six public root/deep industry pages return HTTP 200 with matching metadata and real assets",
+        "status": "PASS",
+        "assets": 31
+      }
+    ],
+    "pages": [
+      {
+        "path": "/carpentry/",
+        "brand": "木作職人",
+        "htmlSha256": "a730bf86d975ba608f44cf7d6759e4572e56fa363718e3785c94d8f82d475d2c",
+        "metadata": "PASS",
+        "assets": "PASS"
+      },
+      {
+        "path": "/carpentry/xk-lp-plumbing-electrical/",
+        "brand": "水電職人",
+        "htmlSha256": "ee42874de9f2d1b147cb88090d09d96e6a2c3619a00ca5d41279dff7d00f1ff9",
+        "metadata": "PASS",
+        "assets": "PASS"
+      },
+      {
+        "path": "/carpentry/xk-lp-painting/",
+        "brand": "油漆職人",
+        "htmlSha256": "3826d34548931449b1668ed32f516e6c877dd11d4ea0b9d73eb8a270572f2935",
+        "metadata": "PASS",
+        "assets": "PASS"
+      },
+      {
+        "path": "/carpentry/xk-lp-waterproofing/",
+        "brand": "防水職人",
+        "htmlSha256": "6dfb81a86cb3692c191005dbd2b75fdf615afb760694726a0f87066320d71372",
+        "metadata": "PASS",
+        "assets": "PASS"
+      },
+      {
+        "path": "/carpentry/xk-lp-hvac/",
+        "brand": "冷氣職人",
+        "htmlSha256": "c2b494f7493ee7a06d96c9cb53f1cf8c1f4781492154844acb94d9f4681ea1e2",
+        "metadata": "PASS",
+        "assets": "PASS"
+      },
+      {
+        "path": "/carpentry/xk-lp-masonry/",
+        "brand": "泥作職人",
+        "htmlSha256": "e6debec039a86baca2c9bc03f51252d410ed220f3443f142641670bb9a304f6a",
+        "metadata": "PASS",
+        "assets": "PASS"
+      }
+    ],
+    "pageCount": 6,
+    "assets": [
+      {
+        "path": "/carpentry/images/hero.webp",
+        "contentType": "image/webp",
+        "bytes": 262056,
+        "sha256": "23018fd50e83014f2280a6a9f8395b65f6d402fb8265b8b9be843fb697956e65",
+        "status": "PASS"
+      },
+      {
+        "path": "/carpentry/_next/static/chunks/0j7odll5-57ij.css",
+        "contentType": "text/css; charset=utf-8",
+        "bytes": 19765,
+        "sha256": "6a639c98365ce318b590fbc6370b9b93fc428db28b37af55c32132aad0b09422",
+        "status": "PASS"
+      },
+      {
+        "path": "/carpentry/_next/static/chunks/3yg8fes0jjqmr.css",
+        "contentType": "text/css; charset=utf-8",
+        "bytes": 5366,
+        "sha256": "6e138b46a538a3427dacc2907f1c4d3d85752841f17b65adc693f0930e22e5b2",
+        "status": "PASS"
+      },
+      {
+        "path": "/carpentry/_next/static/chunks/1pcw6gskne7pf.js",
+        "contentType": "application/javascript; charset=utf-8",
+        "bytes": 5600,
+        "sha256": "6dbc40a359da7b95b1b5d62b81884098dc2a8bc342bb4493b87712049f4fac08",
+        "status": "PASS"
+      },
+      {
+        "path": "/carpentry/_next/static/chunks/1wnov70f88xjy.js",
+        "contentType": "application/javascript; charset=utf-8",
+        "bytes": 29127,
+        "sha256": "279a2bc6537b1cdd6b489788ca91ab8582f1a7d1a4c34b94a0cf0b75ee0784b1",
+        "status": "PASS"
+      },
+      {
+        "path": "/carpentry/_next/static/chunks/092r-mewpaf3q.js",
+        "contentType": "application/javascript; charset=utf-8",
+        "bytes": 229052,
+        "sha256": "30b1a7afdc2b4c18dbed0c12b4cbb9ca6e3b1b048440715e434664cb534d6f11",
+        "status": "PASS"
+      },
+      {
+        "path": "/carpentry/_next/static/chunks/36r-d3ix-630r.js",
+        "contentType": "application/javascript; charset=utf-8",
+        "bytes": 170077,
+        "sha256": "f243618e6efbcb923ec10a383ede78c6fef432a2016d88a80f16216b774269a6",
+        "status": "PASS"
+      },
+      {
+        "path": "/carpentry/_next/static/chunks/turbopack-0gjbcjw_o__oq.js",
+        "contentType": "application/javascript; charset=utf-8",
+        "bytes": 9984,
+        "sha256": "8ffa1da6ecc83df7fd2392935fda77b39a9c728e0b2eb889906fac9321eb08ac",
+        "status": "PASS"
+      },
+      {
+        "path": "/carpentry/_next/static/chunks/3qfy96eoyh-ek.js",
+        "contentType": "application/javascript; charset=utf-8",
+        "bytes": 13994,
+        "sha256": "0f13eecc75702fa059f047636cf8814acbb7acaf3702e75d5835ef85a49528b1",
+        "status": "PASS"
+      },
+      {
+        "path": "/carpentry/_next/static/chunks/3w1md1siz9nro.js",
+        "contentType": "application/javascript; charset=utf-8",
+        "bytes": 37984,
+        "sha256": "f22abbdf2f859721d136ab5d5cf320b7979b394d534d26807de2436a2c9e726d",
+        "status": "PASS"
+      },
+      {
+        "path": "/carpentry/favicon.svg",
+        "contentType": "image/svg+xml",
+        "bytes": 368,
+        "sha256": "7d54e7c849703f850be8c65493747937d6d7f5cb1c6872549bcf21a13a81284a",
+        "status": "PASS"
+      },
+      {
+        "path": "/carpentry/_next/static/chunks/0cz1d0mv5g_q7.js",
+        "contentType": "application/javascript; charset=utf-8",
+        "bytes": 112594,
+        "sha256": "0973c1d64c88adc8e3c950410cb58b288f72118d5965b78049438deb8f2f9683",
+        "status": "PASS"
+      },
+      {
+        "path": "/carpentry/images/cabinet.webp",
+        "contentType": "image/webp",
+        "bytes": 58682,
+        "sha256": "d16f8138d9893c516eeb5ceb12d6d358ae09db76a19ccf987ca47f4052b53efd",
+        "status": "PASS"
+      },
+      {
+        "path": "/carpentry/images/ceiling.webp",
+        "contentType": "image/webp",
+        "bytes": 40002,
+        "sha256": "78d8a4afc9457007840c27071d81cb6fef7265e0ea397ae7745b536c9f82feea",
+        "status": "PASS"
+      },
+      {
+        "path": "/carpentry/images/partition.webp",
+        "contentType": "image/webp",
+        "bytes": 43630,
+        "sha256": "5d5ca4114aed6d1b2bb7e802f663e4041eedb2bfac92e41fc87e3ab0acf0b0df",
+        "status": "PASS"
+      },
+      {
+        "path": "/carpentry/images/tv-wall.webp",
+        "contentType": "image/webp",
+        "bytes": 48174,
+        "sha256": "0c3427fc1050bd2f00f246ac3cda5a66a29b6c6a300cd9ec2c4c332d574080fe",
+        "status": "PASS"
+      },
+      {
+        "path": "/carpentry/images/furniture.webp",
+        "contentType": "image/webp",
+        "bytes": 64714,
+        "sha256": "69869467c818660ea3ffb2372bd52048893938885301833f8ddef552f33f7917",
+        "status": "PASS"
+      },
+      {
+        "path": "/carpentry/images/renovation.webp",
+        "contentType": "image/webp",
+        "bytes": 24568,
+        "sha256": "38198642b01f5195d4c5a0faa29eef445f82340fb3cd505f9bcb550a41d58098",
+        "status": "PASS"
+      },
+      {
+        "path": "/carpentry/images/craft-detail.webp",
+        "contentType": "image/webp",
+        "bytes": 175108,
+        "sha256": "8bb311490b55c38273ae8c8ae3622e4518b72720d2cefcd84cdb6caa1bb55ff3",
+        "status": "PASS"
+      },
+      {
+        "path": "/carpentry/brand/xk-logo-white.svg",
+        "contentType": "image/svg+xml",
+        "bytes": 5920,
+        "sha256": "3ef6fe4c3968992e1c18df2f05233f39ffebd9da26dd9be91e7be81c02087250",
+        "status": "PASS"
+      },
+      {
+        "path": "/carpentry/images/og-carpentry.jpg",
+        "contentType": "image/jpeg",
+        "bytes": 144018,
+        "sha256": "68ebfa8f89f41a6f020fe4c2c8d2160ced3f8207bb71454eb03256d5bbf67348",
+        "status": "PASS"
+      },
+      {
+        "path": "/carpentry/images/industries/plumbing-electrical.webp",
+        "contentType": "image/webp",
+        "bytes": 91784,
+        "sha256": "471f4cfef9801aec65b76b75032c9dbacce0bd33a629716ca1648bfa6ecd655c",
+        "status": "PASS"
+      },
+      {
+        "path": "/carpentry/icons/xk-lp-plumbing-electrical.svg",
+        "contentType": "image/svg+xml",
+        "bytes": 311,
+        "sha256": "95c629ad28809f5897f28d56694184ab09a1998e660156f327182f2d597f7fa4",
+        "status": "PASS"
+      },
+      {
+        "path": "/carpentry/images/industries/painting.webp",
+        "contentType": "image/webp",
+        "bytes": 71492,
+        "sha256": "ad81011df6bd49108e4296f75eb69872885d538ee761ac0e81ff6ffc1f2b30d9",
+        "status": "PASS"
+      },
+      {
+        "path": "/carpentry/icons/xk-lp-painting.svg",
+        "contentType": "image/svg+xml",
+        "bytes": 311,
+        "sha256": "d56dc56a443e1122252998ecd69223d2f44b9b6bb344a1eb720c9fa102e0a3a5",
+        "status": "PASS"
+      },
+      {
+        "path": "/carpentry/images/industries/waterproofing.webp",
+        "contentType": "image/webp",
+        "bytes": 116848,
+        "sha256": "b159a50242ff79af473c3c3b7b966888fbc3af616c221800ab461e4b663931c4",
+        "status": "PASS"
+      },
+      {
+        "path": "/carpentry/icons/xk-lp-waterproofing.svg",
+        "contentType": "image/svg+xml",
+        "bytes": 311,
+        "sha256": "5c21dd181b3c4372ee521d8627f12809d6dea34678d6d111794e916e52fa14cf",
+        "status": "PASS"
+      },
+      {
+        "path": "/carpentry/images/industries/hvac.webp",
+        "contentType": "image/webp",
+        "bytes": 121360,
+        "sha256": "ba577762429e2572857641d1c60e9f01c5f895768439e95ca3f82bc1bcc9da38",
+        "status": "PASS"
+      },
+      {
+        "path": "/carpentry/icons/xk-lp-hvac.svg",
+        "contentType": "image/svg+xml",
+        "bytes": 311,
+        "sha256": "7edc38941a6f9e214750536f0500818fbfbd807182607e91698356e058f31b1c",
+        "status": "PASS"
+      },
+      {
+        "path": "/carpentry/images/industries/masonry.webp",
+        "contentType": "image/webp",
+        "bytes": 221976,
+        "sha256": "e568f64a257a85db7824da07ce047eacff82d9f13a2361bb94c90c8841e9b7e3",
+        "status": "PASS"
+      },
+      {
+        "path": "/carpentry/icons/xk-lp-masonry.svg",
+        "contentType": "image/svg+xml",
+        "bytes": 311,
+        "sha256": "d44299bf22399802af3ee9a210178dba755bcfce86298a6236b2dcb60c816e6f",
+        "status": "PASS"
+      }
+    ],
+    "assetCount": 31,
+    "requests": {
+      "method": "GET",
+      "cacheBusted": true,
+      "redirects": "error",
+      "tlsVerification": true,
+      "nodeConfiguredEnvironmentProxy": true
+    },
+    "evidence": {
+      "manifest": "manifest.json",
+      "gallery": "gallery.html",
+      "industryHTML": [
+        "industry-carpentry.html",
+        "industry-plumbing-electrical.html",
+        "industry-painting.html",
+        "industry-waterproofing.html",
+        "industry-hvac.html",
+        "industry-masonry.html"
+      ]
+    },
+    "separateBrowserAttempt": {
+      "status": "BLOCKED",
+      "reason": "Chromium with inherited environment proxy did not trust its TLS certificate; no TLS bypass or trust-store changes made.",
+      "report": "attempt-3-chromium-tls-results.json",
+      "completedBrowserCases": 0,
+      "screenshots": 0
+    },
+    "limitations": "Programmatic GET checks do not establish browser interaction or rendered responsive behavior. Root is collecting managed trusted Chrome evidence separately; source CI covers responsive flows for the exact deployed artifact."
+  },
+  "managedChromeDesktop": {
+    "verifiedAt": "2026-11-27T07:28:05.013Z",
+    "method": "preconfigured managed Chrome via CUA; no trust-store or TLS settings modified",
+    "scope": "public desktop 1180px, six industry route switches and matching brand/service/FAQ/hero, wood summary and reload clearing; mobile verified by exact-source CI rather than this managed browser",
+    "status": "PASS",
+    "gallery": {
+      "firstLPHref": "./carpentry/",
+      "firstLPName": "職人接案 LP Template",
+      "lpCount": "12 件",
+      "title": "XK SYSTEM｜作品展示中心",
+      "url": "https://showcase.xplorekaleidoscope.com/",
+      "viewport": {
+        "height": 757,
+        "width": 1180
+      }
+    },
+    "industries": [
+      {
+        "active": "水電",
+        "faqCount": 5,
+        "firstService": "配電與迴路規劃",
+        "heading": "梳理水與電，讓你的日常順暢運轉。",
+        "heroLoaded": true,
+        "title": "水電職人｜新北樹林水電服務・提案展示",
+        "url": "https://showcase.xplorekaleidoscope.com/carpentry/xk-lp-plumbing-electrical/"
+      },
+      {
+        "active": "油漆",
+        "faqCount": 5,
+        "firstService": "室內牆面粉刷",
+        "heroLoaded": true,
+        "title": "油漆職人｜新北樹林油漆服務・提案展示",
+        "url": "https://showcase.xplorekaleidoscope.com/carpentry/xk-lp-painting/"
+      },
+      {
+        "active": "防水",
+        "documentWidth": 1165,
+        "faqCount": 5,
+        "firstService": "浴室防水",
+        "heroLoaded": true,
+        "title": "防水職人｜新北樹林防水服務・提案展示",
+        "url": "https://showcase.xplorekaleidoscope.com/carpentry/xk-lp-waterproofing/",
+        "viewport": 1180
+      },
+      {
+        "active": "冷氣",
+        "documentWidth": 1165,
+        "faqCount": 5,
+        "firstService": "冷氣安裝",
+        "heroLoaded": true,
+        "title": "冷氣職人｜新北樹林冷氣服務・提案展示",
+        "url": "https://showcase.xplorekaleidoscope.com/carpentry/xk-lp-hvac/",
+        "viewport": 1180
+      },
+      {
+        "active": "泥作",
+        "faqCount": 5,
+        "firstService": "磁磚鋪貼",
+        "heroLoaded": true,
+        "title": "泥作職人｜新北樹林泥作服務・提案展示",
+        "url": "https://showcase.xplorekaleidoscope.com/carpentry/xk-lp-masonry/"
+      },
+      {
+        "active": "木工",
+        "documentWidth": 1165,
+        "faqCount": 5,
+        "firstService": "客製木作櫃體",
+        "heroLoaded": true,
+        "title": "木作職人｜新北樹林木工服務・提案展示",
+        "url": "https://showcase.xplorekaleidoscope.com/carpentry/",
+        "viewport": 1180
+      }
+    ],
+    "summaryPrepared": true,
+    "refreshClearedDraft": true,
+    "sourceSha": "bed3c363106b41f3d62c60e5b6bfc55f7bff0a5d",
+    "hubSha": "3f36960bba264b3b91cd86f16ae34a0f03f84390",
+    "screenshots": [
+      "/workspace/shared/showcase-lp-first.jpg",
+      "/workspace/shared/template-lp-public.jpg"
+    ]
+  },
+  "responsiveCI": {
+    "status": "PASS",
+    "run": 45955220939,
+    "checks": 13,
+    "scope": "Exact deployed source: wood at 320/375/768/1024/1440px and six-industry navigation at 320/1440px; this is source CI evidence, not public mobile browser evidence.",
+    "countUnit": "browser check groups; only some groups are responsive"
+  },
+  "limitations": [
+    "The separate headless Chromium attempt failed before browser interaction because it did not trust the environment proxy CA. Managed preconfigured Chrome subsequently completed the public desktop cases without changing trust stores or TLS settings.",
+    "The raw HTTP report remains scoped to HTTP checks and retains its contemporaneous blocked headless attempt; the later managed Chrome result is recorded separately.",
+    "Source and Hub runtime pins identify deployed code. Later documentation-only commits do not replace these artifact identities.",
+    "Workspace screenshot paths in the managed-browser record are session artifacts; source documentation also retains dated copies."
+  ]
+}
