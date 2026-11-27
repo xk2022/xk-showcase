@@ -31,6 +31,12 @@ The intended upload identity is `taiyang-logistics-43f3ec1-v1/taiyang-logistics-
 
 ## Publication status
 
-Preparation and archive review are complete. At this revision, the candidate has not been declared live; the prior reviewed tuple remains available for rollback. Promotion updates `ref` and all three `staticArtifact` values together only after the uploaded public ZIP and manifest are independently verified.
+The isolated upload completed successfully in [run 45978440239](https://github.com/xk2022/xk-website-showcase/actions/runs/45978440239), using the reviewed helper/workflow at `cde459fe239f9e8c756e3e0af620c04e08e32c45`. Only `publish-static-artifact` ran; normal build and Pages jobs were skipped. An earlier queued attempt, `45978002674`, was superseded before execution while the shared publication queue was busy; it is not upload evidence.
+
+The [public ZIP](https://github.com/xk2022/xk-website-showcase/releases/download/taiyang-logistics-43f3ec1-v1/taiyang-logistics-static.zip) and [release manifest](https://github.com/xk2022/xk-website-showcase/releases/download/taiyang-logistics-43f3ec1-v1/release-manifest.json) were independently downloaded after upload. Their actual ZIP SHA-256, source repository/SHA and Hub publishing commit/run match the reviewed preparation. The registry now updates `ref` and all three `staticArtifact` values together, preserving the other fields and all other registrations.
+
+Local validation passed 232 Hub tests, exact resolution and the complete 22-registration build/materialization, followed by preserved-runtime transport verification/fresh Hub smoke and Chengce checks at 375/768/1024/1440 px. Build and browser commands ran without API token environment variables; the source install cache stayed under `/tmp`. The local build used an ignored digest mirror of the exact reviewed ZIP while the public upload was queued; the independent download later confirmed the same bytes. That mirror and all build output are untracked and are not required by CI, which consumes the public Release URL.
+
+At this revision, the candidate has not been declared live. PR validation and the subsequent guarded main deployment/public-verification run provide the final release evidence; an uploaded ZIP or source CI success alone does not establish publication. The prior reviewed tuple remains available for rollback.
 
 The previous source SHA is `694968b030adb6755d2e869a4b5181f45b3e79b5`, ZIP digest `60641ab86c49aa1c301062e50cb0c8e8d1cdfe5ccca2fef4cebf3dad24cd8c91`, at `preserved-showcase-45564113822-v1/taiyang-logistics-static.zip`. Restore that reviewed tuple through a new checked release if rollback is needed; source Git rollback alone does not change the fixed snapshot.
