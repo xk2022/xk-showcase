@@ -32,6 +32,11 @@ const projects = {
     archiveName: 'shengfengyang-static.zip', name: '昇豐陽食品｜靜態提案',
     policy: { indexable: false, listed: false },
   },
+  'guanghai-software': {
+    sourceRepository: 'xk2022/xk-lp-guanghai-software',
+    archiveName: 'guanghai-software-static.zip', name: '廣海軟體有限公司｜企業軟體需求整理',
+    policy: {},
+  },
   carpentry: {
     // 新快照使用更名後的模板來源；舊來源 Release 保留原貌，身份不符時不會被改寫或重用。
     sourceRepository: 'xk2022/xk-template-lp',
