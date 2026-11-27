@@ -17,6 +17,13 @@ const projects = {
     archiveName: 'hongjia-brand-static.zip', name: '宏家燕窩 Brand｜自主規劃展示',
     policy: { framework: 'next', indexable: true, listed: true },
   },
+  'consulting-chengce': {
+    sourceRepository: 'xk2022/xk-lp-consulting-chengce',
+    archiveName: 'consulting-chengce-static.zip', name: '澄策企業顧問工作室',
+    // Retain the registered Next export contract, including its sitemap.
+    // Preview noindex remains part of the reviewed source HTML.
+    policy: { framework: 'next' },
+  },
   honest: {
     sourceRepository: 'xk2022/xk-lp-honest-diecut',
     archiveName: 'honest-static.zip', name: '宏能興業｜製造業詢價展示',

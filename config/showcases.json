@@ -40,16 +40,16 @@
     "name": "三月手工湯包",
     "category": "品牌導購型",
     "repository": "xk2022/xk-lp-march-tangbao",
-    "ref": "3415bbef1e4f10f33b5a6658367df0b53b17b742",
+    "ref": "a41f672831f865c22f0bf04bf323b4bd249a61d1",
     "env": {
       "PAGES_EXPORT": "1"
     },
     "brand": "三月手工湯包",
     "purpose": "可切換墨綠與印章紅配色，查看菜單、導航到店或透過 LINE 預留滷味。",
     "staticArtifact": {
-      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/march-tangbao-3415bbe-v1/march-tangbao-static.zip",
-      "sha256": "09b85744be0a511af2b0d05ea1a8fdfea4c7e40b49877c2075b618725d1fe09c",
-      "sourceSha": "3415bbef1e4f10f33b5a6658367df0b53b17b742"
+      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/march-tangbao-a41f672-v1/march-tangbao-static.zip",
+      "sha256": "d1a6191a857a19dffb3b4bae08667ed07cb92655d19181cbddc2e41b1aac7a71",
+      "sourceSha": "a41f672831f865c22f0bf04bf323b4bd249a61d1"
     }
   },
   {
@@ -132,7 +132,7 @@
     "name": "澄策企業顧問工作室",
     "category": "企業顧問型",
     "repository": "xk2022/xk-lp-consulting-chengce",
-    "ref": "17b7624f63da0a6474510ee4536684530b1d4b7c",
+    "ref": "dfe50a754e4f5c8317278e59d0c6cf89375e647d",
     "env": {
       "NEXT_PUBLIC_BASE_PATH": "/consulting-chengce",
       "NEXT_PUBLIC_SITE_URL": "https://showcase.xplorekaleidoscope.com/consulting-chengce/"
@@ -140,9 +140,9 @@
     "brand": "澄策企業顧問",
     "purpose": "介紹專業服務，整理初步顧問諮詢需求。",
     "staticArtifact": {
-      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/preserved-showcase-45564113822-v1/consulting-chengce-static.zip",
-      "sha256": "362ff5300e75015ad0980eae6a45740216c2a779b4b71a77214edcf963776599",
-      "sourceSha": "17b7624f63da0a6474510ee4536684530b1d4b7c"
+      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/consulting-chengce-dfe50a7-v1/consulting-chengce-static.zip",
+      "sha256": "a1d318f6b5e4c85bf597209b46cffee899766762a0cf84c0eef8d5993359d571",
+      "sourceSha": "dfe50a754e4f5c8317278e59d0c6cf89375e647d"
     }
   },
   {
