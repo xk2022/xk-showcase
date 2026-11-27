@@ -25,6 +25,7 @@ on:
           - rotaract
           - consulting-chengce
           - honest
+          - taiyang-logistics
         default: shengfengyang
       static_artifact_blob:
         description: 'Optional reviewed static ZIP Git blob SHA; skips website publication'

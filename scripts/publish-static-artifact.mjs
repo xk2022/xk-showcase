@@ -12,6 +12,11 @@ const manifestName = 'release-manifest.json';
 // Publication inputs select only reviewed projects, never arbitrary repository,
 // slug, asset or release names. Omitted INPUT_PROJECT preserves the original job.
 const projects = {
+  'taiyang-logistics': {
+    sourceRepository: 'xk2022/xk-lp-taiyang-logistics',
+    archiveName: 'taiyang-logistics-static.zip', name: '太陽國際物流｜貨櫃陸運需求整理',
+    policy: { framework: 'next' },
+  },
   'consulting-chengce': {
     sourceRepository: 'xk2022/xk-lp-consulting-chengce',
     archiveName: 'consulting-chengce-static.zip', name: '澄策企業顧問工作室',
