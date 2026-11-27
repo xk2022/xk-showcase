@@ -1,21 +1,21 @@
 [
   {
     "slug": "carpentry",
-    "name": "木作職人",
-    "category": "木作工程需求整理",
-    "repository": "xk2022/xk-lp-carpentry",
-    "ref": "91ade724579ed659287a27f8d77e5e1e0ed0292e",
+    "name": "職人接案 LP Template",
+    "category": "六產業接案樣式模板",
+    "repository": "xk2022/xk-template-lp",
+    "ref": "bed3c363106b41f3d62c60e5b6bfc55f7bff0a5d",
     "env": {
       "NEXT_PUBLIC_BASE_PATH": "/carpentry",
       "NEXT_PUBLIC_SITE_URL": "https://showcase.xplorekaleidoscope.com"
     },
     "staticArtifact": {
-      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/carpentry-91ade72-v1/carpentry-static.zip",
-      "sha256": "9ba114fced8fa350340fc47446d1fbdd40fd1e53f3a75b36ca0b9aa05c6250b1",
-      "sourceSha": "91ade724579ed659287a27f8d77e5e1e0ed0292e"
+      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/carpentry-bed3c36-v1/carpentry-static.zip",
+      "sha256": "8cd35a8de5a474759ce73a94883722a2a02ec8fc164763fec46924c713c36cfb",
+      "sourceSha": "bed3c363106b41f3d62c60e5b6bfc55f7bff0a5d"
     },
-    "brand": "木作職人",
-    "purpose": "以 AI 木作空間示意介紹服務與流程，整理工程需求；LINE 尚未開放。"
+    "brand": "XK LP Template",
+    "purpose": "切換木工、水電、油漆、防水、冷氣與泥作六種接案樣式；AI 情境示意與本頁需求摘要，LINE 尚未開放。"
   },
   {
     "slug": "honest",
