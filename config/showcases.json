@@ -147,20 +147,20 @@
   },
   {
     "slug": "qiangang-windows",
-    "name": "千剛實業有限公司",
+    "name": "萬花筒塑鋼門窗",
     "category": "住宅換窗詢價型",
     "repository": "xk2022/xk-lp-qiangang-windows",
-    "ref": "07df2cd47de784359731af260ee737dc0fef1a48",
+    "ref": "b30236ffead1e50c6c1a5f8a1697d3eabf6b7d15",
     "env": {
       "PAGES_STATIC_EXPORT": "1",
       "NEXT_PUBLIC_SHOWCASE_BASE_PATH": "/qiangang-windows"
     },
-    "brand": "千剛實業",
-    "purpose": "比較窗型、整理住宅換窗與看樣需求。",
+    "brand": "萬花筒塑鋼門窗",
+    "purpose": "以虛構品牌比較窗型，模擬住宅換窗、展間看樣與工程詢價。",
     "staticArtifact": {
-      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/preserved-showcase-45564113822-v1/qiangang-windows-static.zip",
-      "sha256": "222f64f987dd964c202dc521f9c6fa5878796d739a922bfec075907f712e026c",
-      "sourceSha": "07df2cd47de784359731af260ee737dc0fef1a48"
+      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/qiangang-windows-b30236f-v2/qiangang-windows-static.zip",
+      "sha256": "7a570e4684366013df30aea0fe471d831f0c23a95c0e20bae1a4fd3fc3c216b2",
+      "sourceSha": "b30236ffead1e50c6c1a5f8a1697d3eabf6b7d15"
     }
   },
   {
