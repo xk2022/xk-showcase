@@ -28,6 +28,12 @@ This release changes source provenance/build output after project organization; 
 
 The transfer blob contains only the reviewed public export. It is not added to a tree/commit/ref and is not the durable website input. The Release asset and its pinned digest are the durable identity after upload and independent redownload verification.
 
+The first isolated request [45977950985](https://github.com/xk2022/xk-website-showcase/actions/runs/45977950985) was cancelled in the shared pending queue before any job ran. After the existing publication completed, the reviewed publisher branch included Hub main updates without changing their registrations. Bootstrap [45978468492](https://github.com/xk2022/xk-website-showcase/actions/runs/45978468492) succeeded at exact Hub commit `9f3cb10598a9d42f09b99f2fc6927fe8e1a469b6`; normal website resolve/build/deploy jobs were skipped.
+
+An independent public redownload of both assets confirmed the exact 363,523-byte ZIP and SHA-256 above. The generated manifest matches the source repository/SHA, digest and bootstrap run/commit, with `staticOnly: true`. Registry promotion replaces only this case's `ref` and complete `staticArtifact` tuple; it does not change the other 21 registrations.
+
+Local candidate checks passed before review: the complete Hub test suite (without API tokens), resolution and complete 22-site build, preserved transport byte-identity/fresh smoke checks, and Chengce Chromium checks at 375/768/1024/1440 px. The complete output manifest identifies Esan source `1793516c765aebdf0430f9944e0d739b262866a6` with the reviewed digest. The transport source suite is historical reuse, not a newly executed private-source suite. The managed environment used Node's existing proxy support and system Chromium for the Hub-owned checks.
+
 ## Isolated publisher and promotion
 
 The fixed `esan-interior` selector maps only to `xk2022/xk-lp-esan-interior`, `/esan-interior/`, `esan-interior-static.zip` and the versioned tag above. It retains the existing Next.js canonical/resource/sitemap contract and existing preview noindex markup. This is not a change to registry indexing/listing policy. No arbitrary repository, slug or asset override, private-source credential or new permission is accepted.

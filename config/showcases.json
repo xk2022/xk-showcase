@@ -261,7 +261,7 @@
     "name": "一森室內設計",
     "category": "住宅設計諮詢",
     "repository": "xk2022/xk-lp-esan-interior",
-    "ref": "4bcae5151fac6d1c9442c1475cbed53f9c768116",
+    "ref": "1793516c765aebdf0430f9944e0d739b262866a6",
     "env": {
       "GITHUB_PAGES": "true",
       "NEXT_PUBLIC_SHOWCASE": "1",
@@ -271,9 +271,9 @@
     "brand": "一森室內設計",
     "purpose": "展示住宅設計概念並引導設計諮詢。",
     "staticArtifact": {
-      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/preserved-showcase-45564113822-v1/esan-interior-static.zip",
-      "sha256": "5c7dfe693aba8d19ddcd0d3818dbe099f21bad2df6c20efdb638e515644099df",
-      "sourceSha": "4bcae5151fac6d1c9442c1475cbed53f9c768116"
+      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/esan-interior-1793516-v1/esan-interior-static.zip",
+      "sha256": "f9e02c95ba80e49524c8a9d9f560f2a8258c3e9bebeb77e365643174c2565804",
+      "sourceSha": "1793516c765aebdf0430f9944e0d739b262866a6"
     }
   },
   {
