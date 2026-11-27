@@ -31,7 +31,7 @@ The registry promotion changes only Chengce's `ref`, archive URL, SHA-256 and `s
 - ZIP `https://github.com/xk2022/xk-website-showcase/releases/download/preserved-showcase-45564113822-v1/consulting-chengce-static.zip`.
 - SHA-256 `362ff5300e75015ad0980eae6a45740216c2a779b4b71a77214edcf963776599`.
 
-A Release upload is preparation, not a live deployment. The full Hub build, source-specific browser checks, transport validation, guarded main deployment and live manifest/resource verification must pass before this candidate is called published. Results are recorded after execution.
+The release is published at [the Chengce website](https://showcase.xplorekaleidoscope.com/consulting-chengce/). [PR #42](https://github.com/xk2022/xk-website-showcase/pull/42) was merged as Hub main `1782237c631df5aa78defd6e90d82bd97323aa55`. [Main deployment 45977057789](https://github.com/xk2022/xk-website-showcase/actions/runs/45977057789) completed successfully, including the full build, browser checks, guarded Pages deployment and public manifest/resource verification.
 
 ## Executed pre-merge checks
 
@@ -43,3 +43,11 @@ A Release upload is preparation, not a live deployment. The full Hub build, sour
 - Preserved transport runtime-byte equality and fresh Hub-owned browser smoke passed; its historical source suite is retained as `REUSED_NOT_RERUN`.
 
 The normal workflow now runs the Chengce suite before Pages artifact upload and retains its JSON report/screenshots separately. These compiled-output checks run without source API credentials or external form delivery.
+
+## Live verification
+
+On 2026-11-27, an independent HTTP check confirmed the public manifest contains the exact reviewed Chengce source SHA and archive SHA-256. The homepage and 16 referenced or supporting public resources returned HTTP 200; the combined manifest contains 22 cases.
+
+The published site was also opened in a browser. The live page showed the updated business content and title. Navigation reached the consultation section, submitting empty fields displayed all five required-field messages and focused the name field, and synthetic input produced an accurate “諮詢摘要已備妥” summary. FAQ expansion/collapse and clearing the form were verified. Reloading cleared the page-only data. No contact message or booking was sent.
+
+The central Showcase URL remains the published preview location. No client operating domain, DNS, receiving channel or repository visibility was changed.
