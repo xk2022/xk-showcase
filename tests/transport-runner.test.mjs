@@ -5,7 +5,7 @@ import { dirname, join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
-import { createPreviewServer, transportTestEnvironment, validateTransportPlan, testTransport, comparePreservedTransport, preservedTransport } from '../scripts/test-transport.mjs';
+import { createPreviewServer, transportTestEnvironment, validateTransportPlan, testTransport, comparePreservedTransport, preservedTransport, kaleidoscopeTransport, reviewedTransportIdentity, staticTransportReport, assertKaleidoscopeMetadata, assertInquiryPrivacy } from '../scripts/test-transport.mjs';
 import { origin, transportRoutes } from '../scripts/static-export.mjs';
 import { transportGate, transportRepository } from '../scripts/transport-sync.mjs';
 
@@ -77,7 +77,7 @@ function preservedFixture() {
   }
   const script = 'import io,json,sys,zipfile\nb=io.BytesIO()\nwith zipfile.ZipFile(b,"w",compression=zipfile.ZIP_DEFLATED) as z:\n for name,content in json.load(sys.stdin).items(): z.writestr(name,content)\nsys.stdout.buffer.write(b.getvalue())';
   const bytes = execFileSync('python3', ['-c', script], { input: JSON.stringify(entries) });
-  const artifact = { url: preservedTransport.artifactUrl, sha256: createHash('sha256').update(bytes).digest('hex'), sourceSha: preservedTransport.sourceSha };
+  const artifact = { url: preservedTransport.artifactUrl, sha256: preservedTransport.sha256, sourceSha: preservedTransport.sourceSha };
   const site = { slug: 'truck-transport', repository: transportRepository, ref: preservedTransport.sourceSha, sha: preservedTransport.sourceSha, staticArtifact: artifact };
   const row = { slug: site.slug, repository: site.repository, sha: site.sha, staticArtifact: { ...artifact } };
   return { entries, bytes, site, row };
@@ -100,6 +100,7 @@ test('preserved transport accepts only the exact trusted baseline and matching a
     { ...site, releaseGate: transportGate },
     { ...site, release: source.release },
     { ...site, staticArtifact: { ...site.staticArtifact, sourceSha: 'c'.repeat(40) } },
+    { ...site, staticArtifact: { ...site.staticArtifact, sha256: 'f'.repeat(64) } },
     { ...site, staticArtifact: { ...site.staticArtifact, url: site.staticArtifact.url.replace('45564113822', '99999999') } },
   ]) assert.throws(() => validateTransportPlan([changed], [row]));
   assert.throws(() => validateTransportPlan([site], [{ ...row, staticArtifact: undefined }]));
@@ -123,7 +124,7 @@ test('runtime equality excludes only the top-level generated gallery screenshot'
   } finally { await rm(root, { recursive: true, force: true }); }
 });
 
-test('static transport validates the public digest and exact runtime without fetching or executing private source', async () => {
+test('transport orchestration uses the fixed materialization contract and checks exact runtime without private source', async () => {
   const root = await mkdtemp(join(tmpdir(), 'xk-preserved-transport-test-'));
   const { entries, bytes, site, row } = preservedFixture();
   const dist = join(root, 'dist');
@@ -134,9 +135,16 @@ test('static transport validates the public digest and exact runtime without fet
     await writeFile(join(dist, 'manifest.json'), JSON.stringify([row]));
     await writeFile(planPath, JSON.stringify([site]));
     const calls = [];
+    // The real safe downloader/extractor has its own digest/ZIP tests. This
+    // fixture substitutes only that boundary; production has no policy override.
+    const materializeFixture = async (registered, target, { fetchImpl }) => {
+      assert.deepEqual(registered.staticArtifact, site.staticArtifact);
+      await fetchImpl(registered.staticArtifact.url, { headers: {} });
+      await writeEntries(target, entries);
+    };
     let smokeCalls = 0;
     const report = await testTransport({
-      planPath, dist, reportDirectory,
+      planPath, dist, reportDirectory, materializeArtifact: materializeFixture,
       fetchImpl: async (url, options) => { calls.push(url); assert.equal(options.headers.Authorization, undefined); return new Response(bytes); },
       compiledSmoke: async ({ directory }) => { smokeCalls++; assert.equal(directory, dist); return { status: 'PASS', kind: 'unit-test substitute for fresh browser smoke' }; },
     });
@@ -147,9 +155,67 @@ test('static transport validates the public digest and exact runtime without fet
     assert.match(report.historicalSourceSuite.runUrl, /45564113822$/);
     assert.equal(report.comparison.result, 'identical');
     assert.equal(JSON.parse(await readFile(join(reportDirectory, 'static-artifact.json'), 'utf8')).freshCompiledOutputSmoke.status, 'PASS');
-    await assert.rejects(testTransport({ planPath, dist, reportDirectory, fetchImpl: async () => new Response(bytes), compiledSmoke: async () => ({ status: 'FAIL' }) }), /smoke did not pass/);
+    await assert.rejects(testTransport({ planPath, dist, reportDirectory, materializeArtifact: materializeFixture, fetchImpl: async () => new Response(bytes), compiledSmoke: async () => ({ status: 'FAIL' }) }), /smoke did not pass/);
     await writeFile(join(dist, 'truck-transport', '_next/static/app.js'), 'unreviewed runtime');
-    await assert.rejects(testTransport({ planPath, dist, reportDirectory, fetchImpl: async () => new Response(bytes), compiledSmoke: async () => { throw new Error('Smoke must not run after byte mismatch'); } }), /runtime bytes differ/);
+    await assert.rejects(testTransport({ planPath, dist, reportDirectory, materializeArtifact: materializeFixture, fetchImpl: async () => new Response(bytes), compiledSmoke: async () => { throw new Error('Smoke must not run after byte mismatch'); } }), /runtime bytes differ/);
     await assert.rejects(testTransport({ planPath, dist, reportDirectory, fetchImpl: async () => new Response('wrong digest'), compiledSmoke: async () => { throw new Error('Smoke must not run after hash mismatch'); } }), /SHA256 mismatch/);
   } finally { await rm(root, { recursive: true, force: true }); }
+});
+
+
+const kaleidoscopeSite = {
+  slug: 'truck-transport', repository: transportRepository, ref: kaleidoscopeTransport.sourceSha,
+  sha: kaleidoscopeTransport.sourceSha,
+  staticArtifact: { url: kaleidoscopeTransport.artifactUrl, sha256: kaleidoscopeTransport.sha256, sourceSha: kaleidoscopeTransport.sourceSha },
+};
+const kaleidoscopeRow = { slug: kaleidoscopeSite.slug, repository: transportRepository, sha: kaleidoscopeSite.sha, staticArtifact: { ...kaleidoscopeSite.staticArtifact } };
+
+test('reviewed Kaleidoscope and preserved rollback both require their exact SHA, URL and ZIP digest', () => {
+  assert.equal(validateTransportPlan([kaleidoscopeSite], [kaleidoscopeRow]), kaleidoscopeSite);
+  assert.equal(reviewedTransportIdentity(kaleidoscopeSite), kaleidoscopeTransport);
+  const old = preservedFixture();
+  assert.equal(reviewedTransportIdentity(old.site), preservedTransport);
+  for (const site of [old.site, kaleidoscopeSite]) {
+    for (const update of [{ sha256: 'f'.repeat(64) }, { url: site.staticArtifact.url.replace('-v1/', '-v2/') }, { sourceSha: 'f'.repeat(40) }]) {
+      const changed = { ...site, staticArtifact: { ...site.staticArtifact, ...update } };
+      const row = { slug: changed.slug, repository: changed.repository, sha: changed.sha, staticArtifact: { ...changed.staticArtifact } };
+      assert.throws(() => validateTransportPlan([changed], [row]));
+    }
+    assert.throws(() => reviewedTransportIdentity({ ...site, sha: 'e'.repeat(40) }));
+  }
+  assert.throws(() => validateTransportPlan([kaleidoscopeSite], [{ ...kaleidoscopeRow, staticArtifact: { ...kaleidoscopeRow.staticArtifact, sha256: preservedTransport.sha256 } }]));
+});
+
+test('replacement report separates source preparation and fresh smoke without reusing the preserved suite', () => {
+  const smoke = { status: 'PASS', kind: 'fresh Hub-owned compiled-output smoke' };
+  const comparison = { result: 'identical', comparedFiles: 52 };
+  const replacement = staticTransportReport(kaleidoscopeSite, comparison, smoke);
+  assert.equal(replacement.mode, 'reviewed-kaleidoscope-static-artifact');
+  assert.equal(replacement.sourcePreparation.sourceSha, kaleidoscopeTransport.sourceSha);
+  assert.equal(replacement.sourcePreparation.status, 'RECORDED_SEPARATELY_NOT_QUERIED_OR_RERUN');
+  assert.equal(replacement.historicalSourceSuite, undefined);
+  assert.equal(replacement.freshCompiledOutputSmoke, smoke);
+  const old = staticTransportReport(preservedFixture().site, comparison, smoke);
+  assert.equal(old.mode, 'preserved-static-artifact');
+  assert.equal(old.historicalSourceSuite.status, 'REUSED_NOT_RERUN');
+  assert.equal(old.sourcePreparation, undefined);
+});
+
+function kaleidoscopeMetadata(route = '') {
+  const canonical = `${origin}/truck-transport/${route}`;
+  const social = `${origin}/truck-transport/images/social-card.jpg`;
+  return { title: '運輸服務｜萬花筒運輸', description: '說明每週配送與單次出貨。', canonical, robots: 'noindex, nofollow', siteName: '萬花筒運輸', ogTitle: '運輸服務｜萬花筒運輸', twitterTitle: '運輸服務｜萬花筒運輸', ogDescription: '說明每週配送與單次出貨。', twitterDescription: '說明每週配送與單次出貨。', ogUrl: canonical, ogImage: social, twitterImage: social, imageWidth: '1200', imageHeight: '630', twitterCard: 'summary_large_image', icon: '/truck-transport/favicon.svg', visibleText: '萬花筒運輸 KALEIDOSCOPE TRANSPORT 自主規劃展示作品' };
+}
+
+test('fresh replacement metadata catches old branding, incorrect social URLs and indexing changes', () => {
+  const metadata = kaleidoscopeMetadata('services/');
+  assert.doesNotThrow(() => assertKaleidoscopeMetadata(metadata, 'services/'));
+  for (const change of [{ title: '序程運輸' }, { visibleText: '萬花筒運輸 序程運輸' }, { canonical: `${origin}/` }, { ogImage: `${origin}/other/card.jpg` }, { twitterImage: 'http://localhost/card.jpg' }, { robots: 'index,follow' }, { siteName: '序程運輸' }, { imageWidth: '600' }, { icon: '//other/favicon.svg' }]) assert.throws(() => assertKaleidoscopeMetadata({ ...metadata, ...change }, 'services/'));
+});
+
+test('inquiry privacy rejects persistence, external calls, write requests and raw draft URLs', () => {
+  const localOrigin = 'http://127.0.0.1:4173';
+  const clean = { requests: [{ url: `${localOrigin}/truck-transport/inquiry/`, method: 'GET', postData: null }], localStorage: 0, sessionStorage: 0, cookies: [], drafts: ['兩板貨'] };
+  assert.doesNotThrow(() => assertInquiryPrivacy(clean, localOrigin));
+  for (const change of [{ localStorage: 1 }, { sessionStorage: 1 }, { cookies: [{ name: 'draft' }] }, { requests: [{ url: 'https://external.example/', method: 'GET', postData: null }] }, { requests: [{ url: `${localOrigin}/truck-transport/`, method: 'POST', postData: '兩板貨' }] }, { requests: [{ url: `${localOrigin}/?draft=${encodeURIComponent('兩板貨')}`, method: 'GET', postData: null }] }]) assert.throws(() => assertInquiryPrivacy({ ...clean, ...change }, localOrigin));
 });
