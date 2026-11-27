@@ -20,8 +20,10 @@ on:
           - carpentry
           - little-me-owner-demo
           - rui-cafe
+          - qiangang-windows
           - rotaract
           - consulting-chengce
+          - honest
         default: shengfengyang
       static_artifact_blob:
         description: 'Optional reviewed static ZIP Git blob SHA; skips website publication'

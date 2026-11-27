@@ -22,7 +22,7 @@
     "name": "宏能興業",
     "category": "企業詢價型",
     "repository": "xk2022/xk-lp-honest-diecut",
-    "ref": "b80e09be8d44bb34a25b0f9b5f0760e9fec1a1fb",
+    "ref": "4fbca72f5c169a6c08fbeece0db6a8d02e8d4d11",
     "env": {
       "GITHUB_PAGES": "true",
       "NEXT_PUBLIC_SHOWCASE_BASE_PATH": "/honest"
@@ -30,9 +30,9 @@
     "brand": "宏能興業",
     "purpose": "依加工用途選樣，整理尺寸、用量與詢價需求。",
     "staticArtifact": {
-      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/preserved-showcase-45564113822-v1/honest-static.zip",
-      "sha256": "2bffb50a779459712d0ec3d0a20132e32c3944837229352673a68d29d6b77104",
-      "sourceSha": "b80e09be8d44bb34a25b0f9b5f0760e9fec1a1fb"
+      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/honest-4fbca72-v1/honest-static.zip",
+      "sha256": "3f15cedcebcb1c621595ed956b5dcf920b8b0fb38c42f572754cba40dbe17519",
+      "sourceSha": "4fbca72f5c169a6c08fbeece0db6a8d02e8d4d11"
     }
   },
   {
@@ -147,20 +147,20 @@
   },
   {
     "slug": "qiangang-windows",
-    "name": "千剛實業有限公司",
+    "name": "萬花筒塑鋼門窗",
     "category": "住宅換窗詢價型",
     "repository": "xk2022/xk-lp-qiangang-windows",
-    "ref": "07df2cd47de784359731af260ee737dc0fef1a48",
+    "ref": "b30236ffead1e50c6c1a5f8a1697d3eabf6b7d15",
     "env": {
       "PAGES_STATIC_EXPORT": "1",
       "NEXT_PUBLIC_SHOWCASE_BASE_PATH": "/qiangang-windows"
     },
-    "brand": "千剛實業",
-    "purpose": "比較窗型、整理住宅換窗與看樣需求。",
+    "brand": "萬花筒塑鋼門窗",
+    "purpose": "以虛構品牌比較窗型，模擬住宅換窗、展間看樣與工程詢價。",
     "staticArtifact": {
-      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/preserved-showcase-45564113822-v1/qiangang-windows-static.zip",
-      "sha256": "222f64f987dd964c202dc521f9c6fa5878796d739a922bfec075907f712e026c",
-      "sourceSha": "07df2cd47de784359731af260ee737dc0fef1a48"
+      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/qiangang-windows-b30236f-v2/qiangang-windows-static.zip",
+      "sha256": "7a570e4684366013df30aea0fe471d831f0c23a95c0e20bae1a4fd3fc3c216b2",
+      "sourceSha": "b30236ffead1e50c6c1a5f8a1697d3eabf6b7d15"
     }
   },
   {
