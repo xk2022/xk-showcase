@@ -5,7 +5,7 @@ import { dirname, join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
-import { createPreviewServer, transportTestEnvironment, validateTransportPlan, testTransport, comparePreservedTransport, preservedTransport, kaleidoscopeTransport, reviewedTransportIdentity, staticTransportReport, assertKaleidoscopeMetadata, assertInquiryPrivacy } from '../scripts/test-transport.mjs';
+import { createPreviewServer, transportTestEnvironment, validateTransportPlan, testTransport, comparePreservedTransport, preservedTransport, kaleidoscopeTransport, plainArrowTransport, reviewedTransportIdentity, staticTransportReport, assertKaleidoscopeMetadata, assertInquiryPrivacy } from '../scripts/test-transport.mjs';
 import { origin, transportRoutes } from '../scripts/static-export.mjs';
 import { transportGate, transportRepository } from '../scripts/transport-sync.mjs';
 
@@ -169,13 +169,21 @@ const kaleidoscopeSite = {
   staticArtifact: { url: kaleidoscopeTransport.artifactUrl, sha256: kaleidoscopeTransport.sha256, sourceSha: kaleidoscopeTransport.sourceSha },
 };
 const kaleidoscopeRow = { slug: kaleidoscopeSite.slug, repository: transportRepository, sha: kaleidoscopeSite.sha, staticArtifact: { ...kaleidoscopeSite.staticArtifact } };
+const plainArrowSite = {
+  ...kaleidoscopeSite, ref: plainArrowTransport.sourceSha, sha: plainArrowTransport.sourceSha,
+  staticArtifact: { url: plainArrowTransport.artifactUrl, sha256: plainArrowTransport.sha256, sourceSha: plainArrowTransport.sourceSha },
+};
+const plainArrowRow = { slug: plainArrowSite.slug, repository: transportRepository, sha: plainArrowSite.sha, staticArtifact: { ...plainArrowSite.staticArtifact } };
 
-test('reviewed Kaleidoscope and preserved rollback both require their exact SHA, URL and ZIP digest', () => {
+
+test('all three reviewed transport snapshots require their exact SHA, URL and ZIP digest', () => {
   assert.equal(validateTransportPlan([kaleidoscopeSite], [kaleidoscopeRow]), kaleidoscopeSite);
   assert.equal(reviewedTransportIdentity(kaleidoscopeSite), kaleidoscopeTransport);
   const old = preservedFixture();
   assert.equal(reviewedTransportIdentity(old.site), preservedTransport);
-  for (const site of [old.site, kaleidoscopeSite]) {
+  assert.equal(validateTransportPlan([plainArrowSite], [plainArrowRow]), plainArrowSite);
+  assert.equal(reviewedTransportIdentity(plainArrowSite), plainArrowTransport);
+  for (const site of [old.site, kaleidoscopeSite, plainArrowSite]) {
     for (const update of [{ sha256: 'f'.repeat(64) }, { url: site.staticArtifact.url.replace('-v1/', '-v2/') }, { sourceSha: 'f'.repeat(40) }]) {
       const changed = { ...site, staticArtifact: { ...site.staticArtifact, ...update } };
       const row = { slug: changed.slug, repository: changed.repository, sha: changed.sha, staticArtifact: { ...changed.staticArtifact } };
@@ -184,6 +192,15 @@ test('reviewed Kaleidoscope and preserved rollback both require their exact SHA,
     assert.throws(() => reviewedTransportIdentity({ ...site, sha: 'e'.repeat(40) }));
   }
   assert.throws(() => validateTransportPlan([kaleidoscopeSite], [{ ...kaleidoscopeRow, staticArtifact: { ...kaleidoscopeRow.staticArtifact, sha256: preservedTransport.sha256 } }]));
+  // A digest/URL from another approved release cannot approve this source SHA.
+  for (const site of [old.site, kaleidoscopeSite, plainArrowSite]) {
+    for (const other of [old.site, kaleidoscopeSite, plainArrowSite].filter(entry => entry.sha !== site.sha)) {
+      const changed = { ...site, staticArtifact: { ...site.staticArtifact, url: other.staticArtifact.url, sha256: other.staticArtifact.sha256 } };
+      const row = { slug: changed.slug, repository: changed.repository, sha: changed.sha, staticArtifact: { ...changed.staticArtifact } };
+      assert.throws(() => validateTransportPlan([changed], [row]));
+    }
+  }
+
 });
 
 test('replacement report separates source preparation and fresh smoke without reusing the preserved suite', () => {
@@ -195,6 +212,13 @@ test('replacement report separates source preparation and fresh smoke without re
   assert.equal(replacement.sourcePreparation.status, 'RECORDED_SEPARATELY_NOT_QUERIED_OR_RERUN');
   assert.equal(replacement.historicalSourceSuite, undefined);
   assert.equal(replacement.freshCompiledOutputSmoke, smoke);
+  const arrow = staticTransportReport(plainArrowSite, comparison, smoke);
+  assert.equal(arrow.mode, 'reviewed-kaleidoscope-static-artifact');
+  assert.equal(arrow.sourcePreparation.sourceSha, plainArrowTransport.sourceSha);
+  assert.equal(arrow.sourcePreparation.status, 'RECORDED_SEPARATELY_NOT_QUERIED_OR_RERUN');
+  assert.equal(arrow.historicalSourceSuite, undefined);
+  assert.equal(arrow.freshCompiledOutputSmoke, smoke);
+
   const old = staticTransportReport(preservedFixture().site, comparison, smoke);
   assert.equal(old.mode, 'preserved-static-artifact');
   assert.equal(old.historicalSourceSuite.status, 'REUSED_NOT_RERUN');

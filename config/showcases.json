@@ -168,7 +168,7 @@
     "name": "萬花筒運輸",
     "category": "企業形象與運輸詢價型",
     "repository": "xk2022/xk-corp-truck-transport",
-    "ref": "90a33add7d4ab6e71a28c47eb8183fe8c12cf907",
+    "ref": "1460860660a1005646f3be7643ccbc3c54d0206f",
     "env": {
       "GITHUB_PAGES": "true",
       "NEXT_PUBLIC_BASE_PATH": "/truck-transport",
@@ -177,9 +177,9 @@
     "brand": "萬花筒運輸",
     "purpose": "協助工廠與倉管窗口了解固定配送流程，預覽出貨需求摘要。",
     "staticArtifact": {
-      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/truck-transport-90a33ad-v1/truck-transport-static.zip",
-      "sha256": "94971f455523bf85c10d5d0768f09471c69392688a73eb271ea0f2316f3eca1d",
-      "sourceSha": "90a33add7d4ab6e71a28c47eb8183fe8c12cf907"
+      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/truck-transport-1460860-v1/truck-transport-static.zip",
+      "sha256": "dfda90df6f03c1321508ca1a8f97be242dba9b7f601de1fa81ff64bfcbe9b320",
+      "sourceSha": "1460860660a1005646f3be7643ccbc3c54d0206f"
     }
   },
   {
