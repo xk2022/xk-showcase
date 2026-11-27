@@ -28,7 +28,7 @@ The hub supports Next.js static exports and explicitly configured Vite exports. 
 
 ## Six-industry LP template
 
-The `carpentry` entry now registers the six-industry export from private source `xk2022/xk-template-lp` and is first in the LP group. It retains `/carpentry/`, with five additional industry pages under that path. The template repository is explicitly classified as LP; this adds no new website category. The other 21 project identities and relative gallery order are preserved. See [preparation and publication evidence](doc/template-lp-publication.md) for the source CI, exact artifact checksum, deployment status and public verification; registration and artifact upload alone are not a live-site result.
+The `carpentry` entry now registers the six-industry export from private source `xk2022/xk-template-lp` and is first in the LP group. It retains `/carpentry/`, with five additional industry pages under that path. The template repository is explicitly classified as LP; this adds no new website category. The other 21 project identities and relative gallery order are preserved. The update is live following [Pages run 45956818639](https://github.com/xk2022/xk-website-showcase/actions/runs/45956818639), whose public verification passed for 22 sites, 74 pages and 287 assets. Independent HTTPS checks passed for all six routes and 31 assets; managed Chrome confirmed desktop switching and the local summary. Exact-source CI covers mobile responsiveness. See [publication evidence](doc/template-lp-publication.md) and [the verification report](doc/template-lp-live-verification.json) for the separate scopes and exact runtime/artifact identities.
 
 ## Build
 
