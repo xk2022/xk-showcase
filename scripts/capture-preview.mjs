@@ -1,5 +1,39 @@
 import { createPreviewServer } from './test-transport.mjs';
 
+// New workspaces retain the earlier roster/history smoke. The visible release
+// marker selects the additional governance checks without changing rollback or
+// other projects' browser policies.
+export async function exerciseRotaractGovernance(page) {
+  const marker = page.locator('[data-showcase="RK-DEMO-03"]');
+  if (!await marker.count()) return false;
+  const navigation = page.getByRole('navigation', { name: '工作台導覽', exact: true });
+  const open = async (name, heading, level) => {
+    await navigation.getByRole('link', { name, exact: true }).click();
+    await page.getByRole('heading', { name: heading, level, exact: true }).waitFor();
+  };
+  const requireRows = async name => {
+    const table = page.getByRole('table', { name, exact: true });
+    await table.waitFor();
+    if (!await table.locator('tbody tr').count()) throw new Error(`Governance preview has no seeded rows: ${name}`);
+    if (/\.invalid|\+000/.test(await table.innerText())) throw new Error('Governance preview exposed private contact data');
+  };
+  await open('年度治理總覽', '從年度架構到每一段服務', 2);
+  await page.getByRole('heading', { name: '幹部名錄', level: 2, exact: true }).waitFor();
+  await open('組織架構', '年度組織架構', 3);
+  await page.locator('.gov-tree-node').first().waitFor();
+  await open('職務與幹部任命', '年度職務與幹部任命', 3);
+  await requireRows('本頁展示任命');
+  await open('年度交接管理', '年度交接管理', 2);
+  await page.getByRole('table', { name: '年度交接計畫', exact: true }).waitFor();
+  await open('我的服務履歷', '我的服務履歷', 2);
+  await page.getByLabel('服務日數統計', { exact: true }).waitFor();
+  await page.getByRole('list', { name: '本人服務時間軸', exact: true }).waitFor();
+  await open('歷屆幹部名錄', '歷屆幹部名錄', 2);
+  await requireRows('年度幹部名錄');
+  if (await page.getByRole('alert').count()) throw new Error('Governance preview displayed an API error');
+  return true;
+}
+
 // The browser can read only the locally built static export, never external APIs.
 export async function capturePreview(directory, path, output, { interactive = false, rotaractWorkspace = false, ownerDemo = false, anonymousLogistics = false } = {}) {
   const { chromium } = await import('playwright');
@@ -49,8 +83,14 @@ export async function capturePreview(directory, path, output, { interactive = fa
         await members.waitFor();
         const content = await members.innerText();
         if (!content.includes('合成轉社體驗') || !content.includes('未公開或未設定') || /\.invalid|\+000/.test(content)) throw new Error('Interactive workspace must show the synthetic roster with private contacts hidden');
+        const governance = await exerciseRotaractGovernance(page);
         await page.getByLabel('扶輪年度', { exact: true }).selectOption('10000000-0000-4000-8000-000000000025');
         await page.getByText('歷史年度 · 唯讀', { exact: true }).waitFor();
+        if (governance) {
+          await page.getByText('歷史年度 · 幹部名錄唯讀', { exact: true }).waitFor();
+          await page.getByRole('table', { name: '年度幹部名錄', exact: true }).waitFor();
+          if (await page.getByRole('button', { name: '新增行政提名', exact: true }).count()) throw new Error('Historical governance preview exposes a mutation control');
+        }
         await page.getByText('展示操作指南與信箱', { exact: true }).click();
         await page.getByRole('region', { name: '展示信箱', exact: true }).waitFor();
       } else {
