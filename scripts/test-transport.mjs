@@ -27,9 +27,18 @@ export const kaleidoscopeTransport = Object.freeze({
   brand: '萬花筒運輸',
 });
 
+// Reviewed visual-only replacement; earlier tuples remain valid rollback inputs.
+export const plainArrowTransport = Object.freeze({
+  sourceSha: '1460860660a1005646f3be7643ccbc3c54d0206f',
+  artifactUrl: 'https://github.com/xk2022/xk-website-showcase/releases/download/truck-transport-1460860-v1/truck-transport-static.zip',
+  sha256: 'dfda90df6f03c1321508ca1a8f97be242dba9b7f601de1fa81ff64bfcbe9b320',
+  brand: '萬花筒運輸',
+});
+
 export function reviewedTransportIdentity(source) {
-  if (source.sha === preservedTransport.sourceSha && source.staticArtifact?.url === preservedTransport.artifactUrl && source.staticArtifact.sha256 === preservedTransport.sha256) return preservedTransport;
-  if (source.sha === kaleidoscopeTransport.sourceSha && source.staticArtifact?.url === kaleidoscopeTransport.artifactUrl && source.staticArtifact.sha256 === kaleidoscopeTransport.sha256) return kaleidoscopeTransport;
+  for (const snapshot of [preservedTransport, kaleidoscopeTransport, plainArrowTransport]) {
+    if (source.sha === snapshot.sourceSha && source.staticArtifact?.url === snapshot.artifactUrl && source.staticArtifact.sha256 === snapshot.sha256) return snapshot;
+  }
   throw new Error('Transport artifact must match an exact reviewed source, Release URL and digest');
 }
 
@@ -189,7 +198,7 @@ async function exerciseKaleidoscopeInquiry(page, context, base, width, reportDir
 export async function smokePreservedTransport({ directory, reportDirectory, snapshot = preservedTransport }) {
   const { chromium } = await import('playwright');
   const preview = await createPreviewServer(directory);
-  const kaleidoscope = snapshot === kaleidoscopeTransport;
+  const kaleidoscope = snapshot === kaleidoscopeTransport || snapshot === plainArrowTransport;
   let browser;
   const errors = [];
   const checked = [];
