@@ -82,7 +82,18 @@ env -u GH_TOKEN -u GITHUB_TOKEN NODE_USE_ENV_PROXY=1 SHOWCASE_CHROMIUM_PATH=/usr
 
 Hub-owned 報告位於 `/tmp/xk-transport-publication-20261127/hub-transport-report`。
 
-準備階段另以已授權來源的完整 Chromium desktop／mobile 套件，對**同一份實際 combined Hub 輸出**執行，**52／52 通過（42.8 秒）**，不是改測來源自己的 `out/`。來源 WebKit desktop／iPhone 模擬 52 項仍執行中，尚未列為通過。這項額外準備時驗收不改變一般 Hub artifact 流程：Hub job 本身仍不下載私有來源或假稱重跑其完整跨引擎套件。
+準備階段另以已授權來源套件，對**同一份實際 combined Hub 輸出**執行 Chromium 與 WebKit，合計 **104／104 通過，零 fail、skip、retry**，不是改測來源自己的 `out/`：
+
+| 額外準備驗收 | 實際結果 |
+| --- | --- |
+| Chromium 156.0.8078.79 | desktop 1440×1000、mobile 390×844；52／52 通過，42.8 秒；報告 `/tmp/xk-transport-publication-20261127/qa-chromium` |
+| WebKit 27.2 | desktop 1440×1000、iPhone 13 模擬 viewport 390×664／screen 390×844；52／52 通過，55.1 秒；報告 `/tmp/xk-transport-publication-20261127/qa-webkit` |
+
+完整識別、實際命令與產物 manifest hash 記錄於 `/tmp/xk-transport-publication-20261127/qa-result.json`。套件未修改，sandbox 與 TLS 驗證未停用；WebKit 沿用既有 `/tmp` 函式庫與 host 預檢設定。Firefox 沒有在本機重跑，其證據仍是相同 runtime／tests 的來源 CI `45983443767`，不宣稱本機 Firefox 或實體 Safari／iPhone／VoiceOver 已驗收。
+
+這項額外準備時驗收不改變一般 Hub artifact 流程：Hub job 本身仍不下載私有來源或假稱重跑其完整跨引擎套件。
+
+完整 Hub Node suite 亦已執行 `env -u GH_TOKEN -u GITHUB_TOKEN node --test --test-isolation=none tests/*.test.mjs`，**260／260 通過（18.34 秒）**，零 fail、skip、cancel 或 todo。Hub 是 Node.js 腳本專案，未配置獨立 lint／TypeScript 指令，沒有虛構執行結果；來源 CI `38a9be4` 已包含 lint／typecheck，且 `frontend/` 與 `tests/` 均與候選 `90a33ad` 同樹。
 
 ## 完整發布與線上證據
 
@@ -92,7 +103,7 @@ Hub-owned 報告位於 `/tmp/xk-transport-publication-20261127/hub-transport-rep
 | --- | --- |
 | 公開 ZIP 獨立下載、hash／manifest／審查 ZIP bytes 比對 | 通過；正常 TLS，ZIP／manifest 皆 HTTP 200，bytes、digest、52 檔 inventory 與 manifest 識別均匹配 |
 | 固定 publisher focused tests | 61 項通過；包含 selector 及其相關負向情境 |
-| publication focused tests | 28 項通過；完整 Hub suite 仍待補記 |
+| publication focused tests | 28 項通過；完整 Hub suite 另列如下 |
 | 22 站完整 Hub 建置 | 通過，exit 0；本輪基準 `28837f6`，移除 GitHub API tokens 執行 |
 | 實際 combined-output transport smoke | 通過；52 檔 runtime byte 比對、10 組 route／width 與兩寬度詢價 journeys |
 | 來源完整套件對 actual combined 輸出 | Chromium 52／52（42.8 秒）、WebKit 52／52（55.1 秒），共 104／104，零失敗、skip、retry；Chromium 156.0.8078.79：1440×1000／390×844；WebKit 27.2：1440×1000／iPhone viewport 390×664 |
