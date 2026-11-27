@@ -14,18 +14,18 @@ Preparation date: 2026-11-27. **Prepared; the replacement is not yet live.** Thi
 | Build environment | `NEXT_PUBLIC_SITE_URL=https://showcase.xplorekaleidoscope.com`, `NEXT_PUBLIC_SHOWCASE_BASE_PATH=/hongjia-brand` |
 | Reviewed ZIP | `hongjia-brand-static.zip`, 1,395,826 bytes; 54 regular files, 2,065,121 bytes expanded |
 | ZIP SHA-256 | `b9487e5ca85ee8ce24435fd21c0633805b8811f5fbf39316ff9d61992ae1d039` |
-| Planned Release | `hongjia-brand-edc4022-v1`; not uploaded yet |
-| Planned public ZIP | `https://github.com/xk2022/xk-website-showcase/releases/download/hongjia-brand-edc4022-v1/hongjia-brand-static.zip`; not available until upload succeeds |
+| Published Release | `hongjia-brand-edc4022-v1`; compiled ZIP and manifest publicly available |
+| Public ZIP | `https://github.com/xk2022/xk-website-showcase/releases/download/hongjia-brand-edc4022-v1/hongjia-brand-static.zip` |
 | Fresh preparation checks | Production-path build, 18 Chromium checks, safe ZIP extraction and four-route metadata/resource validation passed |
-| Publisher validation | 26 focused publisher tests and all 224 Hub unit tests passed; independent fixed-scope code review completed |
+| Publisher validation | Initial 26 focused publisher tests and final merged 229 Hub unit tests passed; independent fixed-scope code review completed |
 | Isolated upload | [45976852488](https://github.com/xk2022/xk-website-showcase/actions/runs/45976852488), success; helper commit `8dc506e55941fea0533b241b6decf036868bb924`; normal resolve/build/Pages skipped |
 | Independent delivery check | Public ZIP downloaded again: exact 1,395,826 bytes and SHA-256 match; public manifest confirms source, helper commit and run |
-| Local complete integration | 22 sites built from candidate base `876dce4`; transport compared 49 runtime files and passed 10 fresh route/width checks; Hongjia passed 18 Chromium checks against actual combined output |
-| Registry / Pages / live verification | Not yet promoted or published |
+| Local complete integration | 22 sites built from candidate base `876dce4`; transport compared 51 runtime files and passed 10 fresh route/width checks; Hongjia passed 18 Chromium checks against actual combined output |
+| Registry / Pages / live verification | Candidate prepared; requires complete PR CI, merge and guarded Pages publication |
 
 The source change aligns the Brand repository with the common website layout: frontend package, lockfile, configuration and assets in `frontend/`; shared browser tests and documentation remain at the repository root. It preserves the existing application and brand imagery. This publication prepares a new static export from that exact merged source rather than assuming a source merge changes the preserved public snapshot.
 
-Preparation produced this deterministic ZIP from a clean exact-source checkout: `frontend/out/` contents start at the archive root, including `index.html`, without an enclosing output directory. The inventory found no symlinks, source files, source maps, server bundles, workspace paths or credential-pattern matches. Browser JS/CSS, images, fonts, Next.js RSC text payloads and public font license files are intentional runtime output. Fresh Chromium and Hub validator results will be recorded separately when complete.
+Preparation produced this deterministic ZIP from a clean exact-source checkout: `frontend/out/` contents start at the archive root, including `index.html`, without an enclosing output directory. The inventory found no symlinks, source files, source maps, server bundles, workspace paths or credential-pattern matches. Browser JS/CSS, images, fonts, Next.js RSC text payloads and public font license files are intentional runtime output. Fresh Chromium and Hub validator results are recorded in the preparation and local integration rows above; public Pages verification remains separate.
 
 Company guidance was checked at `76252e621ecb5c508494b49d4cd1eabd340b7e81`: the [website README standard](https://github.com/xk2022/xplore-kaleidoscope/blob/76252e621ecb5c508494b49d4cd1eabd340b7e81/06_engineering/website-project-readme-template.md) requires the common root and separate source/central publication responsibilities; [development workflow](https://github.com/xk2022/xplore-kaleidoscope/blob/76252e621ecb5c508494b49d4cd1eabd340b7e81/06_engineering/development-workflow.md) and [testing and release](https://github.com/xk2022/xplore-kaleidoscope/blob/76252e621ecb5c508494b49d4cd1eabd340b7e81/06_engineering/testing-and-release.md) require exact-source checks and actual release evidence. Brand classification remains `xk-brand-`, R01 website service and P01 website development / Brand Website; this does not adopt the LP W01 code.
 
@@ -48,3 +48,5 @@ After the complete Hub PR checks and guarded main publication succeed, record th
 Until that evidence is added, this document records preparation only. A failed post-deploy check reports failure; it does not silently restore the prior Pages deployment. Restore a previously reviewed tuple and use the normal guarded publication process for rollback.
 
 The first upload request, [45975855109](https://github.com/xk2022/xk-website-showcase/actions/runs/45975855109), was cancelled while pending by the shared publication queue, before any job or Release write. The successful retry above is the delivery evidence. Local integration used the reviewed ZIP through the existing digest mirror before public upload; the temporary untracked mirror was removed. The later independent public download verifies delivery separately. Other accepted Hub updates are preserved when this branch is synchronized before promotion.
+
+Before PR, the branch also incorporated accepted March and Chengce updates from main `1782237`; the merged 229-test suite passed. The local complete build above remains labeled with its earlier accepted input baseline, while final PR CI builds the current combined registry again.
