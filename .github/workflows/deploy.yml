@@ -20,7 +20,9 @@ on:
           - carpentry
           - little-me-owner-demo
           - rui-cafe
+          - qiangang-windows
           - rotaract
+          - honest
           - hongjia-brand
         default: shengfengyang
       static_artifact_blob:
