@@ -18,7 +18,9 @@ Preparation date: 2026-11-27. **Prepared; the replacement is not yet live.** Thi
 | Planned public ZIP | `https://github.com/xk2022/xk-website-showcase/releases/download/hongjia-brand-edc4022-v1/hongjia-brand-static.zip`; not available until upload succeeds |
 | Fresh preparation checks | Production-path build, 18 Chromium checks, safe ZIP extraction and four-route metadata/resource validation passed |
 | Publisher validation | 26 focused publisher tests and all 224 Hub unit tests passed; independent fixed-scope code review completed |
-| Isolated upload | Not yet run |
+| Isolated upload | [45976852488](https://github.com/xk2022/xk-website-showcase/actions/runs/45976852488), success; helper commit `8dc506e55941fea0533b241b6decf036868bb924`; normal resolve/build/Pages skipped |
+| Independent delivery check | Public ZIP downloaded again: exact 1,395,826 bytes and SHA-256 match; public manifest confirms source, helper commit and run |
+| Local complete integration | 22 sites built from candidate base `876dce4`; transport compared 49 runtime files and passed 10 fresh route/width checks; Hongjia passed 18 Chromium checks against actual combined output |
 | Registry / Pages / live verification | Not yet promoted or published |
 
 The source change aligns the Brand repository with the common website layout: frontend package, lockfile, configuration and assets in `frontend/`; shared browser tests and documentation remain at the repository root. It preserves the existing application and brand imagery. This publication prepares a new static export from that exact merged source rather than assuming a source merge changes the preserved public snapshot.
@@ -44,3 +46,5 @@ The retained rollback tuple uses source/ref `5ad9300098b11c3e1b5ca22b7d8f39afaa5
 After the complete Hub PR checks and guarded main publication succeed, record the actual Hub runtime SHA, Pages workflow and resolved manifest. Public verification must match the promoted source/artifact tuple and check all four routes, page metadata, images, fonts, scripts and styles. Browser evidence should separately identify desktop/mobile scope and the three journeys: home to personal gifting, home to corporate inquiry and copying, journal to its matching IG original. Visitors still send IG messages themselves; copying is not an order or a delivered inquiry.
 
 Until that evidence is added, this document records preparation only. A failed post-deploy check reports failure; it does not silently restore the prior Pages deployment. Restore a previously reviewed tuple and use the normal guarded publication process for rollback.
+
+The first upload request, [45975855109](https://github.com/xk2022/xk-website-showcase/actions/runs/45975855109), was cancelled while pending by the shared publication queue, before any job or Release write. The successful retry above is the delivery evidence. Local integration used the reviewed ZIP through the existing digest mirror before public upload; the temporary untracked mirror was removed. The later independent public download verifies delivery separately. Other accepted Hub updates are preserved when this branch is synchronized before promotion.
