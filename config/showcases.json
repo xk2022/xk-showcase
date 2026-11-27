@@ -187,7 +187,7 @@
     "name": "隆通物流實業社",
     "category": "物流需求整理",
     "repository": "xk2022/xk-lp-longtong-logistics",
-    "ref": "50ca189d9e87f31af5d02c7a8b340748bb32b5b0",
+    "ref": "af43789eba69494f93be17e108880c8acbf524e5",
     "env": {
       "PAGES_EXPORT": "1",
       "SITE_URL": "https://showcase.xplorekaleidoscope.com/longtong-logistics/"
@@ -195,9 +195,9 @@
     "brand": "隆通物流",
     "purpose": "整理理貨包裝、批次數量與作業需求。",
     "staticArtifact": {
-      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/preserved-showcase-45564113822-v1/longtong-logistics-static.zip",
-      "sha256": "57e8a4d43d9374fc7673fede4416b1403fd68cb0ea6c310fc1689a8bba491f08",
-      "sourceSha": "50ca189d9e87f31af5d02c7a8b340748bb32b5b0"
+      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/longtong-logistics-af43789-v1/longtong-logistics-static.zip",
+      "sha256": "50e15ce69cf8750409ef3d3c42435be7f4ea383525bbb7368c971cec60d671d0",
+      "sourceSha": "af43789eba69494f93be17e108880c8acbf524e5"
     }
   },
   {

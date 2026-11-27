@@ -59,6 +59,12 @@ const projects = {
     archiveName: 'shengfengyang-static.zip', name: '昇豐陽食品｜靜態提案',
     policy: { indexable: false, listed: false },
   },
+  'longtong-logistics': {
+    sourceRepository: 'xk2022/xk-lp-longtong-logistics',
+    archiveName: 'longtong-logistics-static.zip', name: '隆通物流實業社｜批次需求整理',
+    // Keep the registered Next export and sitemap; source HTML retains noindex.
+    policy: { framework: 'next' },
+  },
   'guanghai-software': {
     sourceRepository: 'xk2022/xk-lp-guanghai-software',
     archiveName: 'guanghai-software-static.zip', name: '廣海軟體有限公司｜企業軟體需求整理',

@@ -26,6 +26,9 @@ const esanSourceRepository = 'xk2022/xk-lp-esan-interior';
 const chengceTag = 'consulting-chengce-aaaaaaa-v1';
 const chengceZipUrl = `https://github.com/${repository}/releases/download/${chengceTag}/consulting-chengce-static.zip`;
 const chengceSourceRepository = 'xk2022/xk-lp-consulting-chengce';
+const longtongTag = 'longtong-logistics-aaaaaaa-v1';
+const longtongZipUrl = `https://github.com/${repository}/releases/download/${longtongTag}/longtong-logistics-static.zip`;
+const longtongSourceRepository = 'xk2022/xk-lp-longtong-logistics';
 const taiyangTag = 'taiyang-logistics-aaaaaaa-v1';
 const taiyangZipUrl = `https://github.com/${repository}/releases/download/${taiyangTag}/taiyang-logistics-static.zip`;
 const taiyangSourceRepository = 'xk2022/xk-lp-taiyang-logistics';
@@ -119,6 +122,16 @@ function hongjiaArchive(overrides = {}) {
   return execFileSync('python3', ['-c', pythonZip], { input: JSON.stringify(entries), maxBuffer: 5 * 1024 * 1024 });
 }
 
+function longtongArchive(overrides = {}) {
+  const entries = {
+    'index.html': `<html><head><meta name="robots" content="noindex,nofollow"><link rel="canonical" href="${origin}/longtong-logistics/"></head><body><h1>隆通物流實業社</h1><script src="/longtong-logistics/_next/static/app.js"></script></body></html>`,
+    '_next/static/app.js': '/* reviewed public browser output */',
+    'sitemap.xml': `<urlset><url><loc>${origin}/longtong-logistics/</loc></url></urlset>`,
+    ...overrides,
+  };
+  return execFileSync('python3', ['-c', pythonZip], { input: JSON.stringify(entries), maxBuffer: 5 * 1024 * 1024 });
+}
+
 function environment(bytes) {
   return {
     INPUT_BLOB_SHA: createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex'),
@@ -174,6 +187,7 @@ function mock(bytes, { existing, uploadStatus = 201, blobOverride = {}, publicBy
   };
 }
 function release(env, project = 'shengfengyang') {
+  if (project === 'longtong-logistics') return { tag_name: longtongTag, draft: false, body: JSON.stringify({ sourceRepository: longtongSourceRepository, sourceSha, sha256: env.INPUT_SHA256 }), assets: [{ name: 'longtong-logistics-static.zip' }, { name: 'release-manifest.json' }] };
   if (project === 'taiyang-logistics') return { tag_name: taiyangTag, draft: false, body: JSON.stringify({ sourceRepository: taiyangSourceRepository, sourceSha, sha256: env.INPUT_SHA256 }), assets: [{ name: 'taiyang-logistics-static.zip' }, { name: 'release-manifest.json' }] };
   const carpentry = project === 'carpentry';
   if (project === 'consulting-chengce') return { tag_name: chengceTag, draft: false, body: JSON.stringify({ sourceRepository: chengceSourceRepository, sourceSha, sha256: env.INPUT_SHA256 }), assets: [{ name: 'consulting-chengce-static.zip' }, { name: 'release-manifest.json' }] };
@@ -190,12 +204,95 @@ function assertNoPrivateTemplateSourceCalls(calls) {
   assert.ok(authenticated.every(({ url }) => ['api.github.com', 'uploads.github.com'].includes(url.hostname) && url.pathname.startsWith(`/repos/${repository}/`)));
 }
 
+test('Longtong publishes its fixed private source identity and reviewed Next export without source API access', async () => {
+  const bytes = longtongArchive();
+  const service = mock(bytes, { project: 'longtong-logistics' });
+  assert.deepEqual(await publishStaticArtifact(service), { tag: longtongTag, url: longtongZipUrl, sourceSha, sha256: service.env.INPUT_SHA256, reused: false });
+  const mutations = writes(service.calls);
+  assert.deepEqual(mutations.map(call => `${call.url.hostname}:${call.options.method}`), ['api.github.com:POST', 'uploads.github.com:POST', 'uploads.github.com:POST', 'api.github.com:PATCH']);
+  const created = JSON.parse(mutations[0].options.body);
+  assert.equal(created.tag_name, longtongTag);
+  assert.equal(created.name, '隆通物流實業社｜批次需求整理 aaaaaaa');
+  const manifest = JSON.parse(mutations[2].options.body);
+  assert.deepEqual(manifest, JSON.parse(created.body));
+  assert.equal(manifest.sourceRepository, longtongSourceRepository);
+  assert.equal(manifest.sourceSha, sourceSha);
+  assert.equal(manifest.sha256, service.env.INPUT_SHA256);
+  assert.equal(manifest.staticOnly, true);
+  assert.match(manifest.verification, /does not query private source CI/);
+  assert.deepEqual(mutations.filter(call => call.url.hostname === 'uploads.github.com').map(call => call.url.searchParams.get('name')), ['longtong-logistics-static.zip', 'release-manifest.json']);
+  assert.deepEqual(mutations[1].options.body, bytes);
+  assert.equal(service.calls.some(({ url }) => url.pathname.startsWith(`/repos/${longtongSourceRepository}/`)), false);
+  assert.ok(service.calls.filter(({ options }) => options.headers?.Authorization).every(({ url }) => ['api.github.com', 'uploads.github.com'].includes(url.hostname) && url.pathname.startsWith(`/repos/${repository}/`)));
+});
+
+test('Longtong rejects another case, old origin, incorrect prefix, cross-case assets and missing sitemap before Release access', async () => {
+  const valid = `<html><head><meta name="robots" content="noindex,nofollow"><link rel="canonical" href="${origin}/longtong-logistics/"></head><body><h1>隆通物流實業社</h1><script src="/longtong-logistics/_next/static/app.js"></script></body></html>`;
+  for (const bytes of [
+    carpentryArchive(),
+    longtongArchive({ 'index.html': valid.replace(`${origin}/longtong-logistics/`, 'https://longtong.xplorekaleidoscope.com/') }),
+    longtongArchive({ 'index.html': valid.replace('src="/longtong-logistics/_next/', 'src="/_next/') }),
+    longtongArchive({ 'index.html': valid.replace('</body>', '<img src="/carpentry/image.jpg"></body>') }),
+    longtongArchive({ 'sitemap.xml': undefined }),
+  ]) {
+    const service = mock(bytes, { project: 'longtong-logistics' });
+    await assert.rejects(publishStaticArtifact(service));
+    assert.equal(writes(service.calls).length, 0);
+    assert.equal(service.calls.some(call => call.url.pathname.includes('/releases')), false);
+  }
+});
+
+test('a matching Longtong release revalidates public bytes and is reused without writes', async () => {
+  const bytes = longtongArchive();
+  const service = mock(bytes, { project: 'longtong-logistics', existing: release(environment(bytes), 'longtong-logistics') });
+  const result = await publishStaticArtifact(service);
+  assert.equal(result.reused, true);
+  assert.equal(result.url, longtongZipUrl);
+  assert.equal(writes(service.calls).length, 0);
+  assert.equal(service.calls.filter(call => call.url.hostname === 'github.com').length, 1);
+  assert.equal(service.calls.some(({ url }) => url.pathname.startsWith(`/repos/${longtongSourceRepository}/`)), false);
+});
+
+test('Longtong does not overwrite releases with changed provenance, digest, draft state or public bytes', async () => {
+  const bytes = longtongArchive();
+  const env = environment(bytes);
+  for (const change of [
+    { sourceRepository: 'xk2022/xk-showcase-longtong-logistics' },
+    { sourceSha: 'f'.repeat(40) },
+    { sha256: '0'.repeat(64) },
+  ]) {
+    const existing = release(env, 'longtong-logistics');
+    existing.body = JSON.stringify({ ...JSON.parse(existing.body), ...change });
+    const service = mock(bytes, { project: 'longtong-logistics', existing });
+    await assert.rejects(publishStaticArtifact(service));
+    assert.equal(writes(service.calls).length, 0);
+    assert.equal(service.calls.some(call => call.url.hostname === 'github.com'), false);
+  }
+  for (const options of [
+    { existing: { ...release(env, 'longtong-logistics'), draft: true } },
+    { existing: release(env, 'longtong-logistics'), publicBytes: Buffer.from('changed release bytes') },
+  ]) {
+    const service = mock(bytes, { project: 'longtong-logistics', ...options });
+    await assert.rejects(publishStaticArtifact(service));
+    assert.equal(writes(service.calls).length, 0);
+    assert.equal(service.calls.some(call => call.url.searchParams.has('page')), false);
+  }
+});
+
+test('the workflow exposes only the fixed Longtong selector and retains the original default', async () => {
+  const workflow = await readFile(new URL('../.github/workflows/deploy.yml', import.meta.url), 'utf8');
+  const projectInput = workflow.split('      static_artifact_project:')[1].split('      static_artifact_blob:')[0];
+  assert.match(projectInput, /\n          - longtong-logistics\n/);
+  assert.doesNotMatch(projectInput, /\n          - (?:longtong|xk2022\/xk-lp-longtong-logistics)\n/);
+  assert.match(projectInput, /default: shengfengyang/);
+});
+
 test('validates inputs before reading a blob or making any publication request', async () => {
   const env = environment(archive());
   for (const bad of [
     { GITHUB_REPOSITORY: 'outsider/repo' }, { INPUT_BLOB_SHA: '../blob' }, { INPUT_SHA256: 'invalid' },
     { INPUT_SOURCE_SHA: 'f'.repeat(39) }, { GITHUB_SHA: 'not-a-commit' }, { GITHUB_RUN_ID: '123/other' }, { GH_TOKEN: '' },
-    ...['unknown', '__proto__', 'xk2022/xk-lp-carpentry', 'xk2022/xk-template-lp', 'template-lp', 'CARPENTRY', '../carpentry', 'chengce', 'CONSULTING-CHENGCE', '../consulting-chengce', chengceSourceRepository, 'taiyang', 'TAIYANG-LOGISTICS', '../taiyang-logistics', taiyangSourceRepository, 'xk2022/xk-showcase-taiyang-logistics', ''].map(INPUT_PROJECT => ({ INPUT_PROJECT })),
+    ...['unknown', '__proto__', 'xk2022/xk-lp-carpentry', 'xk2022/xk-template-lp', 'template-lp', 'CARPENTRY', '../carpentry', 'chengce', 'CONSULTING-CHENGCE', '../consulting-chengce', chengceSourceRepository, 'longtong', 'LONGTONG-LOGISTICS', '../longtong-logistics', longtongSourceRepository, 'taiyang', 'TAIYANG-LOGISTICS', '../taiyang-logistics', taiyangSourceRepository, 'xk2022/xk-showcase-taiyang-logistics', ''].map(INPUT_PROJECT => ({ INPUT_PROJECT })),
   ]) {
     let called = false;
     await assert.rejects(publishStaticArtifact({ env: { ...env, ...bad }, fetchImpl: async () => { called = true; throw new Error('Must not fetch'); } }));

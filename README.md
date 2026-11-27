@@ -25,6 +25,7 @@ The hub supports Next.js static exports and explicitly configured Vite exports. 
 - [澄策企業顧問工作室](https://showcase.xplorekaleidoscope.com/consulting-chengce/)
 - [千剛實業有限公司](https://showcase.xplorekaleidoscope.com/qiangang-windows/)
 - [序程運輸](https://showcase.xplorekaleidoscope.com/truck-transport/)
+- [隆通物流實業社](https://showcase.xplorekaleidoscope.com/longtong-logistics/)
 - [職人接案 LP Template｜六產業切換](https://showcase.xplorekaleidoscope.com/carpentry/)
 - [蕋咖啡 Rui Café｜非官方品牌網站提案](https://showcase.xplorekaleidoscope.com/rui-cafe/)
 
@@ -33,6 +34,8 @@ The hub supports Next.js static exports and explicitly configured Vite exports. 
 The `carpentry` entry now registers the six-industry export from private source `xk2022/xk-template-lp` and is first in the LP group. It retains `/carpentry/`, with five additional industry pages under that path. The template repository is explicitly classified as LP; this adds no new website category. The other 21 project identities and relative gallery order are preserved. The update is live following [Pages run 45956818639](https://github.com/xk2022/xk-website-showcase/actions/runs/45956818639), whose public verification passed for 22 sites, 74 pages and 287 assets. Independent HTTPS checks passed for all six routes and 31 assets; managed Chrome confirmed desktop switching and the local summary. Exact-source CI covers mobile responsiveness. See [publication evidence](doc/template-lp-publication.md) and [the verification report](doc/template-lp-live-verification.json) for the separate scopes and exact runtime/artifact identities.
 
 ## Build
+
+Longtong's reviewed source-layout refresh uses source `af43789eba69494f93be17e108880c8acbf524e5` and ZIP digest `50e15ce69cf8750409ef3d3c42435be7f4ea383525bbb7368c971cec60d671d0`. Its original main-CI ZIP passed the source suite and is delivered through the fixed `longtong-logistics` publisher; the source stays private. See [Longtong publication](doc/longtong-publication.md) for source CI, independent public-archive verification, rollback and the separate full-Hub publication evidence.
 
 Install Node.js 24, Git and Python 3 (for safe static-archive extraction), then resolve the release inputs before building:
 

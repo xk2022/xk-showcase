@@ -127,6 +127,7 @@ test('static artifact bootstrap isolates same-repository write permission from a
   assert.match(header, /static_artifact_project:[\s\S]*?options:[\s\S]*?- hongjia-birdnest/);
   assert.match(header, /static_artifact_project:[\s\S]*?options:[\s\S]*?- rui-cafe/);
   assert.match(header, /static_artifact_project:[\s\S]*?options:[\s\S]*?- rotaract/);
+  assert.match(header, /static_artifact_project:[\s\S]*?options:[\s\S]*?- longtong-logistics/);
   assert(publish.includes('INPUT_PROJECT: ${{ inputs.static_artifact_project }}'));
   for (const [key, input] of [['INPUT_BLOB_SHA', 'blob'], ['INPUT_SHA256', 'sha256'], ['INPUT_SOURCE_SHA', 'source']]) {
     assert(publish.includes(key + ': ${{ inputs.static_artifact_' + input + ' }}'));
