@@ -207,7 +207,7 @@ export function renderCards(sites) {
 
 const projectType = site => site.repository === 'xk2022/codex-xk-apparel-store' ? 'APP' : (site.repository?.split('/')[1]?.split('-')[1] || 'XK').toUpperCase();
 const typeInfo = {
-  LP: ['一頁式網站', '聚焦單一行銷目標，縮短導購、洽詢與需求整理流程。'],
+  LP: ['一頁式網站', '適用活動入口、精選預購（10品項內）、與工程詢價留單——資訊不發散、轉換更直接！', '專為單一目標打造的快速轉換頁'],
   BRAND: ['品牌形象網站', '建立品牌認知、產品故事與信任。'],
   CORP: ['企業網站與平台', '整理企業服務、商務資訊及服務流程。'],
   APP: ['應用系統', '展示資料管理、日常營運與數位流程。'],
@@ -226,11 +226,11 @@ export function renderGallery(sites) {
     brands.get(brand).push(site);
   }
   const order = key => Object.keys(typeInfo).includes(key) ? Object.keys(typeInfo).indexOf(key) : 99;
-  const section = (title, subtitle, rows) => `<section class="group"><header class="group-heading"><div><h2>${escape(title)} <small class="count">${rows.length} 件</small></h2>${subtitle ? `<p>${escape(subtitle)}</p>` : ''}</div></header><div class="grid">${renderCards(rows)}</div></section>`;
+  const section = (title, subtitle, rows, headline) => `<section class="group"><header class="group-heading"><div><h2>${escape(title)} <small class="count">${rows.length} 件</small></h2>${headline ? `<p class="group-lead">${escape(headline)}</p>` : ''}${subtitle ? `<p>${escape(subtitle)}</p>` : ''}</div></header><div class="grid">${renderCards(rows)}</div></section>`;
   const sortedTypes = [...types].sort(([a], [b]) => order(a) - order(b));
   const sortedBrands = [...brands].filter(([, rows]) => rows.length >= 2).sort(([, a], [, b]) => b.length - a.length);
   const brandSections = sortedBrands.map(([name, rows]) => section(name, [...new Set(rows.map(projectType))].join(' · '), [...rows].sort((a,b) => order(projectType(a)) - order(projectType(b))))).join('');
-  return `<div class="gallery-mode" role="group" aria-label="作品瀏覽方式"><input type="radio" name="gallery-view" id="view-type" checked><input type="radio" name="gallery-view" id="view-brand"><div class="view-controls"><label for="view-type">依網站類型</label><label for="view-brand">依品牌</label><span class="total">全站 ${visible.length} 件展示作品</span></div><div class="type-view">${sortedTypes.map(([key, rows]) => section(`${key}｜${typeInfo[key]?.[0] || '其他網站'}`, typeInfo[key]?.[1], rows)).join('')}</div><div class="brand-view"><p>僅展示擁有兩件以上作品的品牌（共 ${sortedBrands.length} 個品牌）。</p>${brandSections || '<p>目前尚無符合條件的品牌，請切換至依網站類型查看所有作品。</p>'}</div></div>`;
+  return `<div class="gallery-mode" role="group" aria-label="作品瀏覽方式"><input type="radio" name="gallery-view" id="view-type" checked><input type="radio" name="gallery-view" id="view-brand"><div class="view-controls"><label for="view-type">依網站類型</label><label for="view-brand">依品牌</label><span class="total">全站 ${visible.length} 件展示作品</span></div><div class="type-view">${sortedTypes.map(([key, rows]) => section(`${key}｜${typeInfo[key]?.[0] || '其他網站'}`, typeInfo[key]?.[1], rows, typeInfo[key]?.[2])).join('')}</div><div class="brand-view"><p>僅展示擁有兩件以上作品的品牌（共 ${sortedBrands.length} 個品牌）。</p>${brandSections || '<p>目前尚無符合條件的品牌，請切換至依網站類型查看所有作品。</p>'}</div></div>`;
 }
 
 export function renderNotFound(sites) {
