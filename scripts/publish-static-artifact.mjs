@@ -12,11 +12,6 @@ const manifestName = 'release-manifest.json';
 // Publication inputs select only reviewed projects, never arbitrary repository,
 // slug, asset or release names. Omitted INPUT_PROJECT preserves the original job.
 const projects = {
-  'esan-interior': {
-    sourceRepository: 'xk2022/xk-lp-esan-interior',
-    archiveName: 'esan-interior-static.zip', name: '一森室內設計',
-    policy: { framework: 'next' },
-  },
   'taiyang-logistics': {
     sourceRepository: 'xk2022/xk-lp-taiyang-logistics',
     archiveName: 'taiyang-logistics-static.zip', name: '太陽國際物流｜貨櫃陸運需求整理',
@@ -27,6 +22,11 @@ const projects = {
     archiveName: 'consulting-chengce-static.zip', name: '澄策企業顧問工作室',
     // Retain the registered Next export contract, including its sitemap.
     // Preview noindex remains part of the reviewed source HTML.
+    policy: { framework: 'next' },
+  },
+  'esan-interior': {
+    sourceRepository: 'xk2022/xk-lp-esan-interior',
+    archiveName: 'esan-interior-static.zip', name: '一森室內設計',
     policy: { framework: 'next' },
   },
   honest: {

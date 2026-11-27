@@ -17,6 +17,7 @@ on:
         type: choice
         options:
           - shengfengyang
+          - esan-interior
           - hongjia-brand
           - carpentry
           - guanghai-software
@@ -28,7 +29,6 @@ on:
           - consulting-chengce
           - honest
           - taiyang-logistics
-          - esan-interior
         default: shengfengyang
       static_artifact_blob:
         description: 'Optional reviewed static ZIP Git blob SHA; skips website publication'
