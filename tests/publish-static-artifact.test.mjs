@@ -24,6 +24,8 @@ const chengceSourceRepository = 'xk2022/xk-lp-consulting-chengce';
 const taiyangTag = 'taiyang-logistics-aaaaaaa-v1';
 const taiyangZipUrl = `https://github.com/${repository}/releases/download/${taiyangTag}/taiyang-logistics-static.zip`;
 const taiyangSourceRepository = 'xk2022/xk-lp-taiyang-logistics';
+const hongjiaTag = 'hongjia-birdnest-aaaaaaa-v1';
+const hongjiaZipUrl = `https://github.com/${repository}/releases/download/${hongjiaTag}/hongjia-birdnest-static.zip`;
 const pythonZip = String.raw`
 import io, json, sys, zipfile
 buffer = io.BytesIO()
@@ -80,6 +82,17 @@ function taiyangArchive(overrides = {}) {
   };
   return execFileSync('python3', ['-c', pythonZip], { input: JSON.stringify(entries), maxBuffer: 5 * 1024 * 1024 });
 }
+
+function hongjiaArchive(overrides = {}) {
+  const entries = {
+    'index.html': `<html><head><link rel="canonical" href="${origin}/hongjia-birdnest/"></head><body><h1>宏家燕窩</h1><script src="/hongjia-birdnest/_next/static/app.js"></script></body></html>`,
+    '_next/static/app.js': '/* browser output only */',
+    'sitemap.xml': `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${origin}/hongjia-birdnest/</loc></url></urlset>`,
+    ...overrides,
+  };
+  return execFileSync('python3', ['-c', pythonZip], { input: JSON.stringify(entries), maxBuffer: 5 * 1024 * 1024 });
+}
+
 function environment(bytes) {
   return {
     INPUT_BLOB_SHA: createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex'),
@@ -91,8 +104,8 @@ const response = (data, status = 200) => new Response(JSON.stringify(data), { st
 function mock(bytes, { existing, uploadStatus = 201, blobOverride = {}, publicBytes = bytes, project, releasePages, releaseDetail = existing } = {}) {
   const env = environment(bytes);
   if (project !== undefined) env.INPUT_PROJECT = project;
-  const expectedTag = project === 'taiyang-logistics' ? taiyangTag : project === 'consulting-chengce' ? chengceTag : project === 'rotaract' ? rotaractTag : project === 'rui-cafe' ? ruiTag : project === 'carpentry' ? carpentryTag : tag;
-  const expectedZipUrl = project === 'taiyang-logistics' ? taiyangZipUrl : project === 'consulting-chengce' ? chengceZipUrl : project === 'rotaract' ? rotaractZipUrl : project === 'rui-cafe' ? ruiZipUrl : project === 'carpentry' ? carpentryZipUrl : zipUrl;
+  const expectedTag = project === undefined ? tag : `${project}-aaaaaaa-v1`;
+  const expectedZipUrl = project === undefined ? zipUrl : `https://github.com/${repository}/releases/download/${expectedTag}/${project}-static.zip`;
   const calls = [];
   let draft;
   return {
@@ -363,6 +376,38 @@ test('Carpentry publishes the renamed six-industry template source with the same
   assert.deepEqual(mutations[1].options.body, bytes);
   assertNoPrivateTemplateSourceCalls(service.calls);
   assert.equal(service.calls.some(call => /shengfengyang/.test(call.url.pathname)), false);
+});
+
+test('Hongjia LP publishes and reuses only its fixed, indexable Next.js export', async () => {
+  const bytes = hongjiaArchive();
+  const service = mock(bytes, { project: 'hongjia-birdnest' });
+  const { INPUT_SHA256: sha256 } = service.env;
+  const expected = { tag: hongjiaTag, url: hongjiaZipUrl, sourceSha, sha256 };
+  assert.deepEqual(await publishStaticArtifact(service), { ...expected, reused: false });
+
+  const mutations = writes(service.calls);
+  const created = JSON.parse(mutations[0].options.body);
+  const manifest = JSON.parse(created.body);
+  assert.equal(manifest.sourceRepository, 'xk2022/xk-lp-hongjia-birdnest');
+  assert.deepEqual(JSON.parse(mutations[2].options.body), manifest);
+  const assets = mutations.filter(call => call.url.hostname === 'uploads.github.com').map(call => ({ name: call.url.searchParams.get('name') }));
+  assert.deepEqual(assets.map(asset => asset.name), ['hongjia-birdnest-static.zip', 'release-manifest.json']);
+  const existing = { ...created, draft: false, assets };
+  const repeated = mock(bytes, { project: 'hongjia-birdnest', existing });
+  assert.deepEqual(await publishStaticArtifact(repeated), { ...expected, reused: true });
+  assert.equal(writes(repeated.calls).length, 0);
+
+  const draft = mock(bytes, { project: 'hongjia-birdnest', existing: { ...existing, draft: true } });
+  await assert.rejects(publishStaticArtifact(draft), /still a draft/);
+  assert.equal(writes(draft.calls).length, 0);
+});
+
+test('Hongjia LP rejects mismatched case exports and missing sitemaps before release calls', async () => {
+  for (const bytes of [carpentryArchive(), hongjiaArchive({ 'sitemap.xml': undefined })]) {
+    const service = mock(bytes, { project: 'hongjia-birdnest' });
+    await assert.rejects(publishStaticArtifact(service), /Invalid canonical URL|sitemap\.xml/);
+    assert.equal(service.calls.some(call => call.url.pathname.includes('/releases')), false);
+  }
 });
 
 test('a selected project rejects the other project export before reading or writing releases', async () => {
