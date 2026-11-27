@@ -17,7 +17,9 @@ on:
         type: choice
         options:
           - shengfengyang
+          - hongjia-brand
           - carpentry
+          - longtong-logistics
           - guanghai-software
           - hongjia-birdnest
           - little-me-owner-demo
@@ -26,7 +28,7 @@ on:
           - rotaract
           - consulting-chengce
           - honest
-          - longtong-logistics
+          - taiyang-logistics
         default: shengfengyang
       static_artifact_blob:
         description: 'Optional reviewed static ZIP Git blob SHA; skips website publication'

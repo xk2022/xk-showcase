@@ -1,10 +1,10 @@
 import { createHash } from 'node:crypto';
-import { mkdtemp, rm } from 'node:fs/promises';
+import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 import { pathToFileURL } from 'node:url';
 import { materializeStaticArtifact } from './static-artifact.mjs';
-import { validateExport } from './static-export.mjs';
+import { origin, validateExport } from './static-export.mjs';
 
 const repository = 'xk2022/xk-website-showcase';
 const maxZip = 30 * 1024 * 1024;
@@ -12,10 +12,9 @@ const manifestName = 'release-manifest.json';
 // Publication inputs select only reviewed projects, never arbitrary repository,
 // slug, asset or release names. Omitted INPUT_PROJECT preserves the original job.
 const projects = {
-  'longtong-logistics': {
-    sourceRepository: 'xk2022/xk-lp-longtong-logistics',
-    archiveName: 'longtong-logistics-static.zip', name: '隆通物流實業社｜批次需求整理',
-    // Keep the registered Next export and sitemap; source HTML retains noindex.
+  'taiyang-logistics': {
+    sourceRepository: 'xk2022/xk-lp-taiyang-logistics',
+    archiveName: 'taiyang-logistics-static.zip', name: '太陽國際物流｜貨櫃陸運需求整理',
     policy: { framework: 'next' },
   },
   'consulting-chengce': {
@@ -55,6 +54,12 @@ const projects = {
     archiveName: 'shengfengyang-static.zip', name: '昇豐陽食品｜靜態提案',
     policy: { indexable: false, listed: false },
   },
+  'longtong-logistics': {
+    sourceRepository: 'xk2022/xk-lp-longtong-logistics',
+    archiveName: 'longtong-logistics-static.zip', name: '隆通物流實業社｜批次需求整理',
+    // Keep the registered Next export and sitemap; source HTML retains noindex.
+    policy: { framework: 'next' },
+  },
   'guanghai-software': {
     sourceRepository: 'xk2022/xk-lp-guanghai-software',
     archiveName: 'guanghai-software-static.zip', name: '廣海軟體有限公司｜企業軟體需求整理',
@@ -71,7 +76,32 @@ const projects = {
     archiveName: 'carpentry-static.zip', name: '職人產業 LP Template｜六產業靜態展示',
     policy: {},
   },
+  'hongjia-brand': {
+    sourceRepository: 'xk2022/xk-brand-hongjia-birdnest',
+    archiveName: 'hongjia-brand-static.zip', name: '宏家燕窩 Brand｜自主規劃展示',
+    policy: { framework: 'next', indexable: true, listed: true },
+  },
 };
+
+// This selector promotes the existing four-page indexable Brand site only.
+// Preparation source CI stays separately recorded; these checks inspect ZIP bytes.
+async function validateHongjiaBrand(directory) {
+  const home = `${origin}/hongjia-brand/`;
+  const routes = ['', 'brand/', 'gifting/', 'journal/'];
+  const attributes = tag => Object.fromEntries([...tag.matchAll(/([\w-]+)\s*=\s*(["'])(.*?)\2/gs)].map(([, key, , value]) => [key.toLowerCase(), value]));
+  const xml = await readFile(join(directory, 'sitemap.xml'), 'utf8');
+  const locations = [...xml.matchAll(/<loc\b[^>]*>(.*?)<\/loc>/gs)].map(([, value]) => value.trim()).sort();
+  if (JSON.stringify(locations) !== JSON.stringify(routes.map(route => home + route).sort())) throw new Error('Hongjia Brand sitemap must contain exactly its four routes');
+  for (const route of routes) {
+    const html = await readFile(join(directory, route, 'index.html'), 'utf8');
+    const canonical = [...html.matchAll(/<link\b[^>]*>/gi)].map(match => attributes(match[0])).filter(tag => tag.rel?.toLowerCase() === 'canonical');
+    if (canonical.length !== 1 || canonical[0].href !== home + route) throw new Error(`Incorrect Hongjia Brand canonical URL: ${route || '/'}`);
+    const headings = [...html.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)];
+    if (headings.length !== 1 || !headings[0][1].replace(/<[^>]*>/g, '').trim()) throw new Error(`Hongjia Brand requires one nonempty H1: ${route || '/'}`);
+    const robots = [...html.matchAll(/<meta\b[^>]*>/gi)].map(match => attributes(match[0])).filter(tag => tag.name?.toLowerCase() === 'robots');
+    if (robots.some(tag => (tag.content || '').toLowerCase().split(/[\s,]+/).some(token => ['noindex', 'nofollow', 'none'].includes(token)))) throw new Error(`Hongjia Brand must retain its indexable policy: ${route || '/'}`);
+  }
+}
 
 function inputs(env) {
   if (env.GITHUB_REPOSITORY !== repository) throw new Error('Static publication is restricted to the Showcase Hub');
@@ -152,6 +182,7 @@ export async function publishStaticArtifact({ env = process.env, fetchImpl = fet
     // verified bytes. No source code, package lifecycle or private API is run.
     await materializeStaticArtifact(site, local, { fetchImpl: async () => new Response(bytes) });
     await validateExport(local, site);
+    if (input.project === 'hongjia-brand') await validateHongjiaBrand(local);
 
     const generatedManifest = {
       schemaVersion: 1, sourceRepository, sourceSha: input.sourceSha, sha256: input.sha256,
@@ -213,6 +244,7 @@ export async function publishStaticArtifact({ env = process.env, fetchImpl = fet
         const published = join(temporary, 'existing-public-export');
         await materializeStaticArtifact(site, published, { fetchImpl });
         await validateExport(published, site);
+        if (input.project === 'hongjia-brand') await validateHongjiaBrand(published);
         return { tag, url: downloadUrl, sha256: input.sha256, sourceSha: input.sourceSha, reused: true };
       }
     }

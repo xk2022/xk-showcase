@@ -23,6 +23,7 @@ The hub supports Next.js static exports and explicitly configured Vite exports. 
 - [澄策企業顧問工作室](https://showcase.xplorekaleidoscope.com/consulting-chengce/)
 - [千剛實業有限公司](https://showcase.xplorekaleidoscope.com/qiangang-windows/)
 - [序程運輸](https://showcase.xplorekaleidoscope.com/truck-transport/)
+- [隆通物流實業社](https://showcase.xplorekaleidoscope.com/longtong-logistics/)
 - [職人接案 LP Template｜六產業切換](https://showcase.xplorekaleidoscope.com/carpentry/)
 - [蕋咖啡 Rui Café｜非官方品牌網站提案](https://showcase.xplorekaleidoscope.com/rui-cafe/)
 
@@ -77,7 +78,7 @@ The original [independent deployment](https://xk2022.github.io/xk-corp-truck-tra
 
 The workflow freezes every registration before building. Git-built sources can use a branch, release tag or full commit SHA; resolution checks the public metadata and builds fetch those exact SHAs detached. A `staticArtifact` registration instead requires `ref` to equal its full `sourceSha` and freezes a public Hub Release URL plus SHA-256; it does not read private source metadata or execute a source checkout. The resolved plan is retained as the `resolved-sources` artifact, and the public manifest records the exact source SHA and input identity. Use immutable pins for controlled releases.
 
-In Git-built public-source mode, Hongjia Brand requires successful `Verify root static export` and `Verify subpath static export` checks on its resolved SHA. The current reviewed artifact preserves its prior source identity and gate evidence without requerying private CI. Git-built gates remain enforced when that mode is selected; static inputs use their reviewed identity and digest. API credentials are available only while resolving/checking a release and in the deployment guard; source installation and build run in a separate job without API tokens.
+In Git-built public-source mode, Hongjia Brand requires successful `Verify root static export` and `Verify subpath static export` checks on its resolved SHA. Artifact mode retains a reviewed source identity and digest without requerying private CI. The [Hongjia Brand publication record](doc/hongjia-brand-publication.md) tracks the prepared replacement from source `edc4022`, its exact source CI, compiled-output review, isolated upload and subsequent Pages verification; preparation alone does not update the public site. Git-built gates remain enforced when that mode is selected. API credentials are available only while resolving/checking a release and in the deployment guard; source installation and build run in a separate job without API tokens.
 
 Publish runs serialize the whole pipeline. Immediately before deployment, the workflow rejects an obsolete Hub main revision or a release superseded by a newer main run. After Pages deployment it retries public checks with no-cache requests and compares the complete public manifest against the resolved plan. The checks cover homepage visibility, indexing rules, sitemaps, published pages and referenced assets, including fonts in CSS. Hongjia Brand's four required routes and one H1 per page are checked explicitly. A verification failure marks the workflow failed; it does not silently roll back a deployment already accepted by Pages.
 

@@ -44,9 +44,9 @@ ZIP暫存為獨立Hub Git blob `9f02f6421d9ab3a6ab0c6e7e762bffd66093e37b`，沒�
 
 ## 驗證與發布界線
 
-同步最新main後，完整Hub Node套件234／234通過、0skip。首次未清除繼承API憑證的本機執行被既有transport隔離守門拒絕；改用 `env -u GH_TOKEN -u GITHUB_TOKEN` 後通過，沒有修改或降低守門條件。
+以當時整合的main `26f7fc2bda41ca4fe8f1d0c3f02a1ca4b3232e6e` 為基準，完整Hub Node套件234／234通過、0skip。首次未清除繼承API憑證的本機執行被既有transport隔離守門拒絕；改用 `env -u GH_TOKEN -u GITHUB_TOKEN` 後通過，沒有修改或降低守門條件。
 
-完整Hub建置、combined輸出的Longtong互動、transport與Chengce驗收、PR CI、main guarded deployment及公開manifest／路由／資產檢查須分別完成。Release上傳與本機來源驗收不能取代正式發布；最終Hub合併SHA、workflow及公開結果記錄於本次交付PR。
+完整Hub建置、combined輸出的Longtong互動、transport與Chengce驗收、PR CI、main guarded deployment及公開manifest／路由／資產檢查須分別完成。Release上傳與本機來源驗收不能取代正式發布；最終Hub合併SHA、workflow及公開結果記錄於 [交付PR #48](https://github.com/xk2022/xk-website-showcase/pull/48)。
 
 ## 已執行的合併前驗收
 
@@ -56,3 +56,7 @@ ZIP暫存為獨立Hub Git blob `9f02f6421d9ab3a6ab0c6e7e762bffd66093e37b`，沒�
 - Chengce 29項檢查通過，涵蓋375／768／1024／1440px；剪貼簿分支使用其既有明訂的測試替身，不傳送外部表單。
 - transport 51個runtime檔案內容一致，fresh Hub-owned smoke通過；歷史source suite明列REUSED_NOT_RERUN，沒有冒稱重跑Private來源。
 - browser及build程序移除GH_TOKEN／GITHUB_TOKEN；未提交產物、下載ZIP、解析計畫或驗收截圖。
+
+中央其他案例的並行更新會繼續合併保留；本機上述結果代表其當時完整計畫，最終合併前以PR #48最新head的完整Hub CI為準，不沿用過期base的檢查宣稱新整合已通過。
+
+後續同步main `e15adb7f03899819526b9d9d943bc190e167fbe4`，保留Taiyang／Hongjia新契約及全部測試後，以相同token-free指令完整241／241通過（11.67秒）。Longtong的registry tuple仍是唯一相對該main的登錄差異；新整合的全22站建置由最新PR CI再次驗證。

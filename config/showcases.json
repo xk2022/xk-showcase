@@ -93,7 +93,7 @@
     "name": "宏家燕窩 Brand",
     "category": "品牌形象網站",
     "repository": "xk2022/xk-brand-hongjia-birdnest",
-    "ref": "5ad9300098b11c3e1b5ca22b7d8f39afaa578a2a",
+    "ref": "edc4022ea5a6296c38e9c40e4fa8d3bcea1a7482",
     "env": {
       "NEXT_PUBLIC_SITE_URL": "https://showcase.xplorekaleidoscope.com",
       "NEXT_PUBLIC_SHOWCASE_BASE_PATH": "/hongjia-brand"
@@ -101,9 +101,9 @@
     "brand": "宏家燕窩",
     "purpose": "透過品牌故事、產品與送禮內容建立品牌認知。",
     "staticArtifact": {
-      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/preserved-showcase-45564113822-v1/hongjia-brand-static.zip",
-      "sha256": "2274bd50537dd278e116789690b52bc639572b06c032cd071e46c915a8cd2092",
-      "sourceSha": "5ad9300098b11c3e1b5ca22b7d8f39afaa578a2a"
+      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/hongjia-brand-edc4022-v1/hongjia-brand-static.zip",
+      "sha256": "b9487e5ca85ee8ce24435fd21c0633805b8811f5fbf39316ff9d61992ae1d039",
+      "sourceSha": "edc4022ea5a6296c38e9c40e4fa8d3bcea1a7482"
     }
   },
   {
@@ -224,7 +224,7 @@
     "name": "太陽國際物流",
     "category": "貨櫃陸運詢價",
     "repository": "xk2022/xk-lp-taiyang-logistics",
-    "ref": "694968b030adb6755d2e869a4b5181f45b3e79b5",
+    "ref": "43f3ec138d2c4ad1123bfc7ca7944a8fd28810a6",
     "env": {
       "PAGES_EXPORT": "1",
       "NEXT_PUBLIC_SITE_URL": "https://showcase.xplorekaleidoscope.com",
@@ -233,9 +233,9 @@
     "brand": "太陽國際物流",
     "purpose": "整理起訖地、櫃型及貨櫃陸運詢價需求。",
     "staticArtifact": {
-      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/preserved-showcase-45564113822-v1/taiyang-logistics-static.zip",
-      "sha256": "60641ab86c49aa1c301062e50cb0c8e8d1cdfe5ccca2fef4cebf3dad24cd8c91",
-      "sourceSha": "694968b030adb6755d2e869a4b5181f45b3e79b5"
+      "url": "https://github.com/xk2022/xk-website-showcase/releases/download/taiyang-logistics-43f3ec1-v1/taiyang-logistics-static.zip",
+      "sha256": "fe520e0ebe6255ee58c91a524d5e8cfe7c55131b7dfeb40a9bb752e8966a2a97",
+      "sourceSha": "43f3ec138d2c4ad1123bfc7ca7944a8fd28810a6"
     }
   },
   {
