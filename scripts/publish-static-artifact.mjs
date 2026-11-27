@@ -12,6 +12,11 @@ const manifestName = 'release-manifest.json';
 // Publication inputs select only reviewed projects, never arbitrary repository,
 // slug, asset or release names. Omitted INPUT_PROJECT preserves the original job.
 const projects = {
+  'march-tangbao': {
+    sourceRepository: 'xk2022/xk-lp-march-tangbao',
+    archiveName: 'march-tangbao-static.zip', name: '三月手工湯包｜作品集靜態展示',
+    policy: {},
+  },
   rotaract: {
     sourceRepository: 'xk2022/xk-app-rotaract',
     archiveName: 'rotaract-static.zip', name: '扶青萬花筒｜合成資料互動展示',
