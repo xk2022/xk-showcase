@@ -10,8 +10,8 @@ const repository = 'xk2022/xk-website-showcase';
 const sourceSha = 'a'.repeat(40);
 const tag = 'shengfengyang-aaaaaaa-v1';
 const zipUrl = `https://github.com/${repository}/releases/download/${tag}/shengfengyang-static.zip`;
-const hongjiaTag = 'hongjia-brand-aaaaaaa-v1';
-const hongjiaZipUrl = `https://github.com/${repository}/releases/download/${hongjiaTag}/hongjia-brand-static.zip`;
+const hongjiaBrandTag = 'hongjia-brand-aaaaaaa-v1';
+const hongjiaBrandZipUrl = `https://github.com/${repository}/releases/download/${hongjiaBrandTag}/hongjia-brand-static.zip`;
 const carpentryTag = 'carpentry-aaaaaaa-v1';
 const carpentryZipUrl = `https://github.com/${repository}/releases/download/${carpentryTag}/carpentry-static.zip`;
 // selector 與公開子路徑仍是 carpentry，新 Release 的來源身份則是更名後的模板庫。
@@ -48,7 +48,7 @@ function carpentryArchive(overrides = {}) {
   };
   return execFileSync('python3', ['-c', pythonZip], { input: JSON.stringify(entries), maxBuffer: 5 * 1024 * 1024 });
 }
-function hongjiaArchive(overrides = {}, omitted = []) {
+function hongjiaBrandArchive(overrides = {}, omitted = []) {
   const routes = ['', 'brand/', 'gifting/', 'journal/'];
   const entries = Object.fromEntries(routes.map(route => [`${route}index.html`, `<html><head><meta name="robots" content="index,follow"><link rel="canonical" href="${origin}/hongjia-brand/${route}"></head><body><h1>宏家燕窩 Brand</h1><script src="/hongjia-brand/_next/static/app.js"></script></body></html>`]));
   entries['_next/static/app.js'] = '/* compiled browser output, never executed by the publisher */';
@@ -201,12 +201,12 @@ test('the explicit original selector preserves the Shengfengyang release identit
 });
 
 test('Hongjia Brand publishes only its fixed four-route indexable export and exact source manifest', async () => {
-  const service = mock(hongjiaArchive(), { project: 'hongjia-brand' });
-  assert.deepEqual(await publishStaticArtifact(service), { tag: hongjiaTag, url: hongjiaZipUrl, sourceSha, sha256: service.env.INPUT_SHA256, reused: false });
+  const service = mock(hongjiaBrandArchive(), { project: 'hongjia-brand' });
+  assert.deepEqual(await publishStaticArtifact(service), { tag: hongjiaBrandTag, url: hongjiaBrandZipUrl, sourceSha, sha256: service.env.INPUT_SHA256, reused: false });
   const mutations = writes(service.calls);
   assert.deepEqual(mutations.map(call => `${call.url.hostname}:${call.options.method}`), ['api.github.com:POST', 'uploads.github.com:POST', 'uploads.github.com:POST', 'api.github.com:PATCH']);
   const created = JSON.parse(mutations[0].options.body);
-  assert.equal(created.tag_name, hongjiaTag);
+  assert.equal(created.tag_name, hongjiaBrandTag);
   assert.match(created.name, /^宏家燕窩 Brand/);
   const manifest = JSON.parse(created.body);
   assert.equal(manifest.sourceRepository, 'xk2022/xk-brand-hongjia-birdnest');
@@ -223,12 +223,12 @@ test('Hongjia Brand publishes only its fixed four-route indexable export and exa
 test('Hongjia Brand rejects wrong-site, missing-route and changed indexing output before Release access or writes', async () => {
   const canonical = route => `<html><head><meta name="robots" content="index,follow"><link rel="canonical" href="${origin}/hongjia-brand/${route}"></head><body><h1>Brand</h1><script src="/hongjia-brand/_next/static/app.js"></script></body></html>`;
   const candidates = [
-    hongjiaArchive({ 'index.html': canonical('').replace('/hongjia-brand/', '/another-brand/') }),
-    hongjiaArchive({ 'brand/index.html': canonical('') }),
-    hongjiaArchive({}, ['gifting/index.html']),
-    hongjiaArchive({ 'sitemap.xml': `<urlset><url><loc>${origin}/hongjia-brand/</loc></url></urlset>` }),
-    hongjiaArchive({ 'journal/index.html': canonical('journal/').replace('index,follow', 'noindex,nofollow') }),
-    hongjiaArchive({ 'gifting/index.html': canonical('gifting/').replace('<h1>Brand</h1>', '') }),
+    hongjiaBrandArchive({ 'index.html': canonical('').replace('/hongjia-brand/', '/another-brand/') }),
+    hongjiaBrandArchive({ 'brand/index.html': canonical('') }),
+    hongjiaBrandArchive({}, ['gifting/index.html']),
+    hongjiaBrandArchive({ 'sitemap.xml': `<urlset><url><loc>${origin}/hongjia-brand/</loc></url></urlset>` }),
+    hongjiaBrandArchive({ 'journal/index.html': canonical('journal/').replace('index,follow', 'noindex,nofollow') }),
+    hongjiaBrandArchive({ 'gifting/index.html': canonical('gifting/').replace('<h1>Brand</h1>', '') }),
   ];
   for (const bytes of candidates) {
     const service = mock(bytes, { project: 'hongjia-brand' });

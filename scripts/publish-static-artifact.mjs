@@ -12,11 +12,6 @@ const manifestName = 'release-manifest.json';
 // Publication inputs select only reviewed projects, never arbitrary repository,
 // slug, asset or release names. Omitted INPUT_PROJECT preserves the original job.
 const projects = {
-  'hongjia-brand': {
-    sourceRepository: 'xk2022/xk-brand-hongjia-birdnest',
-    archiveName: 'hongjia-brand-static.zip', name: '宏家燕窩 Brand｜自主規劃展示',
-    policy: { framework: 'next', indexable: true, listed: true },
-  },
   'consulting-chengce': {
     sourceRepository: 'xk2022/xk-lp-consulting-chengce',
     archiveName: 'consulting-chengce-static.zip', name: '澄策企業顧問工作室',
@@ -69,6 +64,11 @@ const projects = {
     sourceRepository: 'xk2022/xk-template-lp',
     archiveName: 'carpentry-static.zip', name: '職人產業 LP Template｜六產業靜態展示',
     policy: {},
+  },
+  'hongjia-brand': {
+    sourceRepository: 'xk2022/xk-brand-hongjia-birdnest',
+    archiveName: 'hongjia-brand-static.zip', name: '宏家燕窩 Brand｜自主規劃展示',
+    policy: { framework: 'next', indexable: true, listed: true },
   },
 };
 

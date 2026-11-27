@@ -17,7 +17,7 @@ Preparation date: 2026-11-27. **Prepared; the replacement is not yet live.** Thi
 | Published Release | `hongjia-brand-edc4022-v1`; compiled ZIP and manifest publicly available |
 | Public ZIP | `https://github.com/xk2022/xk-website-showcase/releases/download/hongjia-brand-edc4022-v1/hongjia-brand-static.zip` |
 | Fresh preparation checks | Production-path build, 18 Chromium checks, safe ZIP extraction and four-route metadata/resource validation passed |
-| Publisher validation | Initial 26 focused publisher tests and final merged 229 Hub unit tests passed; independent fixed-scope code review completed |
+| Publisher validation | Initial 26 focused publisher tests and final merged 231 Hub unit tests passed; independent fixed-scope code review completed |
 | Isolated upload | [45976852488](https://github.com/xk2022/xk-website-showcase/actions/runs/45976852488), success; helper commit `8dc506e55941fea0533b241b6decf036868bb924`; normal resolve/build/Pages skipped |
 | Independent delivery check | Public ZIP downloaded again: exact 1,395,826 bytes and SHA-256 match; public manifest confirms source, helper commit and run |
 | Local complete integration | 22 sites built from candidate base `876dce4`; transport compared 51 runtime files and passed 10 fresh route/width checks; Hongjia passed 18 Chromium checks against actual combined output |
@@ -50,3 +50,5 @@ Until that evidence is added, this document records preparation only. A failed p
 The first upload request, [45975855109](https://github.com/xk2022/xk-website-showcase/actions/runs/45975855109), was cancelled while pending by the shared publication queue, before any job or Release write. The successful retry above is the delivery evidence. Local integration used the reviewed ZIP through the existing digest mirror before public upload; the temporary untracked mirror was removed. The later independent public download verifies delivery separately. Other accepted Hub updates are preserved when this branch is synchronized before promotion.
 
 Before PR, the branch also incorporated accepted March and Chengce updates from main `1782237`; the merged 229-test suite passed. The local complete build above remains labeled with its earlier accepted input baseline, while final PR CI builds the current combined registry again.
+
+Before merge, accepted main `26f7fc2` independently updated the LP. Its registration and tests are retained. Brand fixtures use explicit `hongjiaBrand*` names to avoid colliding with LP fixtures; the shared generic project mock remains intact. All 231 merged unit tests passed. The Brand selector is placed away from common append points to reduce concurrent selector conflicts, with its fixed identity and workflow permissions unchanged.

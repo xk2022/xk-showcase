@@ -17,6 +17,7 @@ on:
         type: choice
         options:
           - shengfengyang
+          - hongjia-brand
           - carpentry
           - guanghai-software
           - hongjia-birdnest
@@ -26,7 +27,6 @@ on:
           - rotaract
           - consulting-chengce
           - honest
-          - hongjia-brand
         default: shengfengyang
       static_artifact_blob:
         description: 'Optional reviewed static ZIP Git blob SHA; skips website publication'
