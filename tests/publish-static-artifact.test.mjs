@@ -11,6 +11,8 @@ const tag = 'shengfengyang-aaaaaaa-v1';
 const zipUrl = `https://github.com/${repository}/releases/download/${tag}/shengfengyang-static.zip`;
 const carpentryTag = 'carpentry-aaaaaaa-v1';
 const carpentryZipUrl = `https://github.com/${repository}/releases/download/${carpentryTag}/carpentry-static.zip`;
+// selector 與公開子路徑仍是 carpentry，新 Release 的來源身份則是更名後的模板庫。
+const templateSourceRepository = 'xk2022/xk-template-lp';
 const ruiTag = 'rui-cafe-aaaaaaa-v1';
 const ruiZipUrl = `https://github.com/${repository}/releases/download/${ruiTag}/rui-cafe-static.zip`;
 const rotaractTag = 'rotaract-aaaaaaa-v1';
@@ -109,16 +111,25 @@ function mock(bytes, { existing, uploadStatus = 201, blobOverride = {}, publicBy
 }
 function release(env, project = 'shengfengyang') {
   const carpentry = project === 'carpentry';
-  return { tag_name: carpentry ? carpentryTag : tag, draft: false, body: JSON.stringify({ sourceRepository: carpentry ? 'xk2022/xk-lp-carpentry' : 'xk2022/xk-brand-shengfengyang', sourceSha, sha256: env.INPUT_SHA256 }), assets: [{ name: carpentry ? 'carpentry-static.zip' : 'shengfengyang-static.zip' }, { name: 'release-manifest.json' }] };
+  return { tag_name: carpentry ? carpentryTag : tag, draft: false, body: JSON.stringify({ sourceRepository: carpentry ? templateSourceRepository : 'xk2022/xk-brand-shengfengyang', sourceSha, sha256: env.INPUT_SHA256 }), assets: [{ name: carpentry ? 'carpentry-static.zip' : 'shengfengyang-static.zip' }, { name: 'release-manifest.json' }] };
 }
 function writes(calls) { return calls.filter(call => ['POST', 'PATCH', 'DELETE'].includes(call.options.method)); }
+
+// 發布只讀 Hub blob 與 Release API；更名不應讓工作流程查詢任何私人來源或來源 CI。
+function assertNoPrivateTemplateSourceCalls(calls) {
+  const sourcePrefixes = [templateSourceRepository, 'xk2022/xk-lp-carpentry'].map(source => `/repos/${source}`);
+  assert.equal(calls.some(({ url }) => url.hostname === 'api.github.com' && sourcePrefixes.some(prefix => url.pathname === prefix || url.pathname.startsWith(prefix + '/'))), false);
+  const authenticated = calls.filter(({ options }) => options.headers?.Authorization);
+  assert.ok(authenticated.length > 0);
+  assert.ok(authenticated.every(({ url }) => ['api.github.com', 'uploads.github.com'].includes(url.hostname) && url.pathname.startsWith(`/repos/${repository}/`)));
+}
 
 test('validates inputs before reading a blob or making any publication request', async () => {
   const env = environment(archive());
   for (const bad of [
     { GITHUB_REPOSITORY: 'outsider/repo' }, { INPUT_BLOB_SHA: '../blob' }, { INPUT_SHA256: 'invalid' },
     { INPUT_SOURCE_SHA: 'f'.repeat(39) }, { GITHUB_SHA: 'not-a-commit' }, { GITHUB_RUN_ID: '123/other' }, { GH_TOKEN: '' },
-    ...['unknown', '__proto__', 'xk2022/xk-lp-carpentry', 'CARPENTRY', '../carpentry', ''].map(INPUT_PROJECT => ({ INPUT_PROJECT })),
+    ...['unknown', '__proto__', 'xk2022/xk-lp-carpentry', 'xk2022/xk-template-lp', 'template-lp', 'CARPENTRY', '../carpentry', ''].map(INPUT_PROJECT => ({ INPUT_PROJECT })),
   ]) {
     let called = false;
     await assert.rejects(publishStaticArtifact({ env: { ...env, ...bad }, fetchImpl: async () => { called = true; throw new Error('Must not fetch'); } }));
@@ -302,7 +313,7 @@ test('Rui Cafe cannot publish an incomplete route or an indexable sitemap', asyn
   }
 });
 
-test('Carpentry publishes its exact asset, source and manifest using the same isolated draft flow', async () => {
+test('Carpentry publishes the renamed six-industry template source with the same fixed asset and isolated draft flow', async () => {
   const bytes = carpentryArchive();
   const service = mock(bytes, { project: 'carpentry' });
   const result = await publishStaticArtifact(service);
@@ -311,10 +322,10 @@ test('Carpentry publishes its exact asset, source and manifest using the same is
   assert.deepEqual(mutations.map(call => `${call.url.hostname}:${call.options.method}`), ['api.github.com:POST', 'uploads.github.com:POST', 'uploads.github.com:POST', 'api.github.com:PATCH']);
   const created = JSON.parse(mutations[0].options.body);
   assert.equal(created.tag_name, carpentryTag);
-  assert.equal(created.name, '木作職人｜靜態展示 aaaaaaa');
+  assert.equal(created.name, '職人產業 LP Template｜六產業靜態展示 aaaaaaa');
   const manifest = JSON.parse(mutations[2].options.body);
   assert.deepEqual(manifest, JSON.parse(created.body));
-  assert.equal(manifest.sourceRepository, 'xk2022/xk-lp-carpentry');
+  assert.equal(manifest.sourceRepository, templateSourceRepository);
   assert.equal(manifest.sourceSha, sourceSha);
   assert.equal(manifest.sha256, service.env.INPUT_SHA256);
   assert.equal(manifest.staticOnly, true);
@@ -323,7 +334,8 @@ test('Carpentry publishes its exact asset, source and manifest using the same is
   assert.equal(manifest.publication.runId, service.env.GITHUB_RUN_ID);
   assert.deepEqual(mutations.filter(call => call.url.hostname === 'uploads.github.com').map(call => call.url.searchParams.get('name')), ['carpentry-static.zip', 'release-manifest.json']);
   assert.deepEqual(mutations[1].options.body, bytes);
-  assert.equal(service.calls.some(call => /xk-lp-carpentry|shengfengyang/.test(call.url.pathname)), false);
+  assertNoPrivateTemplateSourceCalls(service.calls);
+  assert.equal(service.calls.some(call => /shengfengyang/.test(call.url.pathname)), false);
 });
 
 test('a selected project rejects the other project export before reading or writing releases', async () => {
@@ -354,9 +366,25 @@ test('a matching Carpentry public release is revalidated and reused without writ
   assert.equal(result.url, carpentryZipUrl);
   assert.equal(writes(service.calls).length, 0);
   assert.equal(service.calls.filter(call => call.url.hostname === 'github.com').length, 1);
+  assertNoPrivateTemplateSourceCalls(service.calls);
 });
 
-test('Carpentry cannot reuse an existing release whose manifest names another source', async () => {
+test('Carpentry cannot relabel or silently reuse a legacy-source release even when SHA and ZIP match', async () => {
+  const bytes = carpentryArchive();
+  const env = environment(bytes);
+  const existing = release(env, 'carpentry');
+  // 只換回歷史來源，其餘 tag、commit、checksum、asset 均相同，證明來源身份也受比對。
+  existing.body = JSON.stringify({ ...JSON.parse(existing.body), sourceRepository: 'xk2022/xk-lp-carpentry' });
+  const unchanged = JSON.stringify(existing);
+  const service = mock(bytes, { project: 'carpentry', existing });
+  await assert.rejects(publishStaticArtifact(service), /Existing static release differs/);
+  assert.equal(writes(service.calls).length, 0);
+  assert.equal(service.calls.some(call => call.url.hostname === 'github.com'), false);
+  assert.equal(JSON.stringify(existing), unchanged);
+  assertNoPrivateTemplateSourceCalls(service.calls);
+});
+
+test('Carpentry cannot reuse an existing release whose manifest names an unrelated source', async () => {
   const bytes = carpentryArchive();
   const env = environment(bytes);
   const existing = release(env, 'carpentry');

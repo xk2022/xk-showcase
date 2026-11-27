@@ -23,8 +23,12 @@ The hub supports Next.js static exports and explicitly configured Vite exports. 
 - [澄策企業顧問工作室](https://showcase.xplorekaleidoscope.com/consulting-chengce/)
 - [千剛實業有限公司](https://showcase.xplorekaleidoscope.com/qiangang-windows/)
 - [序程運輸](https://showcase.xplorekaleidoscope.com/truck-transport/)
-- [木作職人](https://showcase.xplorekaleidoscope.com/carpentry/)
+- [職人接案 LP Template｜六產業切換](https://showcase.xplorekaleidoscope.com/carpentry/)
 - [蕋咖啡 Rui Café｜非官方品牌網站提案](https://showcase.xplorekaleidoscope.com/rui-cafe/)
+
+## Six-industry LP template
+
+The `carpentry` entry now registers the six-industry export from private source `xk2022/xk-template-lp` and is first in the LP group. It retains `/carpentry/`, with five additional industry pages under that path. The template repository is explicitly classified as LP; this adds no new website category. The other 21 project identities and relative gallery order are preserved. See [preparation and publication evidence](doc/template-lp-publication.md) for the source CI, exact artifact checksum, deployment status and public verification; registration and artifact upload alone are not a live-site result.
 
 ## Build
 

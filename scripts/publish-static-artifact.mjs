@@ -33,8 +33,9 @@ const projects = {
     policy: { indexable: false, listed: false },
   },
   carpentry: {
-    sourceRepository: 'xk2022/xk-lp-carpentry',
-    archiveName: 'carpentry-static.zip', name: '木作職人｜靜態展示',
+    // 新快照使用更名後的模板來源；舊來源 Release 保留原貌，身份不符時不會被改寫或重用。
+    sourceRepository: 'xk2022/xk-template-lp',
+    archiveName: 'carpentry-static.zip', name: '職人產業 LP Template｜六產業靜態展示',
     policy: {},
   },
 };
