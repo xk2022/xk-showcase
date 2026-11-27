@@ -38,7 +38,7 @@ test('gallery groups by type or shared brand, lists purposes, and hides unlisted
   const html = renderGallery([lp, brand, { ...brand, slug: 'hidden', listed: false }, app]);
   assert.match(html, /id="view-type" checked/);
   assert.match(html, /依品牌/);
-  assert.match(html, /LP｜一頁式網站/);
+  assert.match(html, /LP｜快速轉換頁/);
   assert.match(html, /同品牌 <small class="count">2 件/);
   assert.match(html, /引導詢價/);
   assert.match(html, /建立信任/);
@@ -111,7 +111,7 @@ test('legacy apparel repository is a non-indexable APP screenshot, not a separat
   const apparel = { ...app, slug: 'apparel-store', repository: 'xk2022/codex-xk-apparel-store' };
   validateSites([apparel]);
   const html = renderGallery([app, apparel]);
-  assert.match(html, /APP｜應用系統 <small class="count">2 件/);
+  assert.match(html, /APP｜專屬行動應用 <small class="count">2 件/);
   assert.doesNotMatch(html, /XK｜其他網站/);
   assert.match(buildRobots([apparel]), /Disallow: \/apparel-store\//);
   assert.throws(() => validateSites([{ ...apparel, indexable: true }]), /non-indexable/);
@@ -145,7 +145,7 @@ test('Logistics Git-built demo is interactive in the APP gallery and remains exc
   assert.match(cards, /logistics\/_showcase-preview\.jpg/);
   assert.match(cards, /操作互動展示/);
   assert.doesNotMatch(cards, /查看畫面預覽/);
-  assert.match(renderGallery([logisticsDemo]), /APP｜應用系統/);
+  assert.match(renderGallery([logisticsDemo]), /APP｜專屬行動應用/);
   const robots = buildRobots([logisticsDemo]);
   assert.match(robots, /Disallow: \/logistics\//);
   assert.doesNotMatch(robots, /Sitemap:/);
@@ -199,10 +199,25 @@ test('LP service headline and subtitle appear before its cards only in type view
   const lp = { ...app, slug: 'lp-demo', repository: 'xk2022/xk-lp-demo', brand: 'Shared' };
   const html = renderGallery([lp, { ...app, brand: 'Shared' }]);
   const headline = '專為單一目標打造的快速轉換頁';
-  const subtitle = '適用活動入口、精選預購（10品項內）、與工程詢價留單——資訊不發散、轉換更直接！';
-  assert.ok(html.indexOf('LP｜一頁式網站') < html.indexOf(headline));
+  const subtitle = '適用活動入口、精選預購（10品項內）與工程詢價留單——資訊不發散、轉換更直接！';
+  assert.ok(html.indexOf('LP｜快速轉換頁') < html.indexOf(headline));
   assert.ok(html.indexOf(headline) < html.indexOf(subtitle));
   assert.ok(html.indexOf(subtitle) < html.indexOf('href="./lp-demo/"'));
   assert.equal(html.split(headline).length, 2);
   assert.equal(html.split(subtitle).length, 2);
+});
+
+
+test('five service descriptions follow the same heading pattern, with an honest empty AI state', () => {
+  const rows = ['lp', 'brand', 'corp', 'app'].map(type => ({ ...app, slug: type+'-case', repository: 'xk2022/xk-'+type+'-case' }));
+  const html = renderGallery(rows);
+  const labels = ['LP｜快速轉換頁', 'BRAND｜品牌形象網站', 'CORP｜企業商務官網', 'APP｜專屬行動應用', 'AI｜智慧應用解決方案'];
+  assert.ok(labels.every((label, i) => html.includes(label) && (!i || html.indexOf(label) > html.indexOf(labels[i-1]))));
+  assert.equal((html.match(/class="group-lead"/g) || []).length, 5);
+  assert.match(html, /AI｜智慧應用解決方案 <small class="count">0 件/);
+  assert.match(html, /展示案例籌備中/);
+  assert.match(html, /全站 4 件展示作品/);
+  const withAI = renderGallery([...rows, { ...app, slug: 'ai-case', repository: 'xk2022/xk-ai-case' }]);
+  assert.match(withAI, /AI｜智慧應用解決方案 <small class="count">1 件/);
+  assert.doesNotMatch(withAI, /展示案例籌備中/);
 });
