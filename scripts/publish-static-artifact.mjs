@@ -12,6 +12,12 @@ const manifestName = 'release-manifest.json';
 // Publication inputs select only reviewed projects, never arbitrary repository,
 // slug, asset or release names. Omitted INPUT_PROJECT preserves the original job.
 const projects = {
+  'longtong-logistics': {
+    sourceRepository: 'xk2022/xk-lp-longtong-logistics',
+    archiveName: 'longtong-logistics-static.zip', name: '隆通物流實業社｜批次需求整理',
+    // Keep the registered Next export and sitemap; source HTML retains noindex.
+    policy: { framework: 'next' },
+  },
   'consulting-chengce': {
     sourceRepository: 'xk2022/xk-lp-consulting-chengce',
     archiveName: 'consulting-chengce-static.zip', name: '澄策企業顧問工作室',
