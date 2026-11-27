@@ -20,6 +20,9 @@ const ruiTag = 'rui-cafe-aaaaaaa-v1';
 const ruiZipUrl = `https://github.com/${repository}/releases/download/${ruiTag}/rui-cafe-static.zip`;
 const rotaractTag = 'rotaract-aaaaaaa-v1';
 const rotaractZipUrl = `https://github.com/${repository}/releases/download/${rotaractTag}/rotaract-static.zip`;
+const esanTag = 'esan-interior-aaaaaaa-v1';
+const esanZipUrl = `https://github.com/${repository}/releases/download/${esanTag}/esan-interior-static.zip`;
+const esanSourceRepository = 'xk2022/xk-lp-esan-interior';
 const chengceTag = 'consulting-chengce-aaaaaaa-v1';
 const chengceZipUrl = `https://github.com/${repository}/releases/download/${chengceTag}/consulting-chengce-static.zip`;
 const chengceSourceRepository = 'xk2022/xk-lp-consulting-chengce';
@@ -74,6 +77,18 @@ function rotaractArchive(overrides = {}) {
     ...overrides,
   };
   return execFileSync('python3', ['-c', pythonZip], { input: JSON.stringify(entries), maxBuffer: 5 * 1024 * 1024 });
+}
+function esanArchive(overrides = {}) {
+  const entries = {
+    'index.html': `<html><head><meta name="robots" content="noindex,nofollow"><link rel="canonical" href="${origin}/esan-interior/"></head><body><h1>一森室內設計</h1><script src="/esan-interior/_next/static/app.js"></script></body></html>`,
+    '_next/static/app.js': '/* reviewed public browser output */',
+    'sitemap.xml': `<urlset><url><loc>${origin}/esan-interior/</loc></url></urlset>`,
+    ...overrides,
+  };
+  return execFileSync('python3', ['-c', pythonZip], { input: JSON.stringify(entries), maxBuffer: 5 * 1024 * 1024 });
+}
+function esanRelease(env) {
+  return { tag_name: esanTag, draft: false, body: JSON.stringify({ sourceRepository: esanSourceRepository, sourceSha, sha256: env.INPUT_SHA256 }), assets: [{ name: 'esan-interior-static.zip' }, { name: 'release-manifest.json' }] };
 }
 function chengceArchive(overrides = {}) {
   const entries = {
@@ -587,6 +602,72 @@ test('publishes a valid multi-MiB ZIP through Git blob decoding and full static 
   const result = await publishStaticArtifact(service);
   assert.equal(result.reused, false);
   assert.equal(writes(service.calls).length, 4);
+});
+
+test('Esan publishes only its fixed source, subpath and archive with a provenance manifest', async () => {
+  const bytes = esanArchive();
+  const service = mock(bytes, { project: 'esan-interior' });
+  assert.deepEqual(await publishStaticArtifact(service), { tag: esanTag, url: esanZipUrl, sourceSha, sha256: service.env.INPUT_SHA256, reused: false });
+  const mutations = writes(service.calls);
+  assert.deepEqual(mutations.map(call => `${call.url.hostname}:${call.options.method}`), ['api.github.com:POST', 'uploads.github.com:POST', 'uploads.github.com:POST', 'api.github.com:PATCH']);
+  const created = JSON.parse(mutations[0].options.body);
+  assert.equal(created.tag_name, esanTag);
+  assert.equal(created.name, '一森室內設計 aaaaaaa');
+  const manifest = JSON.parse(mutations[2].options.body);
+  assert.deepEqual(manifest, JSON.parse(created.body));
+  assert.equal(manifest.sourceRepository, esanSourceRepository);
+  assert.equal(manifest.sourceSha, sourceSha);
+  assert.equal(manifest.sha256, service.env.INPUT_SHA256);
+  assert.equal(manifest.staticOnly, true);
+  assert.match(manifest.verification, /does not query private source CI/);
+  assert.deepEqual(mutations.filter(call => call.url.hostname === 'uploads.github.com').map(call => call.url.searchParams.get('name')), ['esan-interior-static.zip', 'release-manifest.json']);
+  assert.deepEqual(mutations[1].options.body, bytes);
+  assert.equal(service.calls.some(({ url }) => url.pathname.startsWith(`/repos/${esanSourceRepository}/`)), false);
+  assert.ok(service.calls.filter(({ options }) => options.headers?.Authorization).every(({ url }) => ['api.github.com', 'uploads.github.com'].includes(url.hostname) && url.pathname.startsWith(`/repos/${repository}/`)));
+});
+
+test('Esan rejects other-case exports, missing sitemap and escaping assets before release access', async () => {
+  for (const bytes of [
+    chengceArchive(),
+    esanArchive({ 'sitemap.xml': undefined }),
+    esanArchive({ 'index.html': `<html><head><link rel="canonical" href="${origin}/esan-interior/"></head><body><h1>一森</h1><script src="/esan-interior/_next/static/app.js"></script><img src="/carpentry/image.jpg"></body></html>` }),
+  ]) {
+    const service = mock(bytes, { project: 'esan-interior' });
+    await assert.rejects(publishStaticArtifact(service));
+    assert.equal(writes(service.calls).length, 0);
+    assert.equal(service.calls.some(call => call.url.pathname.includes('/releases')), false);
+  }
+});
+
+test('a matching Esan public release is revalidated and reused without writes', async () => {
+  const bytes = esanArchive();
+  const service = mock(bytes, { project: 'esan-interior', existing: esanRelease(environment(bytes)) });
+  const result = await publishStaticArtifact(service);
+  assert.equal(result.reused, true);
+  assert.equal(result.url, esanZipUrl);
+  assert.equal(writes(service.calls).length, 0);
+  assert.equal(service.calls.filter(call => call.url.hostname === 'github.com').length, 1);
+});
+
+test('Esan refuses changed source provenance and drafts without borrowing Rotaract recovery', async () => {
+  const bytes = esanArchive();
+  const env = environment(bytes);
+  const mismatched = esanRelease(env);
+  mismatched.body = JSON.stringify({ ...JSON.parse(mismatched.body), sourceRepository: chengceSourceRepository });
+  for (const existing of [mismatched, { ...esanRelease(env), draft: true }]) {
+    const service = mock(bytes, { project: 'esan-interior', existing });
+    await assert.rejects(publishStaticArtifact(service));
+    assert.equal(writes(service.calls).length, 0);
+    assert.equal(service.calls.some(call => call.url.searchParams.has('page')), false);
+    assert.equal(service.calls.some(call => call.url.hostname === 'github.com'), false);
+  }
+});
+
+test('the workflow exposes the fixed Esan selector while retaining the original default', async () => {
+  const workflow = await readFile(new URL('../.github/workflows/deploy.yml', import.meta.url), 'utf8');
+  const projectInput = workflow.split('      static_artifact_project:')[1].split('      static_artifact_blob:')[0];
+  assert.match(projectInput, /\n          - esan-interior\n/);
+  assert.match(projectInput, /default: shengfengyang/);
 });
 
 test('Chengce publishes only its fixed source, subpath and archive with a provenance manifest', async () => {

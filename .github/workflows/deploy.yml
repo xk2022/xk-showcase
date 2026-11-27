@@ -17,6 +17,7 @@ on:
         type: choice
         options:
           - shengfengyang
+          - esan-interior
           - hongjia-brand
           - carpentry
           - guanghai-software

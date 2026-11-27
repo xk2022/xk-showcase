@@ -24,6 +24,11 @@ const projects = {
     // Preview noindex remains part of the reviewed source HTML.
     policy: { framework: 'next' },
   },
+  'esan-interior': {
+    sourceRepository: 'xk2022/xk-lp-esan-interior',
+    archiveName: 'esan-interior-static.zip', name: '一森室內設計',
+    policy: { framework: 'next' },
+  },
   honest: {
     sourceRepository: 'xk2022/xk-lp-honest-diecut',
     archiveName: 'honest-static.zip', name: '宏能興業｜製造業詢價展示',
