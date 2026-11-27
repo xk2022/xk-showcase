@@ -42,6 +42,11 @@ const projects = {
     archiveName: 'guanghai-software-static.zip', name: '廣海軟體有限公司｜企業軟體需求整理',
     policy: {},
   },
+  'qiangang-windows': {
+    sourceRepository: 'xk2022/xk-lp-qiangang-windows',
+    archiveName: 'qiangang-windows-static.zip', name: '萬花筒塑鋼門窗｜XK Demo',
+    releaseRevision: 2, policy: {},
+  },
   carpentry: {
     // 新快照使用更名後的模板來源；舊來源 Release 保留原貌，身份不符時不會被改寫或重用。
     sourceRepository: 'xk2022/xk-template-lp',
@@ -85,8 +90,8 @@ async function jsonResponse(response, limit = 45 * 1024 * 1024) {
 
 export async function publishStaticArtifact({ env = process.env, fetchImpl = fetch } = {}) {
   const input = inputs(env);
-  const { sourceRepository, archiveName, name, policy } = projects[input.project];
-  const tag = `${input.project}-${input.sourceSha.slice(0, 7)}-v1`;
+  const { sourceRepository, archiveName, name, policy, releaseRevision = 1 } = projects[input.project];
+  const tag = `${input.project}-${input.sourceSha.slice(0, 7)}-v${releaseRevision}`;
   const downloadUrl = `https://github.com/${repository}/releases/download/${tag}/${archiveName}`;
   const site = {
     slug: input.project, repository: sourceRepository, ref: input.sourceSha,
